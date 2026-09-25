@@ -1,4 +1,4 @@
-package in.nqn.hotelmanagement.entity.room;
+package in.nqn.hotelmanagement.entity;
 
 import in.nqn.hotelmanagement.enums.RoomStatus;
 import in.nqn.hotelmanagement.enums.RoomType;
@@ -8,13 +8,14 @@ import jakarta.persistence.PrimaryKeyJoinColumn;
 
 //@Entity
 @DiscriminatorValue("STANDARD")
-@PrimaryKeyJoinColumn(name = "roomNumer")
+@PrimaryKeyJoinColumn(name = "roomNumber")
 public class StandardRoom extends Room {
 
-    public StandardRoom(Long roomNumber,
-                        RoomType roomType,
-                        Long basePrice,
-                        RoomStatus roomStatus){
-        super(roomNumber,roomType,basePrice,roomStatus);
+    public StandardRoom() {
+        super();
+    }
+
+    public StandardRoom(Long roomNumber, RoomType roomType, Long basePrice, RoomStatus roomStatus) {
+        super(roomNumber, roomType, basePrice, roomStatus);
     }
 }

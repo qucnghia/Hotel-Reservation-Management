@@ -1,4 +1,4 @@
-package in.nqn.hotelmanagement.entity.room;
+package in.nqn.hotelmanagement.entity;
 
 import in.nqn.hotelmanagement.enums.RoomStatus;
 import in.nqn.hotelmanagement.enums.RoomType;
@@ -6,7 +6,9 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "Rooms")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Room {
+
     @Id
     private Long roomNumber;
 
@@ -18,20 +20,17 @@ public class Room {
     @Enumerated(EnumType.STRING)
     private RoomStatus roomStatus;
 
-    public Room(Long roomNumber,
-                RoomType roomType,
-                Long basePrice,
-                RoomStatus roomStatus) {
+    public Room() {
+    }
+
+    public Room(Long roomNumber, RoomType roomType, Long basePrice, RoomStatus roomStatus) {
         this.roomNumber = roomNumber;
         this.roomType = roomType;
         this.basePrice = basePrice;
         this.roomStatus = roomStatus;
     }
 
-    public Room() {
-    }
-
-    public long getRoomNumber() {
+    public Long getRoomNumber() {
         return roomNumber;
     }
 

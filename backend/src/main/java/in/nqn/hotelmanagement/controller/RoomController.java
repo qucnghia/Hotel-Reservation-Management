@@ -1,5 +1,6 @@
 package in.nqn.hotelmanagement.controller;
-import in.nqn.hotelmanagement.entity.room.Room;
+
+import in.nqn.hotelmanagement.entity.Room;
 import in.nqn.hotelmanagement.service.RoomService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:5173")
 public class RoomController {
 
-    private RoomService roomService;
+    private final RoomService roomService;
 
     public RoomController(RoomService roomService) {
         this.roomService = roomService;
@@ -20,10 +21,8 @@ public class RoomController {
 
     @PostMapping
     public ResponseEntity<Room> createRoom(@RequestBody Room room) {
-        roomService.createRoom(room);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(room);
+        Room created = roomService.createRoom(room);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @GetMapping("/{roomNumber}")
@@ -34,19 +33,19 @@ public class RoomController {
 
     @GetMapping
     public ResponseEntity<List<Room>> getAllRooms() {
-        List<Room> roomlist = roomService.getAllRooms();
-        return ResponseEntity.ok(roomlist);
+        List<Room> roomList = roomService.getAllRooms();
+        return ResponseEntity.ok(roomList);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Room> updateRoom(@PathVariable Long id, @RequestBody Room room) {
-        Room UpdatedRoom = roomService.updateRoom(id,room);
-        return ResponseEntity.ok(UpdatedRoom);
+        Room updatedRoom = roomService.updateRoom(id, room);
+        return ResponseEntity.ok(updatedRoom);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteRoomById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteRoomById(@PathVariable Long id) {
         roomService.deleteRoom(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 }
