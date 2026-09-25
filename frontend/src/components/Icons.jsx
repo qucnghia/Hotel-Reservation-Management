@@ -102,3 +102,19 @@ export function SparklesIcon({ className = "w-4 h-4", ...props }) {
         </svg>
     );
 }
+
+export function BookmarkIcon({ className = "w-5 h-5", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H7.5m9 0A2.25 2.25 0 0 1 18.75 6v14.25L12 16.875 5.25 20.25V6A2.25 2.25 0 0 1 7.5 3.75" />
+        </svg>
+    );
+}
+
+export function CurrencyDollarIcon({ className = "w-4 h-4", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        </svg>
+    );
+}
