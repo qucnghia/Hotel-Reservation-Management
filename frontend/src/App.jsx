@@ -8,6 +8,9 @@ import RoomForm from './components/RoomForm.jsx';
 import RoomTable from './components/RoomTable.jsx';
 import BookingForm from './components/BookingForm.jsx';
 import BookingTable from './components/BookingTable.jsx';
+// === [OPTIONAL EFFECT: React Bits Electric Logo & Particle Text] ===
+import HotelElectricLogo from './components/electric-logo/HotelElectricLogo.jsx';
+import ParticleText from './components/particle-text/ParticleText.jsx';
 import { UsersIcon, BedIcon, BookmarkIcon, RefreshIcon, ExclamationTriangleIcon } from './components/Icons';
 
 function App() {
@@ -123,40 +126,96 @@ function App() {
                     {/* Background subtle glow */}
                     <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
 
-                    <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-                        <div className="flex items-center gap-4">
-                            {/* Logo Khách Sạn */}
-                            <div className="w-16 h-16 rounded-2xl bg-white p-1 shadow-xl shadow-blue-900/20 flex-shrink-0 border border-slate-700/60 overflow-hidden flex items-center justify-center">
-                                <img
-                                    src="/hotel-logo.png"
-                                    alt="Hotel Resort Logo"
-                                    className="w-full h-full object-contain"
-                                />
-                            </div>
+                    {/* HÀNG 1: LOGO VÀ TIÊU ĐỀ TO TRÀN ĐẦY 1 DÒNG */}
+                    <div className="relative z-10 flex flex-col md:flex-row items-center justify-center md:justify-start gap-4 sm:gap-8 w-full py-2">
+                        {/* === [BẮT ĐẦU: HIỆU ỨNG ELECTRIC LOGO (REACT BITS)] ===
+                            Thư mục chứa hiệu ứng: src/components/electric-logo/
+                            Khi không cần dùng nữa: chỉ việc xóa component này và thư mục trên! */}
+                        <HotelElectricLogo
+                            src="/hotel-building-logo.png"
+                            size="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72"
+                            glowColor="#1173fb"
+                            scale={1}
+                            intensity={0.5}
+                            glow={0.8}
+                            fill={0}
+                            thickness={0.5}
+                            strands={6}
+                            bend={0}
+                            crackle={0}
+                            arcs={0.4}
+                            flicker={0.6}
+                            speed={0}
+                            interactive={true}
+                            cursorIntensity={2}
+                            cursorRadius={180}
+                        />
+                        {/* === [KẾT THÚC: HIỆU ỨNG ELECTRIC LOGO] === */}
+
+                        {/* === [BẮT ĐẦU: HIỆU ỨNG PARTICLE TEXT (REACT BITS)] ===
+                            Thư mục chứa hiệu ứng: src/components/particle-text/
+                            Khi không cần dùng nữa: chỉ việc xóa component này và thư mục trên! */}
+                        <div className="flex-1 w-full min-w-0 h-36 sm:h-48 md:h-56 lg:h-64 flex items-center justify-center">
+                            <ParticleText
+                                text="HOTEL MANAGEMENT"
+                                fontSize="clamp(2.5rem, 5.5vw, 5rem)"
+                                fontWeight={900}
+                                fontFamily="'Playfair Display SC', Georgia, serif"
+                                color="#ffffff"
+                                highlightColor="#f59e0b" // hoặc #eab308, #d97706
+                                particleSize={3.2}
+                                density={2}
+                                scatter={110}
+                                gatherDuration={1300}
+                                pointerRepel={50}
+                                repelRadius={120}
+                                idleDrift={0.15}
+                                glow={true}
+                                className="w-full h-full"
+                            />
+                        </div>
+                        {/* === [KẾT THÚC: HIỆU ỨNG PARTICLE TEXT] === */}
+                    </div>
+
+                    {/* HÀNG 2: SỐ LIỆU THỐNG KÊ 1 DÒNG RIÊNG */}
+                    <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 w-full mt-4 pt-5 border-t border-slate-800/80">
+                        <div className="bg-slate-950/60 border border-slate-800/80 rounded-xl px-4 py-3.5 sm:px-5 flex items-center justify-between backdrop-blur-md hover:border-slate-700/60 transition-colors shadow-inner">
                             <div>
-                                <h1 className="text-2xl sm:text-3xl font-luxury font-bold tracking-wide text-white uppercase">
-                                    Hotel Management
-                                </h1>
+                                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Khách hàng</span>
+                                <span className="text-2xl sm:text-3xl font-extrabold text-white font-mono mt-1 block">{guests.length}</span>
+                            </div>
+                            <div className="p-2.5 rounded-lg bg-blue-500/10 text-blue-400">
+                                <UsersIcon className="w-5 h-5" />
                             </div>
                         </div>
 
-                        {/* Metric Counter Cards */}
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 self-stretch lg:self-auto">
-                            <div className="bg-slate-950/60 border border-slate-800/80 rounded-xl px-4 py-2.5 text-center backdrop-blur-md">
-                                <span className="text-[11px] font-medium text-slate-400 block uppercase tracking-wider">Khách hàng</span>
-                                <span className="text-xl font-extrabold text-white font-mono mt-0.5 block">{guests.length}</span>
+                        <div className="bg-slate-950/60 border border-slate-800/80 rounded-xl px-4 py-3.5 sm:px-5 flex items-center justify-between backdrop-blur-md hover:border-slate-700/60 transition-colors shadow-inner">
+                            <div>
+                                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Tổng số phòng</span>
+                                <span className="text-2xl sm:text-3xl font-extrabold text-white font-mono mt-1 block">{rooms.length}</span>
                             </div>
-                            <div className="bg-slate-950/60 border border-slate-800/80 rounded-xl px-4 py-2.5 text-center backdrop-blur-md">
-                                <span className="text-[11px] font-medium text-slate-400 block uppercase tracking-wider">Tổng số phòng</span>
-                                <span className="text-xl font-extrabold text-white font-mono mt-0.5 block">{rooms.length}</span>
+                            <div className="p-2.5 rounded-lg bg-indigo-500/10 text-indigo-400">
+                                <BedIcon className="w-5 h-5" />
                             </div>
-                            <div className="bg-slate-950/60 border border-slate-800/80 rounded-xl px-4 py-2.5 text-center backdrop-blur-md">
-                                <span className="text-[11px] font-medium text-emerald-400 block uppercase tracking-wider">Phòng sẵn sàng</span>
-                                <span className="text-xl font-extrabold text-emerald-400 font-mono mt-0.5 block">{availableRoomsCount}</span>
+                        </div>
+
+                        <div className="bg-slate-950/60 border border-slate-800/80 rounded-xl px-4 py-3.5 sm:px-5 flex items-center justify-between backdrop-blur-md hover:border-slate-700/60 transition-colors shadow-inner">
+                            <div>
+                                <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider block">Phòng sẵn sàng</span>
+                                <span className="text-2xl sm:text-3xl font-extrabold text-emerald-400 font-mono mt-1 block">{availableRoomsCount}</span>
                             </div>
-                            <div className="bg-slate-950/60 border border-slate-800/80 rounded-xl px-4 py-2.5 text-center backdrop-blur-md">
-                                <span className="text-[11px] font-medium text-indigo-400 block uppercase tracking-wider">Đơn đang hiệu lực</span>
-                                <span className="text-xl font-extrabold text-indigo-400 font-mono mt-0.5 block">{activeBookingsCount}</span>
+                            <div className="p-2.5 rounded-lg bg-emerald-500/10 text-emerald-400">
+                                <BedIcon className="w-5 h-5" />
+                            </div>
+                        </div>
+
+                        <div className="bg-slate-950/60 border border-slate-800/80 rounded-xl px-4 py-3.5 sm:px-5 flex items-center justify-between backdrop-blur-md hover:border-slate-700/60 transition-colors shadow-inner">
+                            <div>
+                                <span className="text-xs font-semibold text-sky-400 uppercase tracking-wider block">Đơn đang hiệu lực</span>
+                                <span className="text-2xl sm:text-3xl font-extrabold text-sky-400 font-mono mt-1 block">{activeBookingsCount}</span>
+                            </div>
+                            <div className="p-2.5 rounded-lg bg-sky-500/10 text-sky-400">
+                                <BookmarkIcon className="w-5 h-5" />
                             </div>
                         </div>
                     </div>

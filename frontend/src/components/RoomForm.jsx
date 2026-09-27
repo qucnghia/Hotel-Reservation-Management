@@ -8,19 +8,11 @@ const ROOM_TYPES = [
     { value: 'LUXURY', label: 'LUXURY (Sang trọng)' }
 ];
 
-const ROOM_STATUSES = [
-    { value: 'AVAILABLE', label: 'AVAILABLE (Sẵn sàng đón khách)' },
-    { value: 'BOOKED', label: 'BOOKED (Đã được đặt trước)' },
-    { value: 'OCCUPIED', label: 'OCCUPIED (Đang có khách ở)' },
-    { value: 'UNDER_MAINTENANCE', label: 'UNDER_MAINTENANCE (Đang bảo trì)' }
-];
-
 export default function RoomForm({ editingRoom, existingRooms = [], onSaved, onCancelEdit }) {
     const [formData, setFormData] = useState({
         roomNumber: editingRoom?.roomNumber ?? '',
         roomType: editingRoom?.roomType || 'STANDARD',
-        basePrice: editingRoom?.basePrice ?? '',
-        roomStatus: editingRoom?.roomStatus || 'AVAILABLE'
+        basePrice: editingRoom?.basePrice ?? ''
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -43,7 +35,7 @@ export default function RoomForm({ editingRoom, existingRooms = [], onSaved, onC
 
         const roomNum = Number(formData.roomNumber);
 
-        // 1. Kiểm tra trùng số phòng ngay lập tức ở phía Client
+        // 1. Kiểm tra trùng số phòng ngay lập tức ở phía Client khi thêm mới
         if (!editingRoom && existingRooms.some(r => Number(r.roomNumber) === roomNum)) {
             setError(`Số phòng #${roomNum} đã tồn tại trong hệ thống. Vui lòng chọn lại số phòng khác!`);
             return;
@@ -54,29 +46,36 @@ export default function RoomForm({ editingRoom, existingRooms = [], onSaved, onC
             return;
         }
 
+        const payload = {
+            roomNumber: roomNum,
+            roomType: formData.roomType,
+            basePrice: Number(formData.basePrice),
+            // Trạng thái phòng mặc định là AVAILABLE khi thêm mới, hoặc giữ nguyên trạng thái cũ khi chỉnh sửa
+            roomStatus: editingRoom ? editingRoom.roomStatus : 'AVAILABLE'
+        };
+
         setLoading(true);
         try {
             if (editingRoom) {
                 // UPDATE (PUT)
-                await updateRoom(editingRoom.roomNumber, formData);
+                await updateRoom(editingRoom.roomNumber, payload);
                 alert(`Cập nhật phòng #${editingRoom.roomNumber} thành công!`);
             } else {
                 // CREATE (POST)
-                await createRoom(formData);
+                await createRoom(payload);
                 alert(`Thêm phòng #${formData.roomNumber} thành công!`);
             }
             setFormData({
                 roomNumber: '',
                 roomType: 'STANDARD',
-                basePrice: '',
-                roomStatus: 'AVAILABLE'
+                basePrice: ''
             });
             onSaved();
         } catch (err) {
             console.error('Lỗi khi lưu phòng:', err);
             if (err.response) {
                 const status = err.response.status;
-                // Backend trả về mã 500 do DuplicateKeyException khi trùng số phòng
+                // Backend trả về mã 409 hoặc 500 do trùng số phòng
                 if (!editingRoom && (status === 500 || status === 409 || status === 400)) {
                     setError(`Số phòng #${formData.roomNumber} đã tồn tại trong hệ thống. Vui lòng chọn lại số phòng khác!`);
                 } else if (err.response.data?.message) {
@@ -112,7 +111,7 @@ export default function RoomForm({ editingRoom, existingRooms = [], onSaved, onC
                             {editingRoom ? `Cập nhật Phòng #${editingRoom.roomNumber}` : 'Thêm Phòng Mới'}
                         </h3>
                         <p className="text-xs text-slate-400 mt-0.5">
-                            {editingRoom ? 'Điều chỉnh thông tin hạng phòng, giá và trạng thái' : 'Khai báo thông số phòng lưu trú mới'}
+                            {editingRoom ? 'Điều chỉnh thông tin hạng phòng và giá cơ bản' : 'Khai báo thông số phòng lưu trú mới'}
                         </p>
                     </div>
                 </div>
@@ -196,29 +195,6 @@ export default function RoomForm({ editingRoom, existingRooms = [], onSaved, onC
                     aria-required="true"
                     className="w-full bg-slate-950/70 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-mono"
                 />
-            </div>
-
-            {/* Field: Room Status */}
-            <div className="flex flex-col gap-1.5">
-                <label htmlFor="room-status" className="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1">
-                    <span>Trạng thái phòng</span>
-                    <span className="text-rose-400 font-bold">*</span>
-                </label>
-                <select
-                    id="room-status"
-                    name="roomStatus"
-                    value={formData.roomStatus}
-                    onChange={handleChange}
-                    required
-                    aria-required="true"
-                    className="w-full bg-slate-950/70 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all cursor-pointer"
-                >
-                    {ROOM_STATUSES.map(status => (
-                        <option key={status.value} value={status.value} className="bg-slate-900 text-slate-200">
-                            {status.label}
-                        </option>
-                    ))}
-                </select>
             </div>
 
             {/* Action Buttons */}
