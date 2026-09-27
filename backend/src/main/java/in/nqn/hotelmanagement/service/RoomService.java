@@ -1,6 +1,7 @@
 package in.nqn.hotelmanagement.service;
 
 import in.nqn.hotelmanagement.entity.Room;
+import in.nqn.hotelmanagement.enums.RoomStatus;
 import in.nqn.hotelmanagement.exception.DuplicateResourceException;
 import in.nqn.hotelmanagement.exception.ResourceNotFoundException;
 import in.nqn.hotelmanagement.repository.RoomRepository;
@@ -21,6 +22,9 @@ public class RoomService {
         if (roomRepository.existsById(room.getRoomNumber())) {
             throw new DuplicateResourceException("Room #" + room.getRoomNumber() + " already exists. Try another room number.");
         }
+        if (room.getRoomStatus() == null) {
+            room.setRoomStatus(RoomStatus.AVAILABLE);
+        }
         return roomRepository.save(room);
     }
 
@@ -39,7 +43,9 @@ public class RoomService {
 
         roomToUpdate.setBasePrice(room.getBasePrice());
         roomToUpdate.setRoomType(room.getRoomType());
-        roomToUpdate.setRoomStatus(room.getRoomStatus());
+        if (room.getRoomStatus() != null) {
+            roomToUpdate.setRoomStatus(room.getRoomStatus());
+        }
         return roomRepository.save(roomToUpdate);
     }
 
