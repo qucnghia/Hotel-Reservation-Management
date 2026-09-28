@@ -60,7 +60,6 @@ public class Booking {
             if (days <= 0) {
                 days = 1; // Ít nhất tính 1 ngày nếu check-in và check-out cùng ngày
             }
-            this.totalPrice = days * room.getBasePrice();
         }
     }
 

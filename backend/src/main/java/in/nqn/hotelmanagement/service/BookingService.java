@@ -2,6 +2,7 @@ package in.nqn.hotelmanagement.service;
 
 import in.nqn.hotelmanagement.dto.BookingRequest;
 import in.nqn.hotelmanagement.dto.BookingResponse;
+import in.nqn.hotelmanagement.dto.CustomerBookingHistoryResponse;
 import in.nqn.hotelmanagement.entity.Booking;
 import in.nqn.hotelmanagement.entity.Customer;
 import in.nqn.hotelmanagement.entity.Room;
@@ -52,11 +53,15 @@ public class BookingService {
             throw new InvalidBookingException("Ngày trả phòng (Check-out) không thể trước ngày nhận phòng (Check-in)");
         }
 
-        Customer customer = customerRepository.findById(request.getCustomerId())
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy khách hàng với mã #" + request.getCustomerId()));
+        Customer customer = customerRepository
+                .findById(request.getCustomerId())
+                .orElseThrow(()
+                        -> new ResourceNotFoundException("Không tìm thấy khách hàng với mã #" + request.getCustomerId()));
 
-        Room room = roomRepository.findById(request.getRoomNumber())
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy phòng số #" + request.getRoomNumber()));
+        Room room = roomRepository
+                .findById(request.getRoomNumber())
+                .orElseThrow(()
+                        -> new ResourceNotFoundException("Không tìm thấy phòng số #" + request.getRoomNumber()));
 
         if (room.getRoomStatus() == RoomStatus.UNDER_MAINTENANCE) {
             throw new InvalidBookingException("Phòng #" + room.getRoomNumber() + " hiện đang được bảo trì, không thể tiếp nhận đặt phòng!");
@@ -91,7 +96,8 @@ public class BookingService {
 
     @Transactional(readOnly = true)
     public List<BookingResponse> getAllBookings() {
-        return bookingRepository.findAll(Sort.by(Sort.Direction.DESC, "id"))
+        return bookingRepository
+                .findAll(Sort.by(Sort.Direction.DESC, "id"))
                 .stream()
                 .map(BookingResponse::fromEntity)
                 .toList();
@@ -138,5 +144,57 @@ public class BookingService {
         }
 
         bookingRepository.delete(booking);
+    }
+
+    @Transactional(readOnly = true)
+    public CustomerBookingHistoryResponse getCustomerBookingHistory(Long customerId) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy khách hàng với mã #" + customerId));
+
+        List<Booking> bookings = bookingRepository.findByCustomer_IdOrderByIdDesc(customerId);
+
+        int totalBookings = bookings.size();
+        long totalSpent = 0L;
+        int completedBookings = 0;
+        int activeBookings = 0;
+        int cancelledBookings = 0;
+        String message = "";
+
+        for (Booking b : bookings) {
+            if (b.getBookingStatus() == BookingStatus.CANCELLED) {
+                cancelledBookings++;
+            } else {
+                if (b.getTotalPrice() != null) {
+                    totalSpent += b.getTotalPrice();
+                }
+                if (b.getBookingStatus() == BookingStatus.CHECKED_OUT) {
+                    completedBookings++;
+                } else if (b.getBookingStatus() == BookingStatus.CONFIRMED || b.getBookingStatus() == BookingStatus.CHECKED_IN) {
+                    activeBookings++;
+                }
+            }
+        }
+
+        List<BookingResponse> bookingResponses = bookings.stream()
+                .map(BookingResponse::fromEntity)
+                .toList();
+
+        String formattedDob = customer.getDob() != null
+                ? customer.getDob().format(DATE_FORMATTER)
+                : null;
+
+        return new CustomerBookingHistoryResponse(
+                customer.getId(),
+                customer.getFullName(),
+                customer.getEmail(),
+                formattedDob,
+                totalBookings,
+                totalSpent,
+                completedBookings,
+                activeBookings,
+                cancelledBookings,
+                message,
+                bookingResponses
+        );
     }
 }

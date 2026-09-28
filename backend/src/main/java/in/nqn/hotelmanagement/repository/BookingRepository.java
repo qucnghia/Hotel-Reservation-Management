@@ -13,11 +13,7 @@ import java.util.List;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    List<Booking> findByCustomerId(Long customerId);
-
-    List<Booking> findByRoom_RoomNumber(Long roomNumber);
-
-    List<Booking> findByBookingStatus(BookingStatus status);
+    List<Booking> findByCustomer_IdOrderByIdDesc(Long customerId);
 
     /**
      * Thuật toán kiểm tra trùng lịch đặt phòng (Overlap Check):

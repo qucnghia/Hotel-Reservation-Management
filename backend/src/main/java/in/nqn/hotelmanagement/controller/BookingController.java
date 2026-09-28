@@ -2,6 +2,7 @@ package in.nqn.hotelmanagement.controller;
 
 import in.nqn.hotelmanagement.dto.BookingRequest;
 import in.nqn.hotelmanagement.dto.BookingResponse;
+import in.nqn.hotelmanagement.dto.CustomerBookingHistoryResponse;
 import in.nqn.hotelmanagement.enums.BookingStatus;
 import in.nqn.hotelmanagement.service.BookingService;
 import org.springframework.http.HttpStatus;
@@ -51,5 +52,11 @@ public class BookingController {
     public ResponseEntity<Void> deleteBooking(@PathVariable Long id) {
         bookingService.deleteBooking(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping({"/customer/{customerId}"})
+    public ResponseEntity<CustomerBookingHistoryResponse> getCustomerBookingHistory(@PathVariable Long customerId) {
+        CustomerBookingHistoryResponse history = bookingService.getCustomerBookingHistory(customerId);
+        return ResponseEntity.ok(history);
     }
 }
