@@ -20,27 +20,30 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
-    public Customer createGuest(CustomerRequest guest) {
+    public CustomerResponse createGuest(CustomerRequest guest) {
         if (customerRepository.existsByEmail(guest.getEmail())) {
             throw new DuplicateResourceException("Customer with email " + guest.getEmail() + " already exists");
         }
         Customer customer = mapToEntity(guest);
         customerRepository.save(customer);
-        return customer;
+        return mapToDTO(customer);
     }
 
-    public Customer getCustomerById(Long id) {
-        return customerRepository
+    public CustomerResponse getCustomerById(Long id) {
+        return mapToDTO
+                (customerRepository
                 .findById(id)
                 .orElseThrow(()
-                        -> new ResourceNotFoundException("Customer with id " + id + " not found"));
+                        -> new ResourceNotFoundException("Customer with id " + id + " not found")));
     }
 
-    public List<Customer> getAllCustomers() {
-        return customerRepository.findAll();
+    public List<CustomerResponse> getAllCustomers() {
+        List<Customer> customers = customerRepository.findAll();
+
+        return customers.stream().map(this::mapToDTO).toList();
     }
 
-    public Customer updateCustomer(Long id, CustomerRequest customer) {
+    public CustomerResponse updateCustomer(Long id, CustomerRequest customer) {
         Customer customerToUpdate = customerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer with id " + id + " not found"));
 
@@ -54,7 +57,7 @@ public class CustomerService {
         customerToUpdate.setEmail(customer.getEmail());
         customerToUpdate.setDob(customer.getDob());
         customerToUpdate.setMembership(customerToUpdate.getMembership());
-        return customerRepository.save(customerToUpdate);
+        return mapToDTO(customerRepository.save(customerToUpdate));
     }
 
     public void deleteCustomer(Long id) {
@@ -71,6 +74,18 @@ public class CustomerService {
         customer.setEmail(customerRequest.getEmail());
         customer.setDob(customerRequest.getDob());
         customer.setMembership(CustomerMembership.CUSTOMER);
+        customer.setPayedPrice(0L);
         return customer;
+    }
+
+    public CustomerResponse mapToDTO(Customer customer) {
+        CustomerResponse customerResponse = new CustomerResponse();
+        customerResponse.setId(customer.getId());
+        customerResponse.setFullName(customer.getFullName());
+        customerResponse.setEmail(customer.getEmail());
+        customerResponse.setDob(customer.getDob());
+        customerResponse.setMembership(customer.getMembership() != null ? customer.getMembership() : CustomerMembership.CUSTOMER);
+        customerResponse.setPayedPrice(customer.getPayedPrice() != null ? customer.getPayedPrice() : 0L);
+        return customerResponse;
     }
 }

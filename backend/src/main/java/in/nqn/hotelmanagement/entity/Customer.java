@@ -25,20 +25,26 @@ public class Customer {
     @Column(unique = true, nullable = false)
     private String email;
 
+    private Long payedPrice = 0L;
+
     @Enumerated(EnumType.STRING)
-    private CustomerMembership  membership;
+    private CustomerMembership membership = CustomerMembership.CUSTOMER;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Booking> bookings = new ArrayList<>();
 
     public Customer() {
+        this.payedPrice = 0L;
+        this.membership = CustomerMembership.CUSTOMER;
     }
 
     public Customer(String fullName, LocalDate dob, String email) {
         this.fullName = fullName;
         this.dob = dob;
         this.email = email;
+        this.payedPrice = 0L;
+        this.membership = CustomerMembership.CUSTOMER;
     }
 
     public Long getId() {
@@ -65,15 +71,6 @@ public class Customer {
         this.dob = dob;
     }
 
-    // Tương thích cả getDOB / setDOB cũ
-    public LocalDate getDOB() {
-        return dob;
-    }
-
-    public void setDOB(LocalDate dob) {
-        this.dob = dob;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -83,7 +80,7 @@ public class Customer {
     }
 
     public CustomerMembership getMembership() {
-        return membership;
+        return membership != null ? membership : CustomerMembership.CUSTOMER;
     }
 
     public void setMembership(CustomerMembership membership) {
@@ -96,5 +93,45 @@ public class Customer {
 
     public void setBookings(List<Booking> bookings) {
         this.bookings = bookings;
+    }
+
+    public Long getPayedPrice() {
+        return payedPrice != null ? payedPrice : 0L;
+    }
+
+    public void setPayedPrice(Long payedPrice) {
+        this.payedPrice = payedPrice != null ? payedPrice : 0L;
+        recalculateMembership();
+    }
+
+    public void addPayedPrice(Long amount) {
+        if (amount == null || amount <= 0) return;
+        if (this.payedPrice == null) {
+            this.payedPrice = 0L;
+        }
+        this.payedPrice += amount;
+        recalculateMembership();
+    }
+
+    public void deductPayedPrice(Long amount) {
+        if (amount == null || amount <= 0) return;
+        if (this.payedPrice == null) {
+            this.payedPrice = 0L;
+        }
+        this.payedPrice = Math.max(0L, this.payedPrice - amount);
+        recalculateMembership();
+    }
+
+    public void recalculateMembership() {
+        long total = this.payedPrice != null ? this.payedPrice : 0L;
+        if (total >= 10000000L) {
+            this.membership = CustomerMembership.VIP;
+        } else if (total >= 5000000L) {
+            this.membership = CustomerMembership.PLUS;
+        } else if (total >= 2000000L) {
+            this.membership = CustomerMembership.ECONOMY;
+        } else {
+            this.membership = CustomerMembership.CUSTOMER;
+        }
     }
 }

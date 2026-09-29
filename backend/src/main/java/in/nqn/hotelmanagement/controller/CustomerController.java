@@ -22,26 +22,26 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<Customer> createGuest(@RequestBody CustomerRequest guest) {
-        Customer customer = customerService.createGuest(guest);
+    public ResponseEntity<CustomerResponse> createGuest(@RequestBody CustomerRequest guest) {
+        CustomerResponse customer = customerService.createGuest(guest);
         return ResponseEntity.status(HttpStatus.CREATED).body(customer);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> getCustomer(@PathVariable Long id) {
-        Customer customer = customerService.getCustomerById(id);
+    public ResponseEntity<CustomerResponse> getCustomer(@PathVariable Long id) {
+        CustomerResponse customer = customerService.getCustomerById(id);
         return ResponseEntity.ok(customer);
     }
 
     @GetMapping
-    public ResponseEntity<List<Customer>> getAllCustomers() {
-        List<Customer> customers = customerService.getAllCustomers();
+    public ResponseEntity<List<CustomerResponse>> getAllCustomers() {
+        List<CustomerResponse> customers = customerService.getAllCustomers();
         return ResponseEntity.ok(customers);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable Long id, @RequestBody CustomerRequest customer) {
-        Customer updatedCustomer = customerService.updateCustomer(id, customer);
+    public ResponseEntity<CustomerResponse> updateCustomer(@PathVariable Long id, @RequestBody CustomerRequest customer) {
+        CustomerResponse updatedCustomer = customerService.updateCustomer(id, customer);
         return ResponseEntity.ok(updatedCustomer);
     }
 

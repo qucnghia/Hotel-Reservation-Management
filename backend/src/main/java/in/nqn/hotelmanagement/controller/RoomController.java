@@ -1,5 +1,7 @@
 package in.nqn.hotelmanagement.controller;
 
+import in.nqn.hotelmanagement.dto.roomDTO.RoomRequest;
+import in.nqn.hotelmanagement.dto.roomDTO.RoomResponse;
 import in.nqn.hotelmanagement.entity.room.Room;
 import in.nqn.hotelmanagement.service.RoomService;
 import org.springframework.http.HttpStatus;
@@ -20,8 +22,8 @@ public class RoomController {
     }
 
     @PostMapping
-    public ResponseEntity<Room> createRoom(@RequestBody Room room) {
-        Room created = roomService.createRoom(room);
+    public ResponseEntity<RoomResponse> createRoom(@RequestBody RoomRequest room) {
+        RoomResponse created = roomService.createRoom(room);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 

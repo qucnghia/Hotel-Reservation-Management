@@ -23,7 +23,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
      */
     @Query("SELECT b FROM Booking b WHERE b.room.roomNumber = :roomNumber " +
            "AND b.bookingStatus NOT IN (in.nqn.hotelmanagement.enums.BookingStatus.CANCELLED, in.nqn.hotelmanagement.enums.BookingStatus.CHECKED_OUT) " +
-           "AND b.checkInDate < :checkOutDate AND b.checkOutDate > :checkInDate")
+           "AND b.checkInDate < :checkOutDate " +
+           "AND (b.checkOutDate > :checkInDate OR (b.checkOutDate = b.checkInDate AND b.checkInDate >= :checkInDate))")
     List<Booking> findConflictingBookings(@Param("roomNumber") Long roomNumber,
                                          @Param("checkInDate") LocalDate checkInDate,
                                          @Param("checkOutDate") LocalDate checkOutDate);
@@ -34,9 +35,28 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("SELECT b FROM Booking b WHERE b.room.roomNumber = :roomNumber " +
            "AND b.id <> :excludeBookingId " +
            "AND b.bookingStatus NOT IN (in.nqn.hotelmanagement.enums.BookingStatus.CANCELLED, in.nqn.hotelmanagement.enums.BookingStatus.CHECKED_OUT) " +
-           "AND b.checkInDate < :checkOutDate AND b.checkOutDate > :checkInDate")
+           "AND b.checkInDate < :checkOutDate " +
+           "AND (b.checkOutDate > :checkInDate OR (b.checkOutDate = b.checkInDate AND b.checkInDate >= :checkInDate))")
     List<Booking> findConflictingBookingsExcludingCurrent(@Param("roomNumber") Long roomNumber,
                                                          @Param("excludeBookingId") Long excludeBookingId,
                                                          @Param("checkInDate") LocalDate checkInDate,
                                                          @Param("checkOutDate") LocalDate checkOutDate);
+
+    @Query("SELECT COUNT(b) > 0 FROM Booking b WHERE b.room.roomNumber = :roomNumber " +
+           "AND b.id <> :excludeBookingId " +
+           "AND b.bookingStatus = in.nqn.hotelmanagement.enums.BookingStatus.CHECKED_IN")
+    boolean hasOtherCheckedInBooking(@Param("roomNumber") Long roomNumber,
+                                     @Param("excludeBookingId") Long excludeBookingId);
+
+    @Query("SELECT COUNT(b) > 0 FROM Booking b WHERE b.room.roomNumber = :roomNumber " +
+           "AND b.id <> :excludeBookingId " +
+           "AND b.bookingStatus = in.nqn.hotelmanagement.enums.BookingStatus.CONFIRMED " +
+           "AND b.checkOutDate >= :today")
+    boolean hasActiveConfirmedBooking(@Param("roomNumber") Long roomNumber,
+                                      @Param("excludeBookingId") Long excludeBookingId,
+                                      @Param("today") LocalDate today);
+
+    @Query("SELECT COUNT(b) > 0 FROM Booking b WHERE b.customer.id = :customerId " +
+           "AND b.bookingStatus IN (in.nqn.hotelmanagement.enums.BookingStatus.CONFIRMED, in.nqn.hotelmanagement.enums.BookingStatus.CHECKED_IN)")
+    boolean hasActiveBookingForCustomer(@Param("customerId") Long customerId);
 }

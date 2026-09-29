@@ -1,6 +1,7 @@
 package in.nqn.hotelmanagement.dto;
 
 import in.nqn.hotelmanagement.dto.bookingDTO.BookingResponse;
+import in.nqn.hotelmanagement.enums.CustomerMembership;
 
 import java.util.List;
 
@@ -10,10 +11,11 @@ public class CustomerBookingHistoryResponse {
     private String customerName;
     private String email;
     private String dob;
+    private CustomerMembership membership;
 
     // Các chỉ số thống kê nghiệp vụ
     private int totalBookings;      // Tổng số lần đặt phòng
-    private Long totalSpent;        // Tổng số tiền đã thanh toán (không tính các đơn CANCELLED)
+    private Long totalSpent;        // Tổng số tiền từ các đơn hợp lệ (CHECKED_OUT, CHECKED_IN, CONFIRMED)
     private int completedBookings;  // Số đơn đã hoàn tất (CHECKED_OUT)
     private int activeBookings;     // Số đơn đang có hiệu lực (CONFIRMED hoặc CHECKED_IN)
     private int cancelledBookings;  // Số đơn đã hủy (CANCELLED)
@@ -24,6 +26,7 @@ public class CustomerBookingHistoryResponse {
     }
 
     public CustomerBookingHistoryResponse(Long customerId, String customerName, String email, String dob,
+                                          CustomerMembership membership,
                                           int totalBookings, Long totalSpent, int completedBookings,
                                           int activeBookings, int cancelledBookings,
                                           List<BookingResponse> bookings) {
@@ -31,6 +34,7 @@ public class CustomerBookingHistoryResponse {
         this.customerName = customerName;
         this.email = email;
         this.dob = dob;
+        this.membership = membership;
         this.totalBookings = totalBookings;
         this.totalSpent = totalSpent;
         this.completedBookings = completedBookings;
@@ -69,6 +73,14 @@ public class CustomerBookingHistoryResponse {
 
     public void setDob(String dob) {
         this.dob = dob;
+    }
+
+    public CustomerMembership getMembership() {
+        return membership;
+    }
+
+    public void setMembership(CustomerMembership membership) {
+        this.membership = membership;
     }
 
     public int getTotalBookings() {
