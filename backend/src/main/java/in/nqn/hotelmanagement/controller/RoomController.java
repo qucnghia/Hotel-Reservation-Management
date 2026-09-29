@@ -1,6 +1,6 @@
 package in.nqn.hotelmanagement.controller;
 
-import in.nqn.hotelmanagement.entity.Room;
+import in.nqn.hotelmanagement.entity.room.Room;
 import in.nqn.hotelmanagement.service.RoomService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

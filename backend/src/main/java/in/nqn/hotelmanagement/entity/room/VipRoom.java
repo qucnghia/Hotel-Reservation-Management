@@ -1,9 +1,8 @@
-package in.nqn.hotelmanagement.entity;
+package in.nqn.hotelmanagement.entity.room;
 
 import in.nqn.hotelmanagement.enums.RoomStatus;
 import in.nqn.hotelmanagement.enums.RoomType;
 import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 
 //@Entity

@@ -1,7 +1,9 @@
 package in.nqn.hotelmanagement.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import in.nqn.hotelmanagement.entity.room.Room;
 import in.nqn.hotelmanagement.enums.BookingStatus;
+import in.nqn.hotelmanagement.enums.CustomerMembership;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -35,6 +37,8 @@ public class Booking {
 
     private Long totalPrice;
 
+    private Long payedPrice;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -61,6 +65,23 @@ public class Booking {
                 days = 1; // Ít nhất tính 1 ngày nếu check-in và check-out cùng ngày
             }
         }
+        if(customer.getMembership().equals(CustomerMembership.CUSTOMER)){
+            totalPrice = room.getBasePrice() * room.getBasePrice();
+        }
+        else if(customer.getMembership().equals(CustomerMembership.ECONOMY)){
+            totalPrice = room.getBasePrice() * room.getBasePrice() * 95/100;
+        }
+        else if (customer.getMembership().equals(CustomerMembership.PLUS)){
+            totalPrice = room.getBasePrice() * room.getBasePrice() * 9/10;
+        }
+        else{
+            totalPrice = room.getBasePrice() * room.getBasePrice() * 85/100;
+        }
+        payedPrice += totalPrice;
+
+        if(payedPrice > 5000000) customer.setMembership(CustomerMembership.VIP);
+        else if(payedPrice > 2500000)  customer.setMembership(CustomerMembership.PLUS);
+        else if(payedPrice > 1000000) customer.setMembership(CustomerMembership.ECONOMY);
     }
 
     public long getDurationNights() {
@@ -137,5 +158,13 @@ public class Booking {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Long getPayedPrice() {
+        return payedPrice;
+    }
+
+    public void setPayedPrice(Long payedPrice) {
+        this.payedPrice = payedPrice;
     }
 }

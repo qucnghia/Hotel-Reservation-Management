@@ -38,3 +38,9 @@ export const updateBookingStatus = (id, status) => {
 export const deleteBooking = (id) => {
     return axios.delete(`${API_URL}/${id}`);
 };
+
+// 5. GET: Lấy lịch sử đặt phòng của một khách hàng
+export const getCustomerBookingHistory = (customerId) => {
+    return axios.get(`${API_URL}/customer/${customerId}`);
+};
+

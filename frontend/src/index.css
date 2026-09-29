@@ -8,14 +8,37 @@
     --color-border: #334155;
   }
 
-  body {
-    font-family: 'Karla', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: #0b0f19;
-    color: #f1f5f9;
+  html {
+    font-size: 17px;
   }
 
-  h1, h2, h3 {
-    letter-spacing: -0.02em;
+  body {
+    font-family: 'Plus Jakarta Sans', 'Be Vietnam Pro', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #0b0f19;
+    color: #f1f5f9;
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-variant-numeric: normal;
+  }
+
+  /* Khử hoàn toàn số 0 gạch chéo trên toàn bộ ứng dụng */
+  *, input, button, select, textarea {
+    font-feature-settings: "zero" 0;
+    font-variant-numeric: normal;
+  }
+
+  /* Thay thế font-mono để không rơi vào font Consolas có số 0 gạch chéo */
+  .font-mono, code, kbd, samp, pre {
+    font-family: 'Plus Jakarta Sans', 'Be Vietnam Pro', 'Inter', system-ui, sans-serif !important;
+    font-feature-settings: "zero" 0;
+    font-variant-numeric: normal;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', 'Be Vietnam Pro', system-ui, sans-serif;
+    letter-spacing: -0.015em;
   }
 
   .font-luxury {

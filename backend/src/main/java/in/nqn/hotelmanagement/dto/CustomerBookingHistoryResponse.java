@@ -1,5 +1,7 @@
 package in.nqn.hotelmanagement.dto;
 
+import in.nqn.hotelmanagement.dto.bookingDTO.BookingResponse;
+
 import java.util.List;
 
 public class CustomerBookingHistoryResponse {
@@ -15,7 +17,6 @@ public class CustomerBookingHistoryResponse {
     private int completedBookings;  // Số đơn đã hoàn tất (CHECKED_OUT)
     private int activeBookings;     // Số đơn đang có hiệu lực (CONFIRMED hoặc CHECKED_IN)
     private int cancelledBookings;  // Số đơn đã hủy (CANCELLED)
-    private String message;
     // Danh sách chi tiết các đơn đặt phòng
     private List<BookingResponse> bookings;
 
@@ -24,7 +25,7 @@ public class CustomerBookingHistoryResponse {
 
     public CustomerBookingHistoryResponse(Long customerId, String customerName, String email, String dob,
                                           int totalBookings, Long totalSpent, int completedBookings,
-                                          int activeBookings, int cancelledBookings, String message,
+                                          int activeBookings, int cancelledBookings,
                                           List<BookingResponse> bookings) {
         this.customerId = customerId;
         this.customerName = customerName;
@@ -35,16 +36,7 @@ public class CustomerBookingHistoryResponse {
         this.completedBookings = completedBookings;
         this.activeBookings = activeBookings;
         this.cancelledBookings = cancelledBookings;
-        this.message = message;
         this.bookings = bookings;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
     public Long getCustomerId() {

@@ -1,11 +1,11 @@
 package in.nqn.hotelmanagement.service;
 
-import in.nqn.hotelmanagement.dto.BookingRequest;
-import in.nqn.hotelmanagement.dto.BookingResponse;
+import in.nqn.hotelmanagement.dto.bookingDTO.BookingRequest;
+import in.nqn.hotelmanagement.dto.bookingDTO.BookingResponse;
 import in.nqn.hotelmanagement.dto.CustomerBookingHistoryResponse;
 import in.nqn.hotelmanagement.entity.Booking;
 import in.nqn.hotelmanagement.entity.Customer;
-import in.nqn.hotelmanagement.entity.Room;
+import in.nqn.hotelmanagement.entity.room.Room;
 import in.nqn.hotelmanagement.enums.BookingStatus;
 import in.nqn.hotelmanagement.enums.RoomStatus;
 import in.nqn.hotelmanagement.exception.InvalidBookingException;
@@ -193,7 +193,6 @@ public class BookingService {
                 completedBookings,
                 activeBookings,
                 cancelledBookings,
-                message,
                 bookingResponses
         );
     }

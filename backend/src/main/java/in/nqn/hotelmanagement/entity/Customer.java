@@ -2,6 +2,7 @@ package in.nqn.hotelmanagement.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import in.nqn.hotelmanagement.enums.CustomerMembership;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -23,6 +24,9 @@ public class Customer {
 
     @Column(unique = true, nullable = false)
     private String email;
+
+    @Enumerated(EnumType.STRING)
+    private CustomerMembership  membership;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
@@ -76,6 +80,14 @@ public class Customer {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public CustomerMembership getMembership() {
+        return membership;
+    }
+
+    public void setMembership(CustomerMembership membership) {
+        this.membership = membership;
     }
 
     public List<Booking> getBookings() {

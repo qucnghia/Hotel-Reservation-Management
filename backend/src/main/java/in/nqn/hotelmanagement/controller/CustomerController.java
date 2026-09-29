@@ -1,5 +1,7 @@
 package in.nqn.hotelmanagement.controller;
 
+import in.nqn.hotelmanagement.dto.customerDTO.CustomerRequest;
+import in.nqn.hotelmanagement.dto.customerDTO.CustomerResponse;
 import in.nqn.hotelmanagement.entity.Customer;
 import in.nqn.hotelmanagement.service.CustomerService;
 import org.springframework.http.HttpStatus;
@@ -20,9 +22,9 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<Customer> createGuest(@RequestBody Customer guest) {
-        Customer created = customerService.createGuest(guest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    public ResponseEntity<Customer> createGuest(@RequestBody CustomerRequest guest) {
+        Customer customer = customerService.createGuest(guest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(customer);
     }
 
     @GetMapping("/{id}")
@@ -38,7 +40,7 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable Long id, @RequestBody Customer customer) {
+    public ResponseEntity<Customer> updateCustomer(@PathVariable Long id, @RequestBody CustomerRequest customer) {
         Customer updatedCustomer = customerService.updateCustomer(id, customer);
         return ResponseEntity.ok(updatedCustomer);
     }

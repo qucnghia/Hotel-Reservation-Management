@@ -1,4 +1,4 @@
-package in.nqn.hotelmanagement.dto;
+package in.nqn.hotelmanagement.dto.bookingDTO;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import in.nqn.hotelmanagement.entity.Booking;

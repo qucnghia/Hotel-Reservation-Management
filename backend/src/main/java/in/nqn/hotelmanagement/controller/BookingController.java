@@ -1,7 +1,7 @@
 package in.nqn.hotelmanagement.controller;
 
-import in.nqn.hotelmanagement.dto.BookingRequest;
-import in.nqn.hotelmanagement.dto.BookingResponse;
+import in.nqn.hotelmanagement.dto.bookingDTO.BookingRequest;
+import in.nqn.hotelmanagement.dto.bookingDTO.BookingResponse;
 import in.nqn.hotelmanagement.dto.CustomerBookingHistoryResponse;
 import in.nqn.hotelmanagement.enums.BookingStatus;
 import in.nqn.hotelmanagement.service.BookingService;

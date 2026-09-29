@@ -1,6 +1,6 @@
 package in.nqn.hotelmanagement.service;
 
-import in.nqn.hotelmanagement.entity.Room;
+import in.nqn.hotelmanagement.entity.room.Room;
 import in.nqn.hotelmanagement.enums.RoomStatus;
 import in.nqn.hotelmanagement.exception.DuplicateResourceException;
 import in.nqn.hotelmanagement.exception.ResourceNotFoundException;

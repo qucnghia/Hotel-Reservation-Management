@@ -1,6 +1,9 @@
 package in.nqn.hotelmanagement.service;
 
+import in.nqn.hotelmanagement.dto.customerDTO.CustomerRequest;
+import in.nqn.hotelmanagement.dto.customerDTO.CustomerResponse;
 import in.nqn.hotelmanagement.entity.Customer;
+import in.nqn.hotelmanagement.enums.CustomerMembership;
 import in.nqn.hotelmanagement.exception.DuplicateResourceException;
 import in.nqn.hotelmanagement.exception.ResourceNotFoundException;
 import in.nqn.hotelmanagement.repository.CustomerRepository;
@@ -17,11 +20,13 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
-    public Customer createGuest(Customer guest) {
+    public Customer createGuest(CustomerRequest guest) {
         if (customerRepository.existsByEmail(guest.getEmail())) {
             throw new DuplicateResourceException("Customer with email " + guest.getEmail() + " already exists");
         }
-        return customerRepository.save(guest);
+        Customer customer = mapToEntity(guest);
+        customerRepository.save(customer);
+        return customer;
     }
 
     public Customer getCustomerById(Long id) {
@@ -35,7 +40,7 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
-    public Customer updateCustomer(Long id, Customer customer) {
+    public Customer updateCustomer(Long id, CustomerRequest customer) {
         Customer customerToUpdate = customerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer with id " + id + " not found"));
 
@@ -48,6 +53,7 @@ public class CustomerService {
         customerToUpdate.setFullName(customer.getFullName());
         customerToUpdate.setEmail(customer.getEmail());
         customerToUpdate.setDob(customer.getDob());
+        customerToUpdate.setMembership(customerToUpdate.getMembership());
         return customerRepository.save(customerToUpdate);
     }
 
@@ -56,5 +62,15 @@ public class CustomerService {
                 .orElseThrow(() -> new ResourceNotFoundException("Customer with id " + id + " not found"));
 
         customerRepository.delete(customerToDelete);
+    }
+
+    public Customer mapToEntity(CustomerRequest customerRequest) {
+        Customer customer = new Customer();
+        customer.setId(customerRequest.getId());
+        customer.setFullName(customerRequest.getFullName());
+        customer.setEmail(customerRequest.getEmail());
+        customer.setDob(customerRequest.getDob());
+        customer.setMembership(CustomerMembership.CUSTOMER);
+        return customer;
     }
 }

@@ -1,21 +1,20 @@
-package in.nqn.hotelmanagement.entity;
+package in.nqn.hotelmanagement.entity.room;
 
 import in.nqn.hotelmanagement.enums.RoomStatus;
 import in.nqn.hotelmanagement.enums.RoomType;
 import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 
 //@Entity
-@DiscriminatorValue("STANDARD")
+@DiscriminatorValue("LUXURY")
 @PrimaryKeyJoinColumn(name = "roomNumber")
-public class StandardRoom extends Room {
+public class LuxuryRoom extends Room {
 
-    public StandardRoom() {
+    public LuxuryRoom() {
         super();
     }
 
-    public StandardRoom(Long roomNumber, RoomType roomType, Long basePrice, RoomStatus roomStatus) {
+    public LuxuryRoom(Long roomNumber, RoomType roomType, Long basePrice, RoomStatus roomStatus) {
         super(roomNumber, roomType, basePrice, roomStatus);
     }
 }

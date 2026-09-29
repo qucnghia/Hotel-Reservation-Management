@@ -1,33 +1,43 @@
 import { useState } from 'react';
-import { updateBookingStatus, deleteBooking } from '../services/bookingService';
-import { TrashIcon, CheckCircleIcon, XMarkIcon, SearchIcon, BookmarkIcon } from './Icons';
+import { updateBookingStatus } from '../services/bookingService';
+import { XMarkIcon, SearchIcon, BookmarkIcon } from './Icons';
+import GlideSelect from './glide-select';
+
+const BOOKING_STATUS_FILTER_OPTIONS = [
+    { value: 'ALL', label: 'Tất cả trạng thái' },
+    { value: 'CONFIRMED', label: 'Đã xác nhận', tag: 'CONFIRMED' },
+    { value: 'CHECKED_IN', label: 'Đang lưu trú', tag: 'CHECKED_IN' },
+    { value: 'CHECKED_OUT', label: 'Đã trả phòng', tag: 'CHECKED_OUT' },
+    { value: 'CANCELLED', label: 'Đã hủy', tag: 'CANCELLED' }
+];
 
 const STATUS_BADGES = {
-    PENDING: {
-        bg: 'bg-amber-500/10 text-amber-300 border-amber-500/30',
-        dot: 'bg-amber-400',
-        label: 'Chờ duyệt'
-    },
     CONFIRMED: {
-        bg: 'bg-blue-500/10 text-blue-300 border-blue-500/30',
-        dot: 'bg-blue-400',
-        label: 'Đã xác nhận'
+        label: 'Đã xác nhận',
+        bg: 'bg-blue-500/15 text-blue-400 border-blue-500/30 hover:bg-blue-500/25',
+        dot: 'bg-blue-400'
     },
     CHECKED_IN: {
-        bg: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30',
-        dot: 'bg-emerald-400',
-        label: 'Đang lưu trú (In)'
+        label: 'Đang lưu trú',
+        bg: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/25',
+        dot: 'bg-emerald-400'
     },
     CHECKED_OUT: {
-        bg: 'bg-purple-500/10 text-purple-300 border-purple-500/30',
-        dot: 'bg-purple-400',
-        label: 'Đã trả phòng (Out)'
+        label: 'Đã trả phòng',
+        bg: 'bg-purple-500/15 text-purple-400 border-purple-500/30 hover:bg-purple-500/25',
+        dot: 'bg-purple-400'
     },
     CANCELLED: {
-        bg: 'bg-rose-500/10 text-rose-300 border-rose-500/30',
-        dot: 'bg-rose-400',
-        label: 'Đã hủy'
+        label: 'Đã hủy',
+        bg: 'bg-rose-500/15 text-rose-400 border-rose-500/30 hover:bg-rose-500/25',
+        dot: 'bg-rose-400'
     }
+};
+
+// Luồng trạng thái 1 chiều (không quay lại): Đã xác nhận -> Đang lưu trú -> Đã trả phòng
+const NEXT_STATUS = {
+    CONFIRMED: 'CHECKED_IN',
+    CHECKED_IN: 'CHECKED_OUT'
 };
 
 export default function BookingTable({ bookings = [], loading = false, onReload }) {
@@ -48,19 +58,6 @@ export default function BookingTable({ bookings = [], loading = false, onReload 
         }
     };
 
-    const handleDelete = async (id) => {
-        if (!window.confirm(`Bạn có chắc chắn muốn xóa đơn đặt phòng #${id}?`)) return;
-        setProcessingId(id);
-        try {
-            await deleteBooking(id);
-            if (onReload) onReload();
-        } catch (err) {
-            console.error('Lỗi xóa đơn đặt phòng:', err);
-            alert(err.response?.data?.message || 'Không thể xóa đơn đặt phòng');
-        } finally {
-            setProcessingId(null);
-        }
-    };
 
     const filteredBookings = bookings.filter((b) => {
         const matchesSearch =
@@ -79,12 +76,12 @@ export default function BookingTable({ bookings = [], loading = false, onReload 
             {/* Header và Bộ lọc */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+                    <div className="w-11 h-11 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
                         <BookmarkIcon className="w-5 h-5" />
                     </div>
                     <div>
-                        <h2 className="text-xl font-bold text-white tracking-tight">Danh Sách Đơn Đặt Phòng</h2>
-                        <p className="text-xs text-slate-400">Tổng cộng {bookings.length} đơn đặt phòng trong hệ thống</p>
+                        <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Danh Sách Đơn Đặt Phòng</h2>
+                        <p className="text-sm text-slate-400">Tổng cộng {bookings.length} đơn đặt phòng trong hệ thống</p>
                     </div>
                 </div>
 
@@ -96,154 +93,148 @@ export default function BookingTable({ bookings = [], loading = false, onReload 
                             placeholder="Tìm tên khách, số phòng, #ID..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full bg-slate-950/70 border border-slate-800 rounded-2xl pl-10 pr-4 py-2.5 text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+                            className="w-full bg-slate-950/70 border border-slate-800 rounded-2xl pl-10 pr-4 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
                         />
                         <SearchIcon className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     </div>
 
                     {/* Filter Status */}
-                    <select
-                        aria-label="Lọc theo trạng thái đơn"
+                    <GlideSelect
+                        options={BOOKING_STATUS_FILTER_OPTIONS}
                         value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                        className="bg-slate-950/70 border border-slate-800 rounded-2xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors"
-                    >
-                        <option value="ALL">Tất cả trạng thái</option>
-                        <option value="CONFIRMED">Đã xác nhận</option>
-                        <option value="CHECKED_IN">Đang lưu trú (In)</option>
-                        <option value="CHECKED_OUT">Đã trả phòng (Out)</option>
-                        <option value="CANCELLED">Đã hủy</option>
-                    </select>
+                        onChange={(val) => setStatusFilter(val)}
+                        ariaLabel="Lọc theo trạng thái đơn"
+                        size="md"
+                        align="right"
+                        menuWidth={240}
+                        surfaceColor="#0f172a"
+                        highlightColor="#334155"
+                        accentColor="#818cf8"
+                        textColor="#f8fafc"
+                        radius={14}
+                    />
                 </div>
             </div>
 
             {/* Bảng Dữ Liệu */}
-            <div className="overflow-x-auto rounded-2xl border border-slate-800/80">
-                <table className="w-full text-left border-collapse text-sm">
+            <div className="overflow-x-auto rounded-2xl border border-slate-800/80 min-h-[360px]">
+                <table className="w-full text-left border-collapse text-base">
                     <thead>
-                        <tr className="bg-slate-950/60 border-b border-slate-800 text-slate-400 uppercase text-[11px] font-semibold tracking-wider">
+                        <tr className="bg-slate-950/70 border-b border-slate-800 text-slate-300 uppercase text-sm font-bold tracking-wider">
                             <th className="py-4 px-4">Mã Đơn</th>
                             <th className="py-4 px-4">Khách Hàng</th>
                             <th className="py-4 px-4">Phòng</th>
                             <th className="py-4 px-4">Thời Gian Ở</th>
                             <th className="py-4 px-4">Tổng Tiền</th>
                             <th className="py-4 px-4">Trạng Thái</th>
-                            <th className="py-4 px-4 text-right">Thao Tác</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-800/60">
                         {loading && bookings.length === 0 ? (
                             <tr>
-                                <td colSpan={7} className="py-12 text-center text-slate-400">
+                                <td colSpan={6} className="py-12 text-center text-slate-400">
                                     <div className="flex flex-col items-center justify-center gap-2">
                                         <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-                                        <span className="text-xs">Đang tải danh sách đặt phòng...</span>
+                                        <span className="text-sm">Đang tải danh sách đặt phòng...</span>
                                     </div>
                                 </td>
                             </tr>
                         ) : filteredBookings.length === 0 ? (
                             <tr>
-                                <td colSpan={7} className="py-12 text-center text-slate-400 text-xs">
+                                <td colSpan={6} className="py-12 text-center text-slate-400 text-sm">
                                     Không tìm thấy đơn đặt phòng nào phù hợp.
                                 </td>
                             </tr>
                         ) : (
                             filteredBookings.map((b) => {
-                                const badge = STATUS_BADGES[b.bookingStatus] || STATUS_BADGES.CONFIRMED;
+                                const badge = STATUS_BADGES[b.bookingStatus] || {
+                                    label: b.bookingStatus,
+                                    bg: 'bg-slate-500/15 text-slate-300 border-slate-500/30 hover:bg-slate-500/25',
+                                    dot: 'bg-slate-400'
+                                };
                                 const isBusy = processingId === b.id;
+                                const nextStatus = NEXT_STATUS[b.bookingStatus];
+                                const nextLabel = nextStatus ? STATUS_BADGES[nextStatus]?.label : null;
+                                const isCycable = Boolean(nextStatus);
 
                                 return (
                                     <tr key={b.id} className="hover:bg-slate-800/30 transition-colors">
                                         {/* Mã đơn */}
-                                        <td className="py-4 px-4 font-mono font-semibold text-indigo-400">
+                                        <td className="py-4 px-4 font-bold text-base text-indigo-400 whitespace-nowrap">
                                             #{b.id}
                                         </td>
 
                                         {/* Khách hàng */}
                                         <td className="py-4 px-4">
-                                            <div className="font-medium text-slate-200">{b.customerName || `Khách #${b.customerId}`}</div>
-                                            <div className="text-xs text-slate-400">{b.customerEmail}</div>
+                                            <div className="font-bold text-base text-white">{b.customerName || `Khách #${b.customerId}`}</div>
+                                            <div className="text-sm text-slate-400">{b.customerEmail}</div>
                                         </td>
 
                                         {/* Phòng */}
                                         <td className="py-4 px-4">
-                                            <div className="font-semibold text-white">Phòng #{b.roomNumber}</div>
-                                            <div className="text-xs text-slate-400">{b.roomType}</div>
+                                            <div className="font-bold text-base text-white">Phòng #{b.roomNumber}</div>
+                                            <div className="text-sm text-slate-300">{b.roomType}</div>
                                         </td>
 
                                         {/* Thời gian ở */}
-                                        <td className="py-4 px-4">
-                                            <div className="text-xs text-slate-300">
+                                        <td className="py-4 px-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-slate-200">
                                                 {b.checkInDate} <span className="text-slate-500">→</span> {b.checkOutDate}
                                             </div>
-                                            <div className="text-[11px] text-blue-400 font-medium">
+                                            <div className="text-xs text-blue-400 font-bold mt-0.5">
                                                 {b.durationNights || 1} đêm
                                             </div>
                                         </td>
 
                                         {/* Tổng tiền */}
-                                        <td className="py-4 px-4 font-bold text-emerald-400">
-                                            {Number(b.totalPrice || 0).toLocaleString('vi-VN')} <span className="text-[11px] font-normal text-emerald-500">VNĐ</span>
-                                        </td>
-
-                                        {/* Trạng thái */}
-                                        <td className="py-4 px-4">
-                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${badge.bg}`}>
-                                                <span className={`w-1.5 h-1.5 rounded-full ${badge.dot}`} />
-                                                {badge.label}
+                                        <td className="py-4 px-4 font-bold text-base text-emerald-400 whitespace-nowrap">
+                                            <span className="inline-flex items-baseline gap-1">
+                                                <span>{Number(b.totalPrice || 0).toLocaleString('vi-VN')}</span>
+                                                <span className="text-xs font-semibold text-emerald-500">đ</span>
                                             </span>
                                         </td>
 
-                                        {/* Thao tác */}
-                                        <td className="py-4 px-4 text-right">
-                                            <div className="flex items-center justify-end gap-1.5">
-                                                {/* Nút Check-in */}
-                                                {(b.bookingStatus === 'CONFIRMED' || b.bookingStatus === 'PENDING') && (
+                                        {/* Trạng thái - luồng 1 chiều: Đã xác nhận -> Đang lưu trú -> Đã trả phòng (kết thúc, không quay lại) */}
+                                        <td className="py-3 px-4 whitespace-nowrap">
+                                            <div className="flex items-center gap-2">
+                                                {isCycable ? (
                                                     <button
-                                                        onClick={() => handleStatusChange(b.id, 'CHECKED_IN')}
+                                                        type="button"
+                                                        onClick={() => handleStatusChange(b.id, nextStatus)}
                                                         disabled={isBusy}
-                                                        title="Khách nhận phòng (Check-in)"
-                                                        className="px-2.5 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 text-xs font-medium transition-colors border border-emerald-500/30 flex items-center gap-1"
+                                                        title={`Nhấn để chuyển sang: ${nextLabel}`}
+                                                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed select-none ${badge.bg}`}
                                                     >
-                                                        <CheckCircleIcon className="w-3.5 h-3.5" />
-                                                        <span>Check-in</span>
+                                                        {isBusy ? (
+                                                            <span className="w-2 h-2 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                                                        ) : (
+                                                            <span className={`w-2 h-2 rounded-full ${badge.dot}`} />
+                                                        )}
+                                                        <span>{badge.label}</span>
                                                     </button>
+                                                ) : (
+                                                    <span
+                                                        title={b.bookingStatus === 'CHECKED_OUT' ? 'Đơn đã hoàn tất (Đã trả phòng)' : 'Đơn đặt phòng đã bị hủy'}
+                                                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border select-none ${badge.bg}`}
+                                                    >
+                                                        <span className={`w-2 h-2 rounded-full ${badge.dot}`} />
+                                                        <span>{badge.label}</span>
+                                                    </span>
                                                 )}
 
-                                                {/* Nút Check-out */}
-                                                {b.bookingStatus === 'CHECKED_IN' && (
+                                                {/* Nếu đang là "Đã xác nhận" thì bên cạnh có nút hủy */}
+                                                {b.bookingStatus === 'CONFIRMED' && (
                                                     <button
-                                                        onClick={() => handleStatusChange(b.id, 'CHECKED_OUT')}
-                                                        disabled={isBusy}
-                                                        title="Khách trả phòng (Check-out)"
-                                                        className="px-2.5 py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 text-xs font-medium transition-colors border border-purple-500/30 flex items-center gap-1"
-                                                    >
-                                                        <CheckCircleIcon className="w-3.5 h-3.5" />
-                                                        <span>Check-out</span>
-                                                    </button>
-                                                )}
-
-                                                {/* Nút Hủy đơn */}
-                                                {b.bookingStatus !== 'CANCELLED' && b.bookingStatus !== 'CHECKED_OUT' && (
-                                                    <button
+                                                        type="button"
                                                         onClick={() => handleStatusChange(b.id, 'CANCELLED')}
                                                         disabled={isBusy}
-                                                        title="Hủy đơn đặt phòng"
-                                                        className="p-1.5 rounded-xl bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-300 transition-colors"
+                                                        title="Hủy đơn đặt phòng này"
+                                                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-semibold bg-rose-500/15 hover:bg-rose-500/25 text-rose-400 border border-rose-500/30 transition-all cursor-pointer active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
                                                     >
-                                                        <XMarkIcon className="w-4 h-4" />
+                                                        <XMarkIcon className="w-3.5 h-3.5" />
+                                                        <span>Hủy</span>
                                                     </button>
                                                 )}
-
-                                                {/* Nút Xóa đơn */}
-                                                <button
-                                                    onClick={() => handleDelete(b.id)}
-                                                    disabled={isBusy}
-                                                    title="Xóa đơn đặt phòng"
-                                                    className="p-1.5 rounded-xl bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 transition-colors"
-                                                >
-                                                    <TrashIcon className="w-4 h-4" />
-                                                </button>
                                             </div>
                                         </td>
                                     </tr>

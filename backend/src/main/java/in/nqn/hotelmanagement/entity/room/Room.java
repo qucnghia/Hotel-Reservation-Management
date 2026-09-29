@@ -1,4 +1,4 @@
-package in.nqn.hotelmanagement.entity;
+package in.nqn.hotelmanagement.entity.room;
 
 import in.nqn.hotelmanagement.enums.RoomStatus;
 import in.nqn.hotelmanagement.enums.RoomType;
