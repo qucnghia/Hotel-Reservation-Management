@@ -4,10 +4,10 @@ import { PlusIcon, ExclamationTriangleIcon, BookmarkIcon, CurrencyDollarIcon, XM
 import GlideSelect from './glide-select';
 import CustomDatePicker from './CustomDatePicker';
 
-export default function BookingForm({ guests = [], rooms = [], bookings = [], onSaved, onClose }) {
+export default function BookingForm({ guests = [], rooms = [], bookings = [], initialRoomNumber = '', onSaved, onClose }) {
     const [formData, setFormData] = useState({
         customerId: '',
-        roomNumber: '',
+        roomNumber: initialRoomNumber ? String(initialRoomNumber) : '',
         checkInDate: '',
         checkOutDate: '',
     });

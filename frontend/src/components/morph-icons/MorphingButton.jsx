@@ -38,7 +38,7 @@ export function MorphMenuButton({
             aria-label={label || (open ? "Đóng menu" : "Mở menu")}
             className={`p-2.5 rounded-xl border transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 ${
                 open
-                    ? "bg-rose-500/15 text-rose-300 border-rose-500/30 hover:bg-rose-500/25 shadow-lg shadow-rose-500/10"
+                    ? "bg-blue-600/20 text-blue-300 border-blue-500/40 hover:bg-blue-600/30 shadow-lg shadow-blue-500/15"
                     : "bg-slate-800/80 text-slate-300 border-slate-700/80 hover:bg-slate-700 hover:text-white"
             } ${className}`}
             {...props}

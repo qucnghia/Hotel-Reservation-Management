@@ -259,7 +259,7 @@ export default function GlideSelect({
   return (
     <div
       ref={rootRef}
-      className={`group relative ${fullWidth ? 'w-full block' : 'inline-block'} data-[disabled]:opacity-50${className ? ` ${className}` : ''}`}
+      className={`group relative ${phase === 'open' ? 'z-50' : 'z-10'} ${fullWidth ? 'w-full block' : 'inline-block'} data-[disabled]:opacity-50${className ? ` ${className}` : ''}`}
       data-size={size}
       data-disabled={disabled ? '' : undefined}
       style={{
@@ -319,7 +319,7 @@ export default function GlideSelect({
       {phase !== 'closed' ? (
         <div
           ref={menuRef}
-          className="absolute z-50 min-w-full scale-95 p-1 opacity-0 border border-slate-700/80 [width:var(--gs-menu-w)] [border-radius:var(--gs-radius)] [background:var(--gs-surface)] shadow-2xl [transform-origin:var(--gs-origin)] [transition:opacity_var(--gs-pop)_cubic-bezier(0.23,1,0.32,1),transform_var(--gs-pop)_cubic-bezier(0.23,1,0.32,1)] data-[state=open]:scale-100 data-[state=open]:opacity-100 data-[state=closed]:pointer-events-none data-[state=closed]:[transition-duration:var(--gs-pop-out)] data-[side=bottom]:top-[calc(100%+6px)] data-[side=top]:bottom-[calc(100%+6px)] data-[align=left]:left-0 data-[align=right]:right-0 motion-reduce:[transform:none]! motion-reduce:[transition:opacity_var(--gs-pop)_ease] motion-reduce:data-[state=closed]:[transition-duration:var(--gs-pop-out)] max-h-64 overflow-y-auto overflow-x-hidden"
+          className="absolute z-50 min-w-full scale-95 p-1 opacity-0 border border-slate-700/80 [min-width:var(--gs-menu-w)] w-max max-w-[min(92vw,420px)] [border-radius:var(--gs-radius)] [background:var(--gs-surface)] shadow-2xl [transform-origin:var(--gs-origin)] [transition:opacity_var(--gs-pop)_cubic-bezier(0.23,1,0.32,1),transform_var(--gs-pop)_cubic-bezier(0.23,1,0.32,1)] data-[state=open]:scale-100 data-[state=open]:opacity-100 data-[state=closed]:pointer-events-none data-[state=closed]:[transition-duration:var(--gs-pop-out)] data-[side=bottom]:top-[calc(100%+6px)] data-[side=top]:bottom-[calc(100%+6px)] data-[align=left]:left-0 data-[align=right]:right-0 motion-reduce:[transform:none]! motion-reduce:[transition:opacity_var(--gs-pop)_ease] motion-reduce:data-[state=closed]:[transition-duration:var(--gs-pop-out)] max-h-64 overflow-y-auto overflow-x-hidden"
           data-state="open"
           data-side={side}
           data-align={actualAlign}

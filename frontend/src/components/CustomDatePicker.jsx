@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { MorphIcon } from 'morphicons/react';
-import { Calendar, X, ChevronLeft, ChevronRight, Check, Sparkles, Clock } from 'lucide';
+import { Calendar, X, ChevronLeft, ChevronRight, Check, Clock } from 'lucide';
 
 const VI_WEEKDAYS = [
     { label: 'T2', name: 'Thứ 2' },

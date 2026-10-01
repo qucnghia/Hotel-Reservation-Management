@@ -172,7 +172,7 @@ export default function BookingTable({ bookings = [], loading = false, onReload 
 
                                         {/* Phòng */}
                                         <td className="py-4 px-4">
-                                            <div className="font-bold text-base text-white">Phòng #{b.roomNumber}</div>
+                                            <div className="font-bold text-base text-white">Phòng {b.roomNumber}</div>
                                             <div className="text-sm text-slate-300">{b.roomType}</div>
                                         </td>
 

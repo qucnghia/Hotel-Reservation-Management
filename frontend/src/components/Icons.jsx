@@ -135,3 +135,151 @@ export function StarIcon({ className = "w-4 h-4", ...props }) {
     );
 }
 
+export function MapIcon({ className = "w-4 h-4", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.688A1.125 1.125 0 0 0 3 6.694v11.486c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.496a1.125 1.125 0 0 0 1.006 0Z" />
+        </svg>
+    );
+}
+
+export function TableIcon({ className = "w-4 h-4", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h12A2.25 2.25 0 0 1 20.25 6v12A2.25 2.25 0 0 1 18 20.25H6A2.25 2.25 0 0 1 3.75 18V6ZM3.75 9.75h16.5m-16.5 4.5h16.5m-11.25-9v13.5m6-13.5v13.5" />
+        </svg>
+    );
+}
+
+export function LayersIcon({ className = "w-5 h-5", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="m6.75 7.5 5.25-3 5.25 3-5.25 3-5.25-3Z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="m6.75 12 5.25 3 5.25-3" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="m6.75 16.5 5.25 3 5.25-3" />
+        </svg>
+    );
+}
+
+export function CompassIcon({ className = "w-4 h-4", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm2.652-11.652L10.5 10.5l1.152 4.152 4.152-1.152-1.152-4.152Z" />
+        </svg>
+    );
+}
+
+export function WifiIcon({ className = "w-4 h-4", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8.288 15.038a5.25 5.25 0 0 1 7.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22a.75.75 0 1 1-1.06 0 .75.75 0 0 1 1.06 0Z" />
+        </svg>
+    );
+}
+
+export function BathIcon({ className = "w-4 h-4", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.5v2.25c0 1.243.916 2.25 2.045 2.25h13.91C20.084 18 21 16.993 21 15.75V13.5M3 13.5h18M6.75 18v2.25M17.25 18v2.25M6.75 13.5V6a2.25 2.25 0 0 1 4.5 0v.75" />
+        </svg>
+    );
+}
+
+export function TvIcon({ className = "w-3.5 h-3.5", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 20.25h12m-7.5-3v3m3-3v3m-10.5-15h18a2.25 2.25 0 0 1 2.25 2.25v9a2.25 2.25 0 0 1-2.25 2.25H3A2.25 2.25 0 0 1 .75 13.5v-9A2.25 2.25 0 0 1 3 4.5Z" />
+        </svg>
+    );
+}
+
+export function WindIcon({ className = "w-4 h-4", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+        </svg>
+    );
+}
+
+export function ShieldAlertIcon({ className = "w-3.5 h-3.5", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m0-10.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.002A11.959 11.959 0 0 1 12 2.714ZM12 15.75h.007v.008H12v-.008Z" />
+        </svg>
+    );
+}
+
+export function TrendingUpIcon({ className = "w-5 h-5", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
+        </svg>
+    );
+}
+
+export function TrendingDownIcon({ className = "w-5 h-5", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6 9 12.75l4.286-4.286a11.948 11.948 0 0 1 4.306 6.43l.776 2.898m0 0 3.182-5.511m-3.182 5.51-5.511-3.181" />
+        </svg>
+    );
+}
+
+export function BanknotesIcon({ className = "w-5 h-5", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6H2.25m0 0v8.25m0 0a.75.75 0 0 1 .75.75v.75m0-9.75H21m-18 0h18m0 0a.75.75 0 0 1 .75.75v8.25a.75.75 0 0 1-.75.75H3m18-9.75v9.75m0 0a.75.75 0 0 1-.75.75H3.75m17.25-10.5a.75.75 0 0 0-.75-.75H3.75a.75.75 0 0 0-.75.75M12 10.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 0a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0Z" />
+        </svg>
+    );
+}
+
+export function PieChartIcon({ className = "w-5 h-5", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" />
+        </svg>
+    );
+}
+
+export function CreditCardIcon({ className = "w-5 h-5", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+        </svg>
+    );
+}
+
+export function ArrowDownTrayIcon({ className = "w-4 h-4", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+        </svg>
+    );
+}
+
+export function PrinterIcon({ className = "w-4 h-4", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z" />
+        </svg>
+    );
+}
+
+export function ReceiptPercentIcon({ className = "w-5 h-5", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 14.25l6-6m4.5-3.75v16.5l-3-2.25-3 2.25-3-2.25-3 2.25-3-2.25-3 2.25V4.5l3 2.25 3-2.25 3 2.25 3-2.25 3 2.25 3-2.25ZM9.75 8.25h.008v.008H9.75V8.25Zm4.5 4.5h.008v.008h-.008v-.008Z" />
+        </svg>
+    );
+}
+
+export function BuildingOfficeIcon({ className = "w-5 h-5", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+        </svg>
+    );
+}
+
+

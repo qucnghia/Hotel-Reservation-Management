@@ -9,16 +9,20 @@ import RoomTable from './components/RoomTable.jsx';
 import BookingForm from './components/BookingForm.jsx';
 import BookingTable from './components/BookingTable.jsx';
 import CustomerBookingHistoryModal from './components/CustomerBookingHistoryModal.jsx';
+import HotelFloorPlan2D from './components/HotelFloorPlan2D.jsx';
+import RevenueManagement from './components/RevenueManagement.jsx';
 // === [OPTIONAL EFFECT: React Bits Electric Logo & Particle Text] ===
 import HotelElectricLogo from './components/electric-logo/HotelElectricLogo.jsx';
 import ParticleText from './components/particle-text/ParticleText.jsx';
 // === [PACKAGE MORPH-ICONS: Nút Menu Morphing (Menu <-> X)] ===
 import { MorphMenuButton } from './components/morph-icons';
-import { UsersIcon, BedIcon, BookmarkIcon, RefreshIcon, ExclamationTriangleIcon, PlusIcon, PencilIcon, TrashIcon, HistoryIcon } from './components/Icons';
+import { UsersIcon, BedIcon, BookmarkIcon, RefreshIcon, ExclamationTriangleIcon, PlusIcon, PencilIcon, TrashIcon, HistoryIcon, MapIcon, TableIcon, TrendingUpIcon, BanknotesIcon } from './components/Icons';
 
 function App() {
-    const [activeTab, setActiveTab] = useState('guests'); // 'guests' | 'rooms' | 'bookings'
-    const [menuOpen, setMenuOpen] = useState(false);
+    const [activeTab, setActiveTab] = useState('rooms'); // 'guests' | 'rooms' | 'bookings' | 'revenue'
+    const [roomViewMode, setRoomViewMode] = useState('2d'); // '2d' | 'table'
+    const [bookingInitialRoom, setBookingInitialRoom] = useState('');
+    const [menuOpen, setMenuOpen] = useState(true);
     const [showCustomerForm, setShowCustomerForm] = useState(false);
     const [showRoomForm, setShowRoomForm] = useState(false);
     const [showBookingForm, setShowBookingForm] = useState(false);
@@ -183,6 +187,10 @@ function App() {
             fetchBookings();
             fetchRooms(true);
             fetchGuests(true);
+        } else if (activeTab === 'revenue') {
+            fetchBookings(true);
+            fetchRooms(true);
+            fetchGuests(true);
         }
     }, [activeTab]);
 
@@ -193,7 +201,7 @@ function App() {
                 fetchGuests(true);
             } else if (activeTab === 'rooms') {
                 fetchRooms(true);
-            } else if (activeTab === 'bookings') {
+            } else if (activeTab === 'bookings' || activeTab === 'revenue') {
                 fetchBookings(true);
                 fetchRooms(true);
                 fetchGuests(true);
@@ -216,16 +224,24 @@ function App() {
     // Thống kê nhanh
     const availableRoomsCount = rooms.filter(r => r.roomStatus === 'AVAILABLE').length;
     const activeBookingsCount = bookings.filter(b => b.bookingStatus === 'CONFIRMED' || b.bookingStatus === 'CHECKED_IN').length;
+    const totalRevenueRealized = bookings
+        .filter(b => b.bookingStatus === 'CHECKED_OUT' || b.bookingStatus === 'CHECKED_IN')
+        .reduce((sum, b) => sum + Number(b.totalPrice || 0), 0);
 
     const handleRefreshCurrentTab = () => {
         if (activeTab === 'guests') fetchGuests();
         else if (activeTab === 'rooms') fetchRooms();
-        else fetchBookings();
+        else if (activeTab === 'bookings') fetchBookings();
+        else if (activeTab === 'revenue') {
+            fetchBookings();
+            fetchRooms();
+            fetchGuests();
+        }
     };
 
     return (
         <div className="min-h-screen bg-[#080d1a] text-slate-100 flex flex-col items-center py-6 px-4 sm:px-6 lg:px-8 selection:bg-blue-600 selection:text-white">
-            <div className="w-full max-w-7xl flex flex-col gap-6">
+            <div className="w-full max-w-[1600px] flex flex-col gap-6">
 
                 {/* Header Card with Liquid Glass style */}
                 <header className="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-6 shadow-2xl backdrop-blur-xl relative overflow-hidden">
@@ -283,167 +299,28 @@ function App() {
                         {/* === [KẾT THÚC: HIỆU ỨNG PARTICLE TEXT] === */}
                     </div>
 
-                    {/* HÀNG 2: SỐ LIỆU THỐNG KÊ 1 DÒNG RIÊNG */}
-                    <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 w-full mt-4 pt-5 border-t border-slate-800/80">
-                        <div className="bg-slate-950/60 border border-slate-800/80 rounded-2xl px-5 py-4 flex items-center justify-between backdrop-blur-md hover:border-slate-700/60 transition-colors shadow-inner">
-                            <div>
-                                <span className="text-sm font-bold text-slate-300 uppercase tracking-wider block">Khách hàng</span>
-                                <span className="text-3xl sm:text-4xl font-black text-white mt-1 block">{guests.length}</span>
-                            </div>
-                            <div className="p-3 rounded-xl bg-blue-500/10 text-blue-400">
-                                <UsersIcon className="w-6 h-6" />
-                            </div>
-                        </div>
-
-                        <div className="bg-slate-950/60 border border-slate-800/80 rounded-2xl px-5 py-4 flex items-center justify-between backdrop-blur-md hover:border-slate-700/60 transition-colors shadow-inner">
-                            <div>
-                                <span className="text-sm font-bold text-slate-300 uppercase tracking-wider block">Tổng số phòng</span>
-                                <span className="text-3xl sm:text-4xl font-black text-white mt-1 block">{rooms.length}</span>
-                            </div>
-                            <div className="p-3 rounded-xl bg-indigo-500/10 text-indigo-400">
-                                <BedIcon className="w-6 h-6" />
-                            </div>
-                        </div>
-
-                        <div className="bg-slate-950/60 border border-slate-800/80 rounded-2xl px-5 py-4 flex items-center justify-between backdrop-blur-md hover:border-slate-700/60 transition-colors shadow-inner">
-                            <div>
-                                <span className="text-sm font-bold text-emerald-400 uppercase tracking-wider block">Phòng sẵn sàng</span>
-                                <span className="text-3xl sm:text-4xl font-black text-emerald-400 mt-1 block">{availableRoomsCount}</span>
-                            </div>
-                            <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-400">
-                                <BedIcon className="w-6 h-6" />
-                            </div>
-                        </div>
-
-                        <div className="bg-slate-950/60 border border-slate-800/80 rounded-2xl px-5 py-4 flex items-center justify-between backdrop-blur-md hover:border-slate-700/60 transition-colors shadow-inner">
-                            <div>
-                                <span className="text-sm font-bold text-sky-400 uppercase tracking-wider block">Đơn đang hiệu lực</span>
-                                <span className="text-3xl sm:text-4xl font-black text-sky-400 mt-1 block">{activeBookingsCount}</span>
-                            </div>
-                            <div className="p-3 rounded-xl bg-sky-500/10 text-sky-400">
-                                <BookmarkIcon className="w-6 h-6" />
-                            </div>
-                        </div>
-                    </div>
-
                     {/* Thanh điều khiển Danh mục & Nút MorphMenuButton */}
-                    <div className="mt-6 pt-5 border-t border-slate-800/80 flex items-center justify-between flex-wrap gap-3">
+                    <div className="mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-start flex-wrap gap-3">
+                        {/* === [PACKAGE MORPH-ICONS: Nút Menu Morphing (Quản lý khách sạn) ở góc trái] === */}
+                        <MorphMenuButton
+                            open={menuOpen}
+                            setOpen={setMenuOpen}
+                            label="Quản lý khách sạn"
+                            title="Bấm để mở / thu gọn menu bên trái"
+                            className="px-4 py-2.5 rounded-xl font-bold text-sm shadow-md"
+                        />
+
+                        {/* Thẻ hiển thị phân hệ đang quản lý */}
                         <div className="flex items-center gap-2.5 px-4.5 py-2.5 rounded-xl bg-slate-950/70 border border-slate-800 text-slate-300 text-base">
                             <span className="text-xs uppercase tracking-wider text-slate-400 font-bold">Đang quản lý:</span>
                             <span className="font-extrabold text-white flex items-center gap-2 text-base">
                                 {activeTab === 'guests' && <><UsersIcon className="w-5 h-5 text-blue-400" /> Quản lý Khách Hàng ({guests.length})</>}
                                 {activeTab === 'rooms' && <><BedIcon className="w-5 h-5 text-indigo-400" /> Quản lý Phòng ({rooms.length})</>}
                                 {activeTab === 'bookings' && <><BookmarkIcon className="w-5 h-5 text-purple-400" /> Quản lý Đặt Phòng ({bookings.length})</>}
+                                {activeTab === 'revenue' && <><TrendingUpIcon className="w-5 h-5 text-emerald-400" /> Quản lý Doanh Thu & Tài Chính</>}
                             </span>
                         </div>
-
-                        {/* === [PACKAGE MORPH-ICONS: Nút Menu Morphing (Menu <-> X)] === */}
-                        <div className="flex items-center gap-2">
-                            <MorphMenuButton
-                                open={menuOpen}
-                                setOpen={setMenuOpen}
-                                label={menuOpen ? "Đóng danh mục" : "Menu quản lý"}
-                                title="Bấm để mở / đóng 3 ô quản lý"
-                            />
-                        </div>
                     </div>
-
-                    {/* 3 Ô Quản Lý (Hiện ra khi bấm MorphMenuButton) */}
-                    {menuOpen && (
-                        <div className="mt-4 pt-4 border-t border-slate-800/80 grid grid-cols-1 md:grid-cols-3 gap-3.5 animate-fadeIn">
-                            {/* Ô 1: Quản lý Khách Hàng */}
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setActiveTab('guests');
-                                    setEditingCustomer(null);
-                                }}
-                                className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between group ${
-                                    activeTab === 'guests'
-                                        ? 'bg-gradient-to-r from-blue-700/90 via-indigo-600/90 to-blue-600/90 text-white border-blue-400/40 shadow-lg shadow-blue-600/20'
-                                        : 'bg-slate-950/60 hover:bg-slate-800/80 text-slate-300 border-slate-800 hover:border-slate-700'
-                                }`}
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className={`p-2.5 rounded-xl ${
-                                        activeTab === 'guests' ? 'bg-white/20 text-white' : 'bg-blue-500/10 text-blue-400'
-                                    }`}>
-                                        <UsersIcon className="w-5 h-5" />
-                                    </div>
-                                    <div>
-                                        <div className="font-bold text-sm text-white">Quản lý Khách Hàng</div>
-                                        <div className="text-xs text-slate-400 mt-0.5">Hồ sơ, hạng VIP & lịch sử</div>
-                                    </div>
-                                </div>
-                                <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
-                                    activeTab === 'guests' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-300 border border-slate-700'
-                                }`}>
-                                    {guests.length} khách
-                                </span>
-                            </button>
-
-                            {/* Ô 2: Quản lý Phòng */}
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setActiveTab('rooms');
-                                    setEditingRoom(null);
-                                }}
-                                className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between group ${
-                                    activeTab === 'rooms'
-                                        ? 'bg-gradient-to-r from-blue-700/90 via-indigo-600/90 to-blue-600/90 text-white border-blue-400/40 shadow-lg shadow-blue-600/20'
-                                        : 'bg-slate-950/60 hover:bg-slate-800/80 text-slate-300 border-slate-800 hover:border-slate-700'
-                                }`}
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className={`p-2.5 rounded-xl ${
-                                        activeTab === 'rooms' ? 'bg-white/20 text-white' : 'bg-indigo-500/10 text-indigo-400'
-                                    }`}>
-                                        <BedIcon className="w-5 h-5" />
-                                    </div>
-                                    <div>
-                                        <div className="font-bold text-sm text-white">Quản lý Phòng</div>
-                                        <div className="text-xs text-slate-400 mt-0.5">Loại phòng, giá & tình trạng</div>
-                                    </div>
-                                </div>
-                                <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
-                                    activeTab === 'rooms' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-300 border border-slate-700'
-                                }`}>
-                                    {rooms.length} phòng
-                                </span>
-                            </button>
-
-                            {/* Ô 3: Quản lý Đặt Phòng */}
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setActiveTab('bookings');
-                                }}
-                                className={`p-4 rounded-2xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between group ${
-                                    activeTab === 'bookings'
-                                        ? 'bg-gradient-to-r from-indigo-700/90 via-purple-600/90 to-indigo-600/90 text-white border-indigo-400/40 shadow-lg shadow-indigo-600/20'
-                                        : 'bg-slate-950/60 hover:bg-slate-800/80 text-slate-300 border-slate-800 hover:border-slate-700'
-                                }`}
-                            >
-                                <div className="flex items-center gap-3">
-                                    <div className={`p-2.5 rounded-xl ${
-                                        activeTab === 'bookings' ? 'bg-white/20 text-white' : 'bg-purple-500/10 text-purple-400'
-                                    }`}>
-                                        <BookmarkIcon className="w-5 h-5" />
-                                    </div>
-                                    <div>
-                                        <div className="font-bold text-sm text-white">Quản lý Đặt Phòng</div>
-                                        <div className="text-xs text-slate-400 mt-0.5">Check-in, check-out & hóa đơn</div>
-                                    </div>
-                                </div>
-                                <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
-                                    activeTab === 'bookings' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-300 border border-slate-700'
-                                }`}>
-                                    {bookings.length} đơn
-                                </span>
-                            </button>
-                        </div>
-                    )}
                 </header>
 
                 {/* Server Error Notification */}
@@ -464,8 +341,136 @@ function App() {
                     </div>
                 )}
 
-                {/* Main Content Layout */}
-                <main className="w-full">
+                {/* 2-Column Layout: Sidebar Menu bên trái & Nội dung quản lý bên phải */}
+                <div className="w-full flex flex-col lg:flex-row items-start gap-6">
+                    {/* CỘT TRÁI: THANH MENU ĐIỀU HÀNH (SIDEBAR NAVIGATION) */}
+                    {menuOpen && (
+                        <aside className="w-full lg:w-72 xl:w-80 flex-shrink-0 flex flex-col gap-4 animate-fadeIn lg:sticky lg:top-6 z-20">
+                            <div className="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 sm:p-5 shadow-2xl backdrop-blur-xl flex flex-col gap-3 relative overflow-hidden">
+                                <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
+                                    <span className="text-xs uppercase tracking-wider text-slate-400 font-extrabold flex items-center gap-2">
+                                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                        Menu Quản Lý
+                                    </span>
+                                    <span className="text-[11px] font-bold text-slate-500 bg-slate-950/80 px-2 py-0.5 rounded-md border border-slate-800">
+                                        4 mục
+                                    </span>
+                                </div>
+
+                                {/* Danh sách 4 nút menu xếp dọc - MỖI NÚT TRÊN 1 DÒNG DUY NHẤT */}
+                                <nav className="flex flex-col gap-2">
+                                    {/* Mục 1: Khách Hàng */}
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setActiveTab('guests');
+                                            setEditingCustomer(null);
+                                        }}
+                                        className={`w-full px-3.5 py-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 group whitespace-nowrap ${
+                                            activeTab === 'guests'
+                                                ? 'bg-gradient-to-r from-blue-700 via-indigo-600 to-blue-600 text-white border-blue-400/40 shadow-lg shadow-blue-600/25 ring-1 ring-blue-400/30'
+                                                : 'bg-slate-950/60 hover:bg-slate-800/80 text-slate-300 border-slate-800/80 hover:border-slate-700'
+                                        }`}
+                                    >
+                                        <div className="flex items-center gap-2.5 min-w-0">
+                                            <div className={`p-2 rounded-lg flex-shrink-0 ${
+                                                activeTab === 'guests' ? 'bg-white/20 text-white' : 'bg-blue-500/10 text-blue-400'
+                                            }`}>
+                                                <UsersIcon className="w-4.5 h-4.5" />
+                                            </div>
+                                            <span className="font-bold text-sm truncate">Quản lý Khách Hàng</span>
+                                        </div>
+                                        <span className={`px-2 py-0.5 rounded-full text-xs font-bold flex-shrink-0 whitespace-nowrap ${
+                                            activeTab === 'guests' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-300 border border-slate-700'
+                                        }`}>
+                                            {guests.length} khách
+                                        </span>
+                                    </button>
+
+                                    {/* Mục 2: Phòng */}
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setActiveTab('rooms');
+                                            setEditingRoom(null);
+                                        }}
+                                        className={`w-full px-3.5 py-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 group whitespace-nowrap ${
+                                            activeTab === 'rooms'
+                                                ? 'bg-gradient-to-r from-blue-700 via-indigo-600 to-blue-600 text-white border-blue-400/40 shadow-lg shadow-blue-600/25 ring-1 ring-blue-400/30'
+                                                : 'bg-slate-950/60 hover:bg-slate-800/80 text-slate-300 border-slate-800/80 hover:border-slate-700'
+                                        }`}
+                                    >
+                                        <div className="flex items-center gap-2.5 min-w-0">
+                                            <div className={`p-2 rounded-lg flex-shrink-0 ${
+                                                activeTab === 'rooms' ? 'bg-white/20 text-white' : 'bg-indigo-500/10 text-indigo-400'
+                                            }`}>
+                                                <BedIcon className="w-4.5 h-4.5" />
+                                            </div>
+                                            <span className="font-bold text-sm truncate">Quản lý Phòng</span>
+                                        </div>
+                                        <span className={`px-2 py-0.5 rounded-full text-xs font-bold flex-shrink-0 whitespace-nowrap ${
+                                            activeTab === 'rooms' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-300 border border-slate-700'
+                                        }`}>
+                                            {rooms.length} phòng
+                                        </span>
+                                    </button>
+
+                                    {/* Mục 3: Đặt Phòng */}
+                                    <button
+                                        type="button"
+                                        onClick={() => setActiveTab('bookings')}
+                                        className={`w-full px-3.5 py-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 group whitespace-nowrap ${
+                                            activeTab === 'bookings'
+                                                ? 'bg-gradient-to-r from-indigo-700 via-purple-600 to-indigo-600 text-white border-indigo-400/40 shadow-lg shadow-indigo-600/25 ring-1 ring-indigo-400/30'
+                                                : 'bg-slate-950/60 hover:bg-slate-800/80 text-slate-300 border-slate-800/80 hover:border-slate-700'
+                                        }`}
+                                    >
+                                        <div className="flex items-center gap-2.5 min-w-0">
+                                            <div className={`p-2 rounded-lg flex-shrink-0 ${
+                                                activeTab === 'bookings' ? 'bg-white/20 text-white' : 'bg-purple-500/10 text-purple-400'
+                                            }`}>
+                                                <BookmarkIcon className="w-4.5 h-4.5" />
+                                            </div>
+                                            <span className="font-bold text-sm truncate">Quản lý Đặt Phòng</span>
+                                        </div>
+                                        <span className={`px-2 py-0.5 rounded-full text-xs font-bold flex-shrink-0 whitespace-nowrap ${
+                                            activeTab === 'bookings' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-300 border border-slate-700'
+                                        }`}>
+                                            {bookings.length} đơn
+                                        </span>
+                                    </button>
+
+                                    {/* Mục 4: Doanh Thu */}
+                                    <button
+                                        type="button"
+                                        onClick={() => setActiveTab('revenue')}
+                                        className={`w-full px-3.5 py-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 group whitespace-nowrap ${
+                                            activeTab === 'revenue'
+                                                ? 'bg-gradient-to-r from-emerald-700 via-teal-600 to-cyan-600 text-white border-emerald-400/40 shadow-lg shadow-emerald-600/25 ring-1 ring-emerald-400/30'
+                                                : 'bg-slate-950/60 hover:bg-slate-800/80 text-slate-300 border-slate-800/80 hover:border-slate-700'
+                                        }`}
+                                    >
+                                        <div className="flex items-center gap-2.5 min-w-0">
+                                            <div className={`p-2 rounded-lg flex-shrink-0 ${
+                                                activeTab === 'revenue' ? 'bg-white/20 text-white' : 'bg-emerald-500/10 text-emerald-400'
+                                            }`}>
+                                                <TrendingUpIcon className="w-4.5 h-4.5" />
+                                            </div>
+                                            <span className="font-bold text-sm truncate">Quản lý Doanh Thu</span>
+                                        </div>
+                                        <span className={`px-2 py-0.5 rounded-full text-xs font-bold flex-shrink-0 whitespace-nowrap ${
+                                            activeTab === 'revenue' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-300 border border-slate-700'
+                                        }`}>
+                                            {totalRevenueRealized > 0 ? `${(totalRevenueRealized / 1000000).toFixed(1)}M đ` : 'Tài chính'}
+                                        </span>
+                                    </button>
+                                </nav>
+                            </div>
+                        </aside>
+                    )}
+
+                    {/* CỘT PHẢI: NỘI DUNG CHÍNH (MAIN CONTENT) */}
+                    <main className="flex-1 w-full min-w-0">
                     {/* TAB 1: KHÁCH HÀNG */}
                     {activeTab === 'guests' && (
                         <div className="w-full flex flex-col gap-4">
@@ -557,9 +562,37 @@ function App() {
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1">
                                 <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2.5">
                                     <BedIcon className="w-6 h-6 text-indigo-400" />
-                                    <span>Danh Sách Phòng</span>
+                                    <span>Quản Lý Buồng Phòng</span>
                                 </h2>
-                                <div className="flex items-center gap-2.5 flex-wrap">
+                                <div className="flex items-center gap-3 flex-wrap">
+                                    {/* Toggle Sơ đồ 2D / Dạng Bảng */}
+                                    <div className="flex items-center bg-slate-950/80 p-1 rounded-2xl border border-slate-800 shadow-inner">
+                                        <button
+                                            type="button"
+                                            onClick={() => setRoomViewMode('2d')}
+                                            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                                                roomViewMode === '2d'
+                                                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                                                    : 'text-slate-400 hover:text-white'
+                                            }`}
+                                        >
+                                            <MapIcon className="w-4 h-4" />
+                                            <span>Sơ Đồ 2D</span>
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setRoomViewMode('table')}
+                                            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                                                roomViewMode === 'table'
+                                                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                                                    : 'text-slate-400 hover:text-white'
+                                            }`}
+                                        >
+                                            <TableIcon className="w-4 h-4" />
+                                            <span>Dạng Bảng</span>
+                                        </button>
+                                    </div>
+
                                     <button
                                         type="button"
                                         onClick={() => {
@@ -575,17 +608,41 @@ function App() {
                                 </div>
                             </div>
 
-                            <RoomTable
-                                rooms={rooms}
-                                selectedRoom={selectedRoom}
-                                onSelectRoom={(r) => setSelectedRoom(r)}
-                                onEdit={(room) => {
-                                    setEditingRoom(room);
-                                    setSelectedRoom(room);
-                                    setShowRoomForm(true);
-                                }}
-                                onClearSelection={() => setSelectedRoom(null)}
-                            />
+                            {roomViewMode === '2d' ? (
+                                <HotelFloorPlan2D
+                                    rooms={rooms}
+                                    bookings={bookings}
+                                    selectedRoom={selectedRoom}
+                                    onSelectRoom={(r) => setSelectedRoom(r)}
+                                    onClearSelection={() => setSelectedRoom(null)}
+                                    onEdit={(room) => {
+                                        setEditingRoom(room);
+                                        setSelectedRoom(room);
+                                        setShowRoomForm(true);
+                                    }}
+                                    onBookRoom={(room) => {
+                                        setBookingInitialRoom(room.roomNumber);
+                                        setShowBookingForm(true);
+                                    }}
+                                    onAddNewRoom={() => {
+                                        setEditingRoom(null);
+                                        setSelectedRoom(null);
+                                        setShowRoomForm(true);
+                                    }}
+                                />
+                            ) : (
+                                <RoomTable
+                                    rooms={rooms}
+                                    selectedRoom={selectedRoom}
+                                    onSelectRoom={(r) => setSelectedRoom(r)}
+                                    onEdit={(room) => {
+                                        setEditingRoom(room);
+                                        setSelectedRoom(room);
+                                        setShowRoomForm(true);
+                                    }}
+                                    onClearSelection={() => setSelectedRoom(null)}
+                                />
+                            )}
 
                             {showRoomForm && (
                                 <RoomForm
@@ -643,24 +700,47 @@ function App() {
                                     fetchGuests();
                                 }}
                             />
-
-                            {showBookingForm && (
-                                <BookingForm
-                                    guests={guests}
-                                    rooms={rooms}
-                                    bookings={bookings}
-                                    onSaved={() => {
-                                        fetchBookings();
-                                        fetchRooms(); // Đồng bộ trạng thái phòng
-                                        fetchGuests(); // Đồng bộ chi tiêu và hạng hội viên khách hàng
-                                        setShowBookingForm(false);
-                                    }}
-                                    onClose={() => setShowBookingForm(false)}
-                                />
-                            )}
                         </div>
                     )}
+
+                    {/* TAB 4: QUẢN LÝ DOANH THU & TÀI CHÍNH */}
+                    {activeTab === 'revenue' && (
+                        <RevenueManagement
+                            bookings={bookings}
+                            rooms={rooms}
+                            guests={guests}
+                            onRefresh={async () => {
+                                await Promise.allSettled([
+                                    fetchBookings(true),
+                                    fetchRooms(true),
+                                    fetchGuests(true)
+                                ]);
+                            }}
+                        />
+                    )}
                 </main>
+            </div>
+
+                {/* Modal Tạo Đơn Đặt Phòng (dùng chung cho cả Tab Đặt Phòng & Sơ Đồ 2D Khách Sạn) */}
+                {showBookingForm && (
+                    <BookingForm
+                        guests={guests}
+                        rooms={rooms}
+                        bookings={bookings}
+                        initialRoomNumber={bookingInitialRoom}
+                        onSaved={() => {
+                            fetchBookings();
+                            fetchRooms(); // Đồng bộ trạng thái phòng
+                            fetchGuests(); // Đồng bộ chi tiêu và hạng hội viên khách hàng
+                            setShowBookingForm(false);
+                            setBookingInitialRoom('');
+                        }}
+                        onClose={() => {
+                            setShowBookingForm(false);
+                            setBookingInitialRoom('');
+                        }}
+                    />
+                )}
 
                 {/* Modal Xem Lịch Sử Đặt Phòng Của Khách Hàng */}
                 {viewingHistoryCustomer && (

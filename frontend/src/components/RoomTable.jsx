@@ -168,7 +168,7 @@ export default function RoomTable({ rooms, selectedRoom, onSelectRoom, onEdit, o
                                                     ? 'bg-indigo-500 text-white border-indigo-400'
                                                     : 'bg-slate-800 text-white border-slate-700'
                                             }`}>
-                                                #{roomNum}
+                                                {roomNum}
                                             </span>
                                         </td>
                                         <td className="px-5 py-4 font-medium">
