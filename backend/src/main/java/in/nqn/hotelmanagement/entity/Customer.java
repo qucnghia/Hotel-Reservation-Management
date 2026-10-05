@@ -28,7 +28,7 @@ public class Customer {
     private Long payedPrice = 0L;
 
     @Enumerated(EnumType.STRING)
-    private CustomerMembership membership = CustomerMembership.CUSTOMER;
+    private CustomerMembership membership;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
