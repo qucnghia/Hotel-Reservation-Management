@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { UsersIcon, SearchIcon, XMarkIcon, StarIcon } from './Icons';
+import { UsersIcon, SearchIcon, XMarkIcon, StarIcon } from '../Icons.jsx';
 
 const MEMBERSHIP_STYLES = {
     VIP: {

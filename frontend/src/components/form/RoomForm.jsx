@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { createRoom, updateRoom } from '../services/roomService';
-import { PlusIcon, PencilIcon, ExclamationTriangleIcon, XMarkIcon, TrashIcon, BedIcon } from './Icons';
-import GlideSelect from './glide-select';
+import { createRoom, updateRoom } from '../../services/roomService.js';
+import { PlusIcon, PencilIcon, ExclamationTriangleIcon, XMarkIcon, TrashIcon, BedIcon } from '../Icons.jsx';
+import GlideSelect from '../glide-select/index.js';
 
 const ROOM_TYPES = [
     { value: 'STANDARD', label: 'STANDARD (Tiêu chuẩn)', tag: 'Tiêu chuẩn' },
