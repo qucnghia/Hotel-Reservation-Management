@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createGuest, updateGuest } from '../../services/customerService.js';
-import { PlusIcon, PencilIcon, ExclamationTriangleIcon, XMarkIcon, TrashIcon, HistoryIcon, StarIcon } from '../icons';
-import CustomDatePicker from '../date-picker';
+import { PlusIcon, PencilIcon, ExclamationTriangleIcon, XMarkIcon, TrashIcon, HistoryIcon, StarIcon } from '../icons/Icons.jsx';
+import CustomDatePicker from '../date-picker/CustomDatePicker.jsx';
 
 const MEMBERSHIP_STYLES = {
     VIP: {

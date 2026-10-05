@@ -1,21 +1,25 @@
 // === CÁC FORM NGHIỆP VỤ ===
-export { BookingForm, CustomerForm, RoomForm } from './form/index.js';
+export { default as BookingForm } from './form/BookingForm.jsx';
+export { default as CustomerForm } from './form/CustomerForm.jsx';
+export { default as RoomForm } from './form/RoomForm.jsx';
 
 // === CÁC BẢNG DỮ LIỆU ===
-export { BookingTable, CustomerTable, RoomTable } from './table/index.js';
+export { default as BookingTable } from './table/BookingTable.jsx';
+export { default as CustomerTable } from './table/CustomerTable.jsx';
+export { default as RoomTable } from './table/RoomTable.jsx';
 
 // === CỬA SỔ MODAL / POPUP ===
-export { default as CustomerBookingHistoryModal } from './booking-history/index.js';
+export { default as CustomerBookingHistoryModal } from './booking-history/CustomerBookingHistoryModal.jsx';
 
 // === SƠ ĐỒ PHÒNG 2D & QUẢN LÝ DOANH THU ===
-export { default as HotelFloorPlan2D } from './floor-plan/index.js';
-export { default as RevenueManagement } from './revenue/index.js';
+export { default as HotelFloorPlan2D } from './floor-plan/HotelFloorPlan2D.jsx';
+export { default as RevenueManagement } from './revenue/RevenueManagement.jsx';
 
 // === UI CONTROLS & ICONS ===
-export { default as CustomDatePicker } from './date-picker/index.js';
-export { default as GlideSelect } from './glide-select/index.js';
-export { MorphMenuButton, MorphIconButton, MorphIcon } from './morph-icons/index.js';
-export * from './icons/index.js';
+export { default as CustomDatePicker } from './date-picker/CustomDatePicker.jsx';
+export { default as GlideSelect } from './glide-select/GlideSelect.jsx';
+export { MorphMenuButton, MorphIconButton, MorphIcon } from './morph-icons/MorphingButton.jsx';
+export * from './icons/Icons.jsx';
 
 // === HIỆU ỨNG ĐỒ HỌA ===
 export { default as HotelElectricLogo } from './electric-logo/HotelElectricLogo.jsx';

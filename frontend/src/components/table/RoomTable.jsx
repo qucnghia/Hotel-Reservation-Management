@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
-import { BedIcon, SearchIcon, XMarkIcon } from '../icons';
-import GlideSelect from '../glide-select';
+import { BedIcon, SearchIcon, XMarkIcon } from '../icons/Icons.jsx';
+import GlideSelect from '../glide-select/GlideSelect.jsx';
 
 const ROOM_STATUS_FILTER_OPTIONS = [
     { value: 'ALL', label: 'Tất cả trạng thái' },

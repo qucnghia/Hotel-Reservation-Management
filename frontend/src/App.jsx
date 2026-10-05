@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-import { getGuests, deleteGuest, getRooms, deleteRoom, getBookings } from './services';
+import { getGuests, deleteGuest } from './services/customerService';
+import { getRooms, deleteRoom } from './services/roomService';
+import { getBookings } from './services/bookingService';
 import {
     CustomerForm,
     CustomerTable,
