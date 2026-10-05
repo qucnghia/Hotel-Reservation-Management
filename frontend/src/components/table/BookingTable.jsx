@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { updateBookingStatus } from '../../services/bookingService.js';
-import { XMarkIcon, SearchIcon, BookmarkIcon } from '../Icons.jsx';
-import GlideSelect from '../glide-select/index.js';
+import { XMarkIcon, SearchIcon, BookmarkIcon } from '../icons';
+import GlideSelect from '../glide-select';
 
 const BOOKING_STATUS_FILTER_OPTIONS = [
     { value: 'ALL', label: 'Tất cả trạng thái' },

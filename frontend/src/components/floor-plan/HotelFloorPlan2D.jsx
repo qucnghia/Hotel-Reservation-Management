@@ -14,8 +14,8 @@ import {
     WifiIcon as Wifi,
     WindIcon as Wind,
     ShieldAlertIcon as ShieldAlert
-} from './Icons';
-import GlideSelect from './glide-select';
+} from '../icons';
+import GlideSelect from '../glide-select';
 
 // Cấu hình trạng thái phòng
 const ROOM_STATUS_CONFIG = {

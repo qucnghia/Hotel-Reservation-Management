@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
-import { getCustomerBookingHistory } from '../services/bookingService';
-import { XMarkIcon, HistoryIcon, StarIcon, BookmarkIcon } from './Icons';
-import GlideSelect from './glide-select';
+import { getCustomerBookingHistory } from '../../services/bookingService';
+import { XMarkIcon, HistoryIcon, StarIcon, BookmarkIcon } from '../icons';
+import GlideSelect from '../glide-select';
 
 const MEMBERSHIP_CONFIG = {
     VIP: {

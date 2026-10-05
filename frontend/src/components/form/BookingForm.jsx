@@ -1,8 +1,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import { createBooking } from '../../services/bookingService.js';
-import { PlusIcon, ExclamationTriangleIcon, BookmarkIcon, CurrencyDollarIcon, XMarkIcon } from '../Icons.jsx';
-import GlideSelect from '../glide-select/index.js';
-import CustomDatePicker from '../CustomDatePicker.jsx';
+import { PlusIcon, ExclamationTriangleIcon, BookmarkIcon, CurrencyDollarIcon, XMarkIcon } from '../icons';
+import GlideSelect from '../glide-select';
+import CustomDatePicker from '../date-picker';
 
 export default function BookingForm({ guests = [], rooms = [], bookings = [], initialRoomNumber = '', onSaved, onClose }) {
     const [formData, setFormData] = useState({

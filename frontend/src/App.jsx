@@ -1,22 +1,32 @@
 import { useState, useEffect } from 'react';
-import { getGuests, deleteGuest } from './services/customerService';
-import { getRooms, deleteRoom } from './services/roomService';
-import { getBookings } from './services/bookingService';
-import CustomerForm from './components/CustomerForm.jsx';
-import CustomerTable from './components/CustomerTable.jsx';
-import RoomForm from './components/RoomForm.jsx';
-import RoomTable from './components/RoomTable.jsx';
-import BookingForm from './components/BookingForm.jsx';
-import BookingTable from './components/BookingTable.jsx';
-import CustomerBookingHistoryModal from './components/CustomerBookingHistoryModal.jsx';
-import HotelFloorPlan2D from './components/HotelFloorPlan2D.jsx';
-import RevenueManagement from './components/RevenueManagement.jsx';
-// === [OPTIONAL EFFECT: React Bits Electric Logo & Particle Text] ===
-import HotelElectricLogo from './components/electric-logo/HotelElectricLogo.jsx';
-import ParticleText from './components/particle-text/ParticleText.jsx';
-// === [PACKAGE MORPH-ICONS: Nút Menu Morphing (Menu <-> X)] ===
-import { MorphMenuButton } from './components/morph-icons';
-import { UsersIcon, BedIcon, BookmarkIcon, RefreshIcon, ExclamationTriangleIcon, PlusIcon, PencilIcon, TrashIcon, HistoryIcon, MapIcon, TableIcon, TrendingUpIcon, BanknotesIcon } from './components/Icons';
+import { getGuests, deleteGuest, getRooms, deleteRoom, getBookings } from './services';
+import {
+    CustomerForm,
+    CustomerTable,
+    RoomForm,
+    RoomTable,
+    BookingForm,
+    BookingTable,
+    CustomerBookingHistoryModal,
+    HotelFloorPlan2D,
+    RevenueManagement,
+    HotelElectricLogo,
+    ParticleText,
+    MorphMenuButton,
+    UsersIcon,
+    BedIcon,
+    BookmarkIcon,
+    RefreshIcon,
+    ExclamationTriangleIcon,
+    PlusIcon,
+    PencilIcon,
+    TrashIcon,
+    HistoryIcon,
+    MapIcon,
+    TableIcon,
+    TrendingUpIcon,
+    BanknotesIcon
+} from './components';
 
 function App() {
     const [activeTab, setActiveTab] = useState('rooms'); // 'guests' | 'rooms' | 'bookings' | 'revenue'
