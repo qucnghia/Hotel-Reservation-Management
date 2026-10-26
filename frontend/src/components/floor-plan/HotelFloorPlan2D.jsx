@@ -70,8 +70,8 @@ const ROOM_TYPE_CONFIG = {
     STANDARD: {
         label: 'STANDARD',
         vietnameseName: 'Tiêu Chuẩn',
-        badge: 'bg-slate-800 text-slate-300 border-slate-700',
-        accent: 'from-blue-500/20 to-indigo-500/20 text-blue-300 border-blue-500/30',
+        badge: 'room-badge-standard',
+        accent: 'from-blue-500/20 to-indigo-500/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-500/30',
         bedType: 'Giường Queen Size',
         capacity: '2 Người Lớn',
         area: '32 m²',
@@ -80,8 +80,8 @@ const ROOM_TYPE_CONFIG = {
     VIP: {
         label: 'VIP',
         vietnameseName: 'Cao Cấp',
-        badge: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40',
-        accent: 'from-indigo-500/20 to-purple-500/20 text-indigo-300 border-indigo-500/40',
+        badge: 'room-badge-vip',
+        accent: 'from-indigo-500/20 to-purple-500/20 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-500/40',
         bedType: 'Giường King Size Luxury',
         capacity: '2 - 3 Người Lớn',
         area: '48 m²',
@@ -90,8 +90,8 @@ const ROOM_TYPE_CONFIG = {
     LUXURY: {
         label: 'LUXURY',
         vietnameseName: 'Sang Trọng',
-        badge: 'bg-gradient-to-r from-amber-500/20 to-yellow-500/20 text-amber-300 border-amber-500/40',
-        accent: 'from-amber-500/20 to-yellow-500/20 text-amber-300 border-amber-500/40',
+        badge: 'room-badge-luxury',
+        accent: 'from-amber-500/20 to-yellow-500/20 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-500/40',
         bedType: 'Giường Hoàng Gia Suite',
         capacity: '4 Người Lớn',
         area: '68 m²',

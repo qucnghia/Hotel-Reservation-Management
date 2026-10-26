@@ -395,3 +395,55 @@ html.light ::-webkit-scrollbar-thumb:hover {
     color: #475569 !important;
   }
 }
+
+/* ==========================================================================
+   HUY HIỆU HẠNG PHÒNG (ROOM TYPE BADGES) - SẮC NÉT, ĐẲNG CẤP, TƯƠNG PHẢN CAO
+   ========================================================================== */
+
+/* STANDARD */
+.room-badge-standard {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.05em !important;
+}
+html.dark .room-badge-standard,
+.dark .room-badge-standard {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* VIP - Tím Sapphire Hoàng Gia */
+.room-badge-vip {
+  background-color: #e0e7ff !important;
+  color: #312e81 !important;
+  border-color: #a5b4fc !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.05em !important;
+}
+html.dark .room-badge-vip,
+.dark .room-badge-vip {
+  background-color: #1e1b4b !important;
+  color: #a5b4fc !important;
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.3) !important;
+}
+
+/* LUXURY - Vàng Kim Hổ Phách Sang Trọng */
+.room-badge-luxury {
+  background-color: #fef3c7 !important;
+  color: #78350f !important;
+  border-color: #fcd34d !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.05em !important;
+}
+html.dark .room-badge-luxury,
+.dark .room-badge-luxury {
+  background-color: #451a03 !important;
+  color: #fde047 !important;
+  border-color: #eab308 !important;
+  box-shadow: 0 0 12px rgba(234, 179, 8, 0.3) !important;
+}

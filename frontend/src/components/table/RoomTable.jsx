@@ -36,15 +36,15 @@ const ROOM_STATUS_CONFIG = {
 const ROOM_TYPE_CONFIG = {
     STANDARD: {
         label: 'STANDARD',
-        badge: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+        badge: 'room-badge-standard'
     },
     VIP: {
         label: 'VIP',
-        badge: 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-500/30'
+        badge: 'room-badge-vip'
     },
     LUXURY: {
         label: 'LUXURY',
-        badge: 'bg-amber-50 dark:bg-gradient-to-r dark:from-amber-500/20 dark:to-yellow-500/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-500/40'
+        badge: 'room-badge-luxury'
     }
 };
 
@@ -172,7 +172,7 @@ export default function RoomTable({ rooms, selectedRoom, onSelectRoom, onEdit, o
                                             </span>
                                         </td>
                                         <td className="px-5 py-4 font-medium">
-                                            <span className={`inline-block px-3 py-1 rounded-lg text-xs font-bold border ${ROOM_TYPE_CONFIG[roomType]?.badge || 'bg-slate-800 text-slate-300 border-slate-700'}`}>
+                                            <span className={`inline-block px-3 py-1 rounded-lg text-xs font-black tracking-wider border shadow-xs ${ROOM_TYPE_CONFIG[roomType]?.badge || "room-badge-standard"}`}>
                                                 {ROOM_TYPE_CONFIG[roomType]?.label || roomType}
                                             </span>
                                         </td>

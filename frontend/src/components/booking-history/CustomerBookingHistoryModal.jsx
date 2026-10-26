@@ -247,7 +247,7 @@ export default function CustomerBookingHistoryModal({ customer, guests = [], onS
                                                             </td>
                                                             <td className="px-4 py-3.5">
                                                                 <span className="font-bold text-slate-900 dark:text-white">Phòng {b.roomNumber}</span>
-                                                                <span className="text-xs font-semibold text-slate-300 ml-2 px-2 py-0.5 rounded bg-slate-800">[{b.roomType}]</span>
+                                                                <span className={`text-[10px] font-black uppercase ml-2 px-2 py-0.5 rounded-md border ${b.roomType === "LUXURY" ? "room-badge-luxury" : b.roomType === "VIP" ? "room-badge-vip" : "room-badge-standard"}`}>{b.roomType}</span>
                                                             </td>
                                                             <td className="px-4 py-3.5 text-sm font-medium text-slate-700 dark:text-slate-200 whitespace-nowrap">
                                                                 {b.checkInDate} <span className="text-slate-500">→</span> {b.checkOutDate}

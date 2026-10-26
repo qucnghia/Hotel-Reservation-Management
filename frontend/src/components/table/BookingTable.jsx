@@ -173,7 +173,7 @@ export default function BookingTable({ bookings = [], loading = false, onReload 
                                         {/* Phòng */}
                                         <td className="py-4 px-4">
                                             <div className="font-bold text-base text-slate-900 dark:text-white">Phòng {b.roomNumber}</div>
-                                            <div className="text-sm text-slate-600 dark:text-slate-300">{b.roomType}</div>
+                                            <div className="mt-1"><span className={`inline-block text-[11px] font-black uppercase px-2 py-0.5 rounded-md border ${b.roomType === "LUXURY" ? "room-badge-luxury" : b.roomType === "VIP" ? "room-badge-vip" : "room-badge-standard"}`}>{b.roomType}</span></div>
                                         </td>
 
                                         {/* Thời gian ở */}
