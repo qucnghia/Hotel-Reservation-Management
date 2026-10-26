@@ -263,7 +263,7 @@ function App() {
                     <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-5 sm:gap-6 w-full py-2">
                         <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-6">
                             {/* Logo Khách Sạn */}
-                            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white/5 border border-slate-700/60 p-2 flex items-center justify-center flex-shrink-0 shadow-xl shadow-blue-900/10 backdrop-blur-sm">
+                            <div className="w-24 sm:w-32 md:w-40 h-20 sm:h-24 md:h-28 rounded-2xl bg-white p-2 flex items-center justify-center flex-shrink-0 shadow-xl shadow-blue-900/15 border border-slate-700/60 transition-transform duration-300 hover:scale-105">
                                 <img
                                     src="/hotel-building-logo.png"
                                     alt="Hotel Management Logo"
@@ -272,11 +272,11 @@ function App() {
                             </div>
 
                             {/* Tiêu đề Khách Sạn */}
-                            <div className="text-center sm:text-left">
-                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-wide text-white uppercase font-luxury">
+                            <div className="text-center sm:text-left flex flex-col justify-center">
+                                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-wider text-white uppercase font-luxury leading-tight">
                                     Hotel Management
                                 </h1>
-                                <p className="text-xs sm:text-sm text-slate-400 mt-1 font-medium tracking-wider">
+                                <p className="text-xs sm:text-sm md:text-base text-slate-400 mt-2 font-semibold tracking-widest uppercase">
                                     Hệ thống quản trị và điều hành khách sạn
                                 </p>
                             </div>
