@@ -42,6 +42,11 @@ public class RoomController {
         return ResponseEntity.ok(roomService.updateRoom(id, room));
     }
 
+    @PutMapping("/{id}/maintenance")
+    public ResponseEntity<RoomResponse> setMaintenance(@PathVariable Long id, @RequestParam boolean enabled) {
+        return ResponseEntity.ok(roomService.setMaintenance(id, enabled));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRoomById(@PathVariable Long id) {
         roomService.deleteRoom(id);

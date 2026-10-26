@@ -69,11 +69,25 @@ public class RoomService {
 
     public RoomResponse updateRoom(Long roomId, RoomRequest request) {
         Room current = findRoom(roomId);
-        RoomStatus status = request.getRoomStatus() != null ? request.getRoomStatus() : current.getRoomStatus();
 
+        // Trạng thái phòng không sửa ở đây: do đơn đặt phòng và chức năng bảo trì quyết định
         // Cập nhật bằng câu lệnh UPDATE để đổi được cả hạng phòng (tức là đổi lớp con), rồi đọc lại đúng lớp mới
-        roomRepository.updateRoom(roomId, request.getRoomType(), request.getBasePrice(), status);
+        roomRepository.updateRoom(roomId, request.getRoomType(), request.getBasePrice(), current.getRoomStatus());
         return RoomResponse.fromEntity(findRoom(roomId));
+    }
+
+    public RoomResponse setMaintenance(Long roomId, boolean enabled) {
+        Room room = findRoom(roomId);
+        if (enabled) {
+            if (bookingRepository.hasOtherCheckedInBooking(roomId, -1L)
+                    || bookingRepository.hasActiveConfirmedBooking(roomId, -1L, LocalDate.now())) {
+                throw new InvalidBookingException("Phòng #" + roomId + " đang có khách ở hoặc có đơn đặt sắp tới, không thể chuyển sang bảo trì. Hãy trả phòng hoặc huỷ đơn trước.");
+            }
+            room.setRoomStatus(RoomStatus.UNDER_MAINTENANCE);
+        } else if (room.getRoomStatus() == RoomStatus.UNDER_MAINTENANCE) {
+            room.setRoomStatus(RoomStatus.AVAILABLE);
+        }
+        return RoomResponse.fromEntity(room);
     }
 
     public void deleteRoom(Long roomId) {
