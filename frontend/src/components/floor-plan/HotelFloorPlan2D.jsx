@@ -571,9 +571,9 @@ export default function HotelFloorPlan2D({
                                         {/* DÃY BẮC */}
                                         {northWing.length > 0 && (
                                             <div>
-                                                <div className="flex items-center mb-2 px-2 text-xs font-bold uppercase tracking-wider text-blue-400">
+                                                <div className="flex items-center mb-2 px-2 text-xs font-extrabold uppercase tracking-wider text-blue-700 dark:text-blue-400">
                                                     <div className="flex items-center gap-2">
-                                                        <span className="w-2 h-2 rounded-full bg-blue-400" />
+                                                        <span className="w-2 h-2 rounded-full bg-blue-600 dark:bg-blue-400" />
                                                         <span>Dãy Phòng Hướng Bắc</span>
                                                     </div>
                                                 </div>
@@ -643,9 +643,9 @@ export default function HotelFloorPlan2D({
                                         {/* DÃY NAM */}
                                         {southWing.length > 0 && (
                                             <div>
-                                                <div className="flex items-center mb-2 px-2 text-xs font-bold uppercase tracking-wider text-emerald-400">
+                                                <div className="flex items-center mb-2 px-2 text-xs font-extrabold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
                                                     <div className="flex items-center gap-2">
-                                                        <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                                                        <span className="w-2 h-2 rounded-full bg-emerald-600 dark:bg-emerald-400" />
                                                         <span>Dãy Phòng Hướng Nam</span>
                                                     </div>
                                                 </div>
@@ -831,12 +831,12 @@ export default function HotelFloorPlan2D({
 function Room2DPod({ 
     room, 
     isSelected, 
-    isDimmed = false, 
-    isHighlighted = false, 
+    isDimmed, 
+    isHighlighted, 
     activeBooking, 
-    doorPosition = 'bottom', 
+    doorPosition = 'bottom',
     onSelect, 
-    onInspect,
+    onInspect, 
     onEdit, 
     onBook 
 }) {
@@ -857,20 +857,20 @@ function Room2DPod({
             }}
             className={`room-2d-card group relative rounded-2xl p-4 transition-all duration-300 cursor-pointer select-none border-2 flex flex-col justify-between min-h-[175px] ${
                 isSelected
-                    ? 'border-indigo-400 ring-2 ring-indigo-400/80 bg-indigo-950/40 shadow-2xl scale-[1.02] z-20'
+                    ? 'border-indigo-500 ring-2 ring-indigo-400/80 bg-indigo-50/70 dark:bg-indigo-950/40 shadow-xl scale-[1.02] z-20'
                     : isDimmed
-                        ? 'opacity-25 grayscale-[70%] border-dashed border-slate-700/60 bg-slate-950/40 hover:opacity-90 hover:grayscale-0 hover:border-solid hover:scale-[1.01] hover:z-10'
+                        ? 'opacity-30 grayscale-[70%] border-dashed border-slate-300 dark:border-slate-700/60 bg-slate-50 dark:bg-slate-950/40 hover:opacity-90 hover:grayscale-0 hover:border-solid hover:scale-[1.01] hover:z-10'
                         : isHighlighted
                             ? `${statusConfig.border} ${statusConfig.bg} ring-2 ring-indigo-400/60 scale-[1.01] z-10 ${statusConfig.glow}`
                             : `${statusConfig.border} ${statusConfig.bg} hover:scale-[1.02] hover:z-10 ${statusConfig.glow}`
             }`}
         >
-            {/* CỬA RA VÀO KIẾN TRÚC 2D (DOOR OPENING ARC) */}
+            {/* ĐÈN CHỈ BÁO CỬA RA VÀO KIẾN TRÚC & SMART RFID LOCK */}
             <div 
-                className={`absolute left-6 w-9 h-2.5 bg-slate-900 border-x-2 border-slate-600 flex items-center justify-center z-10 transition-opacity duration-300 ${
-                    doorPosition === 'bottom' ? '-bottom-1.5 border-b-2' : '-top-1.5 border-t-2'
+                className={`absolute left-6 w-8 h-2 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-600 flex items-center justify-center z-10 transition-all duration-300 shadow-xs ${
+                    doorPosition === 'bottom' ? '-bottom-1' : '-top-1'
                 } ${isDimmed ? 'opacity-40 group-hover:opacity-100' : 'opacity-100'}`}
-                title="Cửa phòng"
+                title="Cửa phòng & Đèn RFID"
             >
                 {/* Đèn chỉ báo khóa cửa RFID */}
                 <span className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot}`} />
@@ -879,7 +879,7 @@ function Room2DPod({
             {/* PHẦN ĐẦU CỦA PHÒNG: SỐ PHÒNG & HẠNG PHÒNG */}
             <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2">
-                    <span className="text-lg font-black text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors">
+                    <span className="text-xl font-black text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors">
                         {room.roomNumber}
                     </span>
                     <span className={`px-2 py-0.5 rounded-md text-[10px] font-black border uppercase tracking-wider ${typeConfig.badge}`}>
@@ -887,40 +887,40 @@ function Room2DPod({
                     </span>
                 </div>
 
-                {/* Chấm trạng thái */}
-                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${statusConfig.badge}`}>
+                {/* Huy hiệu trạng thái */}
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold border shadow-xs ${statusConfig.badge}`}>
                     <span className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot}`} />
                     <span>{statusConfig.label}</span>
                 </span>
             </div>
 
             {/* MẶT BẰNG NỘI THẤT 2D (STYLIZED 2D FURNITURE) */}
-            <div className="my-2.5 py-2 px-3 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-center justify-between gap-3">
+            <div className="my-2.5 py-2 px-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/90 dark:border-slate-800/80 flex items-center justify-between gap-3 shadow-inner">
                 {/* Giường 2D */}
-                <div className="flex items-center gap-2 flex-1">
-                    <div className="w-10 h-9 rounded-lg bg-slate-800/90 border border-slate-700/80 flex flex-col items-center justify-center text-slate-300 relative shadow-inner">
+                <div className="flex items-center gap-2.5 flex-1">
+                    <div className="w-10 h-9 rounded-lg bg-indigo-50/80 dark:bg-slate-800/90 border border-indigo-200/80 dark:border-slate-700/80 flex flex-col items-center justify-center relative shadow-xs">
                         {/* Gối 2D */}
-                        <div className="w-7 h-1.5 bg-slate-600 rounded-sm mb-1" />
-                        <Bed className="w-4 h-4 text-indigo-400" />
+                        <div className="w-7 h-1.5 bg-indigo-200 dark:bg-slate-600 rounded-sm mb-1" />
+                        <Bed className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                     </div>
                     <div className="text-[11px] leading-tight">
-                        <div className="font-bold text-slate-800 dark:text-slate-200">{typeConfig.vietnameseName}</div>
-                        <div className="text-[10px] text-slate-400">{typeConfig.capacity}</div>
+                        <div className="font-bold text-slate-900 dark:text-slate-100">{typeConfig.vietnameseName}</div>
+                        <div className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">{typeConfig.capacity}</div>
                     </div>
                 </div>
 
                 {/* Tiện ích icon */}
-                <div className="flex flex-col items-end gap-1 text-slate-500">
+                <div className="flex flex-col items-end gap-1 text-slate-400 dark:text-slate-500">
                     <Tv className="w-3.5 h-3.5" />
                     <Bath className="w-3.5 h-3.5" />
                 </div>
             </div>
 
             {/* PHẦN CHÂN PHÒNG: GIÁ TIỀN & THÔNG TIN KHÁCH (NẾU CÓ) */}
-            <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs">
+            <div className="pt-2 border-t border-slate-200/90 dark:border-slate-800/80 flex items-center justify-between text-xs">
                 <div>
-                    <span className="text-[10px] text-slate-400 uppercase font-semibold block leading-none">Giá niêm yết</span>
-                    <span className="text-sm font-extrabold text-emerald-400 font-mono">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider block leading-none">Giá niêm yết</span>
+                    <span className="text-sm sm:text-base font-black text-emerald-700 dark:text-emerald-400 font-mono mt-0.5 inline-block">
                         {formatCurrency(room.basePrice)}
                     </span>
                 </div>
@@ -935,10 +935,10 @@ function Room2DPod({
                         className="text-right cursor-pointer hover:opacity-85 transition-opacity"
                         title="Xem chi tiết khách đang lưu trú"
                     >
-                        <span className="text-[10px] text-rose-400 font-bold block truncate max-w-[90px] underline decoration-rose-500/40">
+                        <span className="text-[10px] text-rose-600 dark:text-rose-400 font-bold block truncate max-w-[90px] underline decoration-rose-500/40">
                             {activeBooking.customerName || 'Đang ở'}
                         </span>
-                        <span className="text-[9px] text-slate-400">
+                        <span className="text-[9px] text-slate-500 dark:text-slate-400">
                             Check-out: {activeBooking.checkOutDate}
                         </span>
                     </button>
@@ -949,7 +949,7 @@ function Room2DPod({
                             e.stopPropagation();
                             if (onInspect) onInspect(room);
                         }}
-                        className="text-[10px] text-slate-400 hover:text-indigo-300 font-semibold transition-colors flex items-center gap-0.5 cursor-pointer px-1.5 py-0.5 rounded-md hover:bg-slate-800 border border-transparent hover:border-slate-700"
+                        className="text-[11px] text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-300 font-bold transition-colors flex items-center gap-1 cursor-pointer px-2 py-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
                         title="Xem chi tiết phòng & đặt phòng"
                     >
                         <span>Chi tiết</span>

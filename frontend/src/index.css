@@ -325,27 +325,25 @@ html.light [title="Mở bảng chọn lịch"]:hover {
   border-color: #818cf8 !important;
 }
 
-/* Sơ đồ phòng 2D */
-html.light .bg-emerald-950\/20 {
-  background-color: #ecfdf5 !important;
-  border-color: #a7f3d0 !important;
+/* Sơ đồ phòng 2D - Giao diện thẻ phòng Sáng Sang Trọng */
+html.light .room-2d-card {
+  background-color: #ffffff !important;
+  box-shadow: 0 4px 15px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.03) !important;
 }
-html.light .hover\:bg-emerald-900\/30:hover {
-  background-color: #d1fae5 !important;
+html.light .room-2d-card:hover {
+  box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.12), 0 4px 6px -2px rgba(15, 23, 42, 0.04) !important;
 }
-html.light .bg-amber-950\/20 {
-  background-color: #fffbeb !important;
+html.light .room-2d-card .border-emerald-300 {
+  border-color: #86efac !important;
+}
+html.light .room-2d-card .border-amber-300 {
   border-color: #fde68a !important;
 }
-html.light .hover\:bg-amber-900\/30:hover {
-  background-color: #fef3c7 !important;
-}
-html.light .bg-rose-950\/20 {
-  background-color: #fff1f2 !important;
+html.light .room-2d-card .border-rose-300 {
   border-color: #fecdd3 !important;
 }
-html.light .hover\:bg-rose-900\/30:hover {
-  background-color: #ffe4e6 !important;
+html.light .room-2d-card .text-emerald-700 {
+  color: #047857 !important;
 }
 html.light .bg-slate-950\/40 {
   background-color: #f1f5f9 !important;

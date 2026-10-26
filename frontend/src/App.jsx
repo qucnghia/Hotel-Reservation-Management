@@ -555,14 +555,14 @@ function App() {
                                 </h2>
                                 <div className="flex items-center gap-3 flex-wrap">
                                     {/* Toggle Sơ đồ 2D / Dạng Bảng */}
-                                    <div className="flex items-center bg-slate-950/80 p-1 rounded-2xl border border-slate-800 shadow-inner">
+                                    <div className="flex items-center bg-slate-100 dark:bg-slate-950/80 p-1 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-inner">
                                         <button
                                             type="button"
                                             onClick={() => setRoomViewMode('2d')}
                                             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                                                 roomViewMode === '2d'
                                                     ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                                                    : 'text-slate-400 hover:text-white'
+                                                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                                             }`}
                                         >
                                             <MapIcon className="w-4 h-4" />
@@ -574,7 +574,7 @@ function App() {
                                             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                                                 roomViewMode === 'table'
                                                     ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                                                    : 'text-slate-400 hover:text-white'
+                                                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                                             }`}
                                         >
                                             <TableIcon className="w-4 h-4" />
