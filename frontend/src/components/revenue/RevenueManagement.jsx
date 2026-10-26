@@ -598,22 +598,16 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                     <div className="absolute bottom-0 right-0 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none -mb-20"></div>
                 </div>
 
-                <div className="relative z-30 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <div className="relative z-30 flex flex-col xl:flex-row xl:items-center justify-between gap-4 sm:gap-6">
                     <div>
-                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-2">
-                            <span>Executive Financial Suite</span>
-                        </div>
-                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
-                            <BanknotesIcon className="w-8 h-8 sm:w-9 sm:h-9 text-emerald-400" />
+                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight flex items-center gap-3">
+                            <BanknotesIcon className="w-8 h-8 sm:w-9 sm:h-9 text-emerald-400 shrink-0" />
                             <span>Quản Lý Doanh Thu & Tài Chính</span>
                         </h2>
-                        <p className="text-slate-400 text-sm sm:text-base mt-1.5 max-w-2xl">
-                            Phân tích luồng tiền thời gian thực, hiệu suất bán phòng (RevPAR, ADR), tỷ lệ lấp đầy và cấu trúc sinh lời khách sạn.
-                        </p>
                     </div>
 
                     {/* Bộ điều khiển khoảng thời gian GlideSelect & Nút xuất báo cáo */}
-                    <div className="flex flex-wrap items-center gap-2.5 relative z-40">
+                    <div className="flex items-center gap-2 sm:gap-2.5 flex-nowrap relative z-40 shrink-0">
                         {/* GlideSelect Thời Gian */}
                         <GlideSelect
                             options={TIME_RANGE_OPTIONS}
@@ -637,7 +631,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                             onClick={handleRefresh}
                             disabled={isRefreshing}
                             title="Làm mới toàn bộ chỉ số tài chính"
-                            className="p-2.5 sm:px-3.5 sm:py-2.5 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer flex items-center gap-2 shadow-sm"
+                            className="p-2.5 sm:px-3.5 sm:py-2.5 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 hover:text-white transition-all cursor-pointer flex items-center gap-2 shadow-sm shrink-0"
                         >
                             <RefreshIcon className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-emerald-400' : ''}`} />
                             <span className="hidden sm:inline text-xs sm:text-sm font-semibold">Cập nhật</span>
@@ -648,7 +642,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                             type="button"
                             onClick={handleExportCSV}
                             title="Xuất bảng kê giao dịch ra file CSV (Excel)"
-                            className="px-4 py-2.5 rounded-2xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 hover:text-white text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 shadow-lg shadow-emerald-950/50"
+                            className="px-3.5 sm:px-4 py-2.5 rounded-2xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 hover:text-white text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2 shadow-lg shadow-emerald-950/50 shrink-0"
                         >
                             <ArrowDownTrayIcon className="w-4 h-4" />
                             <span>Xuất CSV</span>
@@ -659,7 +653,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                             type="button"
                             onClick={handlePrintReport}
                             title="In bản tổng hợp doanh thu"
-                            className="px-3.5 py-2.5 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 hover:text-white text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2"
+                            className="px-3 sm:px-3.5 py-2.5 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 hover:text-white text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center gap-2 shrink-0"
                         >
                             <PrinterIcon className="w-4 h-4" />
                             <span className="hidden sm:inline">In</span>
