@@ -48,7 +48,7 @@
 }
 
 /* ==========================================================================
-   CHẾ ĐỘ SÁNG (LUXURY LIGHT THEME)
+   CHẾ ĐỘ SÁNG (LUXURY LIGHT THEME) - TỐI ƯU TOÀN DIỆN & TƯƠNG PHẢN RÕ NÉT
    ========================================================================== */
 html.light {
   color-scheme: light;
@@ -59,15 +59,16 @@ html.light body {
   color: #0f172a !important;
 }
 
-/* Background chính của ứng dụng */
+/* Nền toàn trang */
 html.light .bg-\[\#080d1a\],
-html.light .bg-\[\#0b0f19\] {
-  background-color: #f8fafc !important;
+html.light .bg-\[\#0b0f19\],
+html.light div.min-h-screen {
+  background-color: #f1f5f9 !important;
 }
 
-/* Card, Header, Sidebar, Right Content Container */
+/* Các thẻ Card chính: Header, Sidebar, Bảng dữ liệu, Modal, Khung quản lý */
 html.light header.bg-slate-900\/80,
-html.light aside .bg-slate-900\/80,
+html.light aside > div.bg-slate-900\/80,
 html.light .bg-slate-900,
 html.light .bg-slate-900\/80,
 html.light .bg-slate-900\/90,
@@ -75,42 +76,70 @@ html.light .bg-slate-900\/95,
 html.light .bg-slate-900\/50,
 html.light .bg-slate-900\/40 {
   background-color: #ffffff !important;
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.03) !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 4px 15px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.03) !important;
 }
 
-/* Các khung con, Card đếm số, Filter bar, Inset boxes */
+/* Khung lót phụ, Inset card, Filter bar, Ô tìm kiếm */
 html.light .bg-slate-950,
-html.light .bg-slate-950\/40,
-html.light .bg-slate-950\/50,
-html.light .bg-slate-950\/60,
-html.light .bg-slate-950\/70,
+html.light .bg-slate-950\/98,
+html.light .bg-slate-950\/95,
+html.light .bg-slate-950\/90,
 html.light .bg-slate-950\/80,
-html.light .bg-slate-950\/90 {
+html.light .bg-slate-950\/70,
+html.light .bg-slate-950\/60,
+html.light .bg-slate-950\/50,
+html.light .bg-slate-950\/40 {
   background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
 }
 
-/* Đường viền bảng và các khối */
+/* Thẻ thông báo mờ / Highlight info box */
+html.light .bg-blue-950\/40,
+html.light .bg-blue-950\/30,
+html.light .bg-blue-950\/20 {
+  background-color: #eff6ff !important;
+  border-color: #bfdbfe !important;
+}
+
+/* Badge ID, Pill counter, Chip xám trong Light Mode */
+html.light .bg-slate-800,
+html.light .bg-slate-800\/80,
+html.light .bg-slate-800\/70,
+html.light .bg-slate-800\/60,
+html.light .bg-slate-800\/50,
+html.light .bg-slate-800\/40 {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+/* Đường viền tổng thể */
 html.light .border-slate-800,
 html.light .border-slate-800\/80,
+html.light .border-slate-800\/70,
 html.light .border-slate-800\/60,
 html.light .border-slate-700,
-html.light .border-slate-700\/60,
 html.light .border-slate-700\/80,
+html.light .border-slate-700\/60,
 html.light .border-slate-700\/50 {
   border-color: #e2e8f0 !important;
 }
 
-/* Tiêu đề trong chế độ sáng */
-html.light h1:not([class*="bg-"]):not(button *),
-html.light h2:not([class*="bg-"]):not(button *),
-html.light h3:not([class*="bg-"]):not(button *),
-html.light h4:not([class*="bg-"]):not(button *),
-html.light h5:not([class*="bg-"]):not(button *),
-html.light h6:not([class*="bg-"]):not(button *) {
+/* ==========================================================================
+   XỬ LÝ MÀU CHỮ TRONG CHẾ ĐỘ SÁNG - TƯƠNG PHẢN CAO, KHÔNG BỊ MẤT CHỮ
+   ========================================================================== */
+
+/* 1. Tiêu đề và chữ văn bản cơ bản */
+html.light h1,
+html.light h2,
+html.light h3,
+html.light h4,
+html.light h5,
+html.light h6 {
   color: #0f172a !important;
 }
 
-/* Thứ bậc văn bản */
 html.light .text-slate-100 {
   color: #0f172a !important;
 }
@@ -121,82 +150,125 @@ html.light .text-slate-300 {
 }
 
 html.light .text-slate-400 {
-  color: #64748b !important;
+  color: #475569 !important;
 }
 
 html.light .text-slate-500 {
-  color: #94a3b8 !important;
+  color: #64748b !important;
 }
 
-/* Chữ trắng thông thường chuyển sang màu tối (loại trừ button & badge) */
-html.light header h1.text-white,
-html.light .bg-slate-900 h1.text-white,
-html.light .bg-slate-900 h2.text-white,
-html.light .bg-slate-900 h3.text-white,
-html.light p.text-white,
-html.light td.text-white,
-html.light th.text-white,
-html.light span.text-2xl.text-white,
-html.light span.text-3xl.text-white,
-html.light span.text-xl.text-white {
+/* 2. Chuyển chữ text-white sang đen đậm mặc định trong Light Mode */
+html.light .text-white {
   color: #0f172a !important;
 }
 
-/* Bảo toàn màu chữ trắng cho các nút / badge có nền màu đậm */
-html.light .bg-blue-600,
-html.light .bg-blue-600 *,
-html.light .bg-indigo-600,
-html.light .bg-indigo-600 *,
-html.light .bg-emerald-600,
-html.light .bg-emerald-600 *,
-html.light .bg-rose-600,
-html.light .bg-rose-600 *,
-html.light .bg-amber-600,
-html.light .bg-amber-600 *,
-html.light .bg-purple-600,
-html.light .bg-purple-600 *,
-html.light .bg-red-600,
-html.light .bg-red-600 *,
-html.light button.bg-blue-600 span,
-html.light button.bg-indigo-600 span,
-html.light button.bg-rose-600 span {
+/* 3. BẢO TOÀN CHỮ TRẮNG CHO CÁC NÚT BẤM CHÍNH (PRIMARY / GRADIENT BUTTONS) */
+html.light [class*="bg-gradient-"] *,
+html.light [class*="bg-gradient-"],
+html.light [class*="from-blue-"],
+html.light [class*="from-blue-"] *,
+html.light [class*="from-indigo-"],
+html.light [class*="from-indigo-"] *,
+html.light [class*="from-emerald-"],
+html.light [class*="from-emerald-"] *,
+html.light [class*="from-rose-"],
+html.light [class*="from-rose-"] *,
+html.light button.bg-blue-600,
+html.light button.bg-blue-600 *,
+html.light button.bg-indigo-600,
+html.light button.bg-indigo-600 *,
+html.light button.bg-emerald-600,
+html.light button.bg-emerald-600 *,
+html.light button.bg-rose-600,
+html.light button.bg-rose-600 *,
+html.light button.bg-red-600,
+html.light button.bg-red-600 *,
+html.light button.bg-amber-600,
+html.light button.bg-amber-600 * {
   color: #ffffff !important;
 }
 
-/* Sidebar navigation buttons in light mode */
-html.light aside button.bg-slate-950\/60 {
-  background-color: #f8fafc !important;
-  border-color: #e2e8f0 !important;
-  color: #334155 !important;
-}
-html.light aside button.bg-slate-950\/60:hover {
-  background-color: #f1f5f9 !important;
-  color: #0f172a !important;
-  border-color: #cbd5e1 !important;
+/* 4. Sửa các màu chữ nhạt (text-*-300 / 400) thành màu đậm nét, rõ ràng */
+html.light .text-blue-300,
+html.light .text-blue-400 {
+  color: #1d4ed8 !important; /* blue-700 */
 }
 
-/* Bảng dữ liệu trong Light Mode */
-html.light thead,
-html.light thead.bg-slate-950\/90,
-html.light thead.bg-slate-950\/80 {
+html.light .text-indigo-300,
+html.light .text-indigo-400 {
+  color: #4338ca !important; /* indigo-700 */
+}
+
+html.light .text-purple-300,
+html.light .text-purple-400 {
+  color: #6b21a8 !important; /* purple-700 */
+}
+
+html.light .text-emerald-300,
+html.light .text-emerald-400 {
+  color: #047857 !important; /* emerald-700 */
+}
+
+html.light .text-amber-300,
+html.light .text-amber-400 {
+  color: #b45309 !important; /* amber-700 */
+}
+
+html.light .text-rose-300,
+html.light .text-rose-400 {
+  color: #be123c !important; /* rose-700 */
+}
+
+html.light .text-sky-300,
+html.light .text-sky-400 {
+  color: #0369a1 !important; /* sky-700 */
+}
+
+/* ==========================================================================
+   CÁC THÀNH PHẦN CHI TIẾT
+   ========================================================================== */
+
+/* Nút phụ / Nút Lịch Sử / Nút MorphMenuButton */
+html.light .bg-blue-500\/15 {
+  background-color: #eff6ff !important;
+  border-color: #bfdbfe !important;
+  color: #1d4ed8 !important;
+}
+html.light .bg-blue-500\/15:hover {
+  background-color: #dbeafe !important;
+}
+
+/* Header Thẻ Đang quản lý */
+html.light header div.bg-slate-950\/70,
+html.light header div.bg-slate-100 {
   background-color: #f8fafc !important;
-  border-bottom-color: #e2e8f0 !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* Bảng dữ liệu */
+html.light thead,
+html.light thead.bg-slate-950\/70,
+html.light thead.bg-slate-950\/80,
+html.light thead.bg-slate-950\/90,
+html.light thead.bg-slate-50 {
+  background-color: #f8fafc !important;
+  border-bottom: 2px solid #e2e8f0 !important;
 }
 
 html.light thead th {
   color: #475569 !important;
-  border-bottom: 1px solid #e2e8f0 !important;
+  font-weight: 700 !important;
 }
 
 html.light tbody tr {
-  border-bottom-color: #e2e8f0 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
 }
 
 html.light tbody tr:hover {
   background-color: #f8fafc !important;
 }
 
-/* Form inputs, textareas, selects */
+/* Ô nhập liệu Form & Tìm kiếm */
 html.light input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
 html.light textarea,
 html.light select {
@@ -205,11 +277,11 @@ html.light select {
   border-color: #cbd5e1 !important;
 }
 
-html.light input:not([type="checkbox"]):not([type="radio"]):focus,
+html.light input:focus,
 html.light textarea:focus,
 html.light select:focus {
-  border-color: #3b82f6 !important;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15) !important;
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
 }
 
 html.light input::placeholder,
@@ -217,17 +289,45 @@ html.light textarea::placeholder {
   color: #94a3b8 !important;
 }
 
-/* Hover effects */
-html.light .hover\:bg-slate-800:hover,
-html.light .hover\:bg-slate-800\/60:hover,
-html.light .hover\:bg-slate-800\/80:hover,
-html.light .hover\:bg-slate-800\/30:hover,
-html.light .hover\:bg-slate-700:hover,
-html.light .hover\:bg-slate-700\/60:hover {
-  background-color: #e2e8f0 !important;
+/* GlideSelect Menu & Trigger trong Chế Độ Sáng */
+html.light [data-size] {
+  --gs-surface: #ffffff !important;
+  --gs-highlight: #f1f5f9 !important;
+  --gs-text: #0f172a !important;
+}
+html.light .group\/trigger {
+  border-color: #cbd5e1 !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+html.light .group\/trigger:hover {
+  background-color: #f8fafc !important;
+  border-color: #94a3b8 !important;
+}
+html.light [data-state="open"] {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05) !important;
+}
+html.light [role="option"] {
+  color: #0f172a !important;
+}
+html.light [role="option"]:hover {
+  background-color: #f1f5f9 !important;
 }
 
-/* Sơ đồ phòng 2D (Hotel Floor Plan) trong Light Mode */
+/* CustomDatePicker Dialog & Cells trong Chế Độ Sáng */
+html.light [title="Mở bảng chọn lịch"] {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #4338ca !important;
+}
+html.light [title="Mở bảng chọn lịch"]:hover {
+  background-color: #e0e7ff !important;
+  border-color: #818cf8 !important;
+}
+
+/* Sơ đồ phòng 2D */
 html.light .bg-emerald-950\/20 {
   background-color: #ecfdf5 !important;
   border-color: #a7f3d0 !important;

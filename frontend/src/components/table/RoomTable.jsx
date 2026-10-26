@@ -36,15 +36,15 @@ const ROOM_STATUS_CONFIG = {
 const ROOM_TYPE_CONFIG = {
     STANDARD: {
         label: 'STANDARD',
-        badge: 'bg-slate-800 text-slate-300 border-slate-700'
+        badge: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
     },
     VIP: {
         label: 'VIP',
-        badge: 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30'
+        badge: 'bg-indigo-50 dark:bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-500/30'
     },
     LUXURY: {
         label: 'LUXURY',
-        badge: 'bg-gradient-to-r from-amber-500/20 to-yellow-500/20 text-amber-300 border-amber-500/40'
+        badge: 'bg-amber-50 dark:bg-gradient-to-r dark:from-amber-500/20 dark:to-yellow-500/20 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-500/40'
     }
 };
 
@@ -91,7 +91,7 @@ export default function RoomTable({ rooms, selectedRoom, onSelectRoom, onEdit, o
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Tìm theo số phòng, hạng phòng..."
-                        className="w-full bg-slate-900 border border-slate-700/80 rounded-xl pl-10 pr-8 py-2.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-medium"
+                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-xl pl-10 pr-8 py-2.5 text-sm text-slate-900 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-medium shadow-sm"
                     />
                     {searchTerm && (
                         <button
@@ -130,7 +130,7 @@ export default function RoomTable({ rooms, selectedRoom, onSelectRoom, onEdit, o
             {/* Table */}
             <div className="overflow-x-auto w-full rounded-b-2xl">
                 <table className="w-full text-left text-base text-slate-200">
-                    <thead className="bg-slate-950/70 text-sm uppercase tracking-wider text-slate-300 border-b border-slate-800 font-bold">
+                    <thead className="bg-slate-50 dark:bg-slate-950/70 text-sm uppercase tracking-wider text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-800 font-bold">
                         <tr>
                             <th scope="col" className="px-5 py-4 w-32">Số phòng</th>
                             <th scope="col" className="px-5 py-4">Hạng phòng</th>
@@ -138,7 +138,7 @@ export default function RoomTable({ rooms, selectedRoom, onSelectRoom, onEdit, o
                             <th scope="col" className="px-5 py-4">Trạng thái</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-800/70">
+                    <tbody className="divide-y divide-slate-200 dark:divide-slate-800/70">
                         {filteredRooms && filteredRooms.length > 0 ? (
                             filteredRooms.map((room) => {
                                 const roomNum = room.roomNumber;
@@ -166,7 +166,7 @@ export default function RoomTable({ rooms, selectedRoom, onSelectRoom, onEdit, o
                                             <span className={`font-black text-base px-3 py-1.5 rounded-xl border inline-block shadow-sm ${
                                                 isSelected
                                                     ? 'bg-indigo-500 text-white border-indigo-400'
-                                                    : 'bg-slate-800 text-white border-slate-700'
+                                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border-slate-200 dark:border-slate-700'
                                             }`}>
                                                 {roomNum}
                                             </span>

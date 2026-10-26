@@ -80,8 +80,8 @@ export default function BookingTable({ bookings = [], loading = false, onReload 
                         <BookmarkIcon className="w-5 h-5" />
                     </div>
                     <div>
-                        <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Danh Sách Đơn Đặt Phòng</h2>
-                        <p className="text-sm text-slate-400">Tổng cộng {bookings.length} đơn đặt phòng trong hệ thống</p>
+                        <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Danh Sách Đơn Đặt Phòng</h2>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">Tổng cộng {bookings.length} đơn đặt phòng trong hệ thống</p>
                     </div>
                 </div>
 
@@ -160,7 +160,7 @@ export default function BookingTable({ bookings = [], loading = false, onReload 
                                 return (
                                     <tr key={b.id} className="hover:bg-slate-800/30 transition-colors">
                                         {/* Mã đơn */}
-                                        <td className="py-4 px-4 font-bold text-base text-indigo-400 whitespace-nowrap">
+                                        <td className="py-4 px-4 font-bold text-base text-indigo-600 dark:text-indigo-400 whitespace-nowrap">
                                             #{b.id}
                                         </td>
 

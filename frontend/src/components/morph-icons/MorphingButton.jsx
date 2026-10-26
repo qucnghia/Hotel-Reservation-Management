@@ -4,13 +4,7 @@ import { Menu, X } from "lucide";
 /**
  * Component MorphMenuButton:
  * Nút bấm chuyển đổi hoạt ảnh mượt mà giữa Icon Menu (3 gạch) và Icon X (Đóng).
- * Sử dụng thư viện morphicons và lucide.
- *
- * @param {boolean} open - Trạng thái mở (true = X, false = Menu)
- * @param {function} setOpen - Hàm cập nhật state (ví dụ: setOpen(o => !o))
- * @param {function} [onClick] - Callback bổ sung khi nhấn nút
- * @param {number} [size=20] - Kích thước icon (px)
- * @param {string} [className] - Class tùy biến Tailwind / CSS
+ * Hỗ trợ tối ưu cả chế độ sáng (Light Mode) và chế độ tối (Dark Mode).
  */
 export function MorphMenuButton({
     open = false,
@@ -38,13 +32,13 @@ export function MorphMenuButton({
             aria-label={label || (open ? "Đóng menu" : "Mở menu")}
             className={`p-2.5 rounded-xl border transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 ${
                 open
-                    ? "bg-blue-600/20 text-blue-300 border-blue-500/40 hover:bg-blue-600/30 shadow-lg shadow-blue-500/15"
-                    : "bg-slate-800/80 text-slate-300 border-slate-700/80 hover:bg-slate-700 hover:text-white"
+                    ? "bg-blue-50 dark:bg-blue-600/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-500/40 hover:bg-blue-100 dark:hover:bg-blue-600/30 shadow-md shadow-blue-500/10"
+                    : "bg-white dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700/80 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white shadow-sm"
             } ${className}`}
             {...props}
         >
             <MorphIcon icon={open ? X : Menu} size={size} />
-            {label && <span className="text-xs font-semibold">{label}</span>}
+            {label && <span className="text-xs font-bold">{label}</span>}
         </button>
     );
 }

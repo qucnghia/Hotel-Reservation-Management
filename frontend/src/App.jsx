@@ -300,13 +300,13 @@ function App() {
                         />
 
                         {/* Thẻ hiển thị phân hệ đang quản lý */}
-                        <div className="flex items-center gap-2.5 px-4.5 py-2.5 rounded-xl bg-slate-950/70 border border-slate-800 text-slate-300 text-base">
-                            <span className="text-xs uppercase tracking-wider text-slate-400 font-bold">Đang quản lý:</span>
-                            <span className="font-extrabold text-white flex items-center gap-2 text-base">
-                                {activeTab === 'guests' && <><UsersIcon className="w-5 h-5 text-blue-400" /> Quản lý Khách Hàng ({guests.length})</>}
-                                {activeTab === 'rooms' && <><BedIcon className="w-5 h-5 text-indigo-400" /> Quản lý Phòng ({rooms.length})</>}
-                                {activeTab === 'bookings' && <><BookmarkIcon className="w-5 h-5 text-purple-400" /> Quản lý Đặt Phòng ({bookings.length})</>}
-                                {activeTab === 'revenue' && <><TrendingUpIcon className="w-5 h-5 text-emerald-400" /> Quản lý Doanh Thu & Tài Chính</>}
+                        <div className="flex items-center gap-2.5 px-4.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-base shadow-sm">
+                            <span className="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">Đang quản lý:</span>
+                            <span className="font-extrabold text-slate-900 dark:text-white flex items-center gap-2 text-base">
+                                {activeTab === 'guests' && <><UsersIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" /> Quản lý Khách Hàng ({guests.length})</>}
+                                {activeTab === 'rooms' && <><BedIcon className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Quản lý Phòng ({rooms.length})</>}
+                                {activeTab === 'bookings' && <><BookmarkIcon className="w-5 h-5 text-purple-600 dark:text-purple-400" /> Quản lý Đặt Phòng ({bookings.length})</>}
+                                {activeTab === 'revenue' && <><TrendingUpIcon className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> Quản lý Doanh Thu & Tài Chính</>}
                             </span>
                         </div>
                     </div>
@@ -341,7 +341,7 @@ function App() {
                                         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                                         Menu Quản Lý
                                     </span>
-                                    <span className="text-[11px] font-bold text-slate-500 bg-slate-950/80 px-2 py-0.5 rounded-md border border-slate-800">
+                                    <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-950/80 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-800">
                                         4 mục
                                     </span>
                                 </div>
@@ -358,19 +358,19 @@ function App() {
                                         className={`w-full px-3.5 py-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 group whitespace-nowrap ${
                                             activeTab === 'guests'
                                                 ? 'bg-gradient-to-r from-blue-700 via-indigo-600 to-blue-600 text-white border-blue-400/40 shadow-lg shadow-blue-600/25 ring-1 ring-blue-400/30'
-                                                : 'bg-slate-950/60 hover:bg-slate-800/80 text-slate-300 border-slate-800/80 hover:border-slate-700'
+                                                : 'bg-white dark:bg-slate-950/60 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm'
                                         }`}
                                     >
                                         <div className="flex items-center gap-2.5 min-w-0">
                                             <div className={`p-2 rounded-lg flex-shrink-0 ${
-                                                activeTab === 'guests' ? 'bg-white/20 text-white' : 'bg-blue-500/10 text-blue-400'
+                                                activeTab === 'guests' ? 'bg-white/20 text-white' : 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400'
                                             }`}>
                                                 <UsersIcon className="w-4.5 h-4.5" />
                                             </div>
                                             <span className="font-bold text-sm truncate">Quản lý Khách Hàng</span>
                                         </div>
                                         <span className={`px-2 py-0.5 rounded-full text-xs font-bold flex-shrink-0 whitespace-nowrap ${
-                                            activeTab === 'guests' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-300 border border-slate-700'
+                                            activeTab === 'guests' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
                                         }`}>
                                             {guests.length} khách
                                         </span>
@@ -386,19 +386,19 @@ function App() {
                                         className={`w-full px-3.5 py-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 group whitespace-nowrap ${
                                             activeTab === 'rooms'
                                                 ? 'bg-gradient-to-r from-blue-700 via-indigo-600 to-blue-600 text-white border-blue-400/40 shadow-lg shadow-blue-600/25 ring-1 ring-blue-400/30'
-                                                : 'bg-slate-950/60 hover:bg-slate-800/80 text-slate-300 border-slate-800/80 hover:border-slate-700'
+                                                : 'bg-white dark:bg-slate-950/60 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm'
                                         }`}
                                     >
                                         <div className="flex items-center gap-2.5 min-w-0">
                                             <div className={`p-2 rounded-lg flex-shrink-0 ${
-                                                activeTab === 'rooms' ? 'bg-white/20 text-white' : 'bg-indigo-500/10 text-indigo-400'
+                                                activeTab === 'rooms' ? 'bg-white/20 text-white' : 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
                                             }`}>
                                                 <BedIcon className="w-4.5 h-4.5" />
                                             </div>
                                             <span className="font-bold text-sm truncate">Quản lý Phòng</span>
                                         </div>
                                         <span className={`px-2 py-0.5 rounded-full text-xs font-bold flex-shrink-0 whitespace-nowrap ${
-                                            activeTab === 'rooms' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-300 border border-slate-700'
+                                            activeTab === 'rooms' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
                                         }`}>
                                             {rooms.length} phòng
                                         </span>
@@ -411,19 +411,19 @@ function App() {
                                         className={`w-full px-3.5 py-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 group whitespace-nowrap ${
                                             activeTab === 'bookings'
                                                 ? 'bg-gradient-to-r from-indigo-700 via-purple-600 to-indigo-600 text-white border-indigo-400/40 shadow-lg shadow-indigo-600/25 ring-1 ring-indigo-400/30'
-                                                : 'bg-slate-950/60 hover:bg-slate-800/80 text-slate-300 border-slate-800/80 hover:border-slate-700'
+                                                : 'bg-white dark:bg-slate-950/60 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm'
                                         }`}
                                     >
                                         <div className="flex items-center gap-2.5 min-w-0">
                                             <div className={`p-2 rounded-lg flex-shrink-0 ${
-                                                activeTab === 'bookings' ? 'bg-white/20 text-white' : 'bg-purple-500/10 text-purple-400'
+                                                activeTab === 'bookings' ? 'bg-white/20 text-white' : 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400'
                                             }`}>
                                                 <BookmarkIcon className="w-4.5 h-4.5" />
                                             </div>
                                             <span className="font-bold text-sm truncate">Quản lý Đặt Phòng</span>
                                         </div>
                                         <span className={`px-2 py-0.5 rounded-full text-xs font-bold flex-shrink-0 whitespace-nowrap ${
-                                            activeTab === 'bookings' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-300 border border-slate-700'
+                                            activeTab === 'bookings' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
                                         }`}>
                                             {bookings.length} đơn
                                         </span>
@@ -435,22 +435,22 @@ function App() {
                                         onClick={() => setActiveTab('revenue')}
                                         className={`w-full px-3.5 py-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 group whitespace-nowrap ${
                                             activeTab === 'revenue'
-                                                ? 'bg-gradient-to-r from-emerald-700 via-teal-600 to-cyan-600 text-white border-emerald-400/40 shadow-lg shadow-emerald-600/25 ring-1 ring-emerald-400/30'
-                                                : 'bg-slate-950/60 hover:bg-slate-800/80 text-slate-300 border-slate-800/80 hover:border-slate-700'
+                                                ? 'bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 text-white border-emerald-400/40 shadow-lg shadow-emerald-600/25 ring-1 ring-emerald-400/30'
+                                                : 'bg-white dark:bg-slate-950/60 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm'
                                         }`}
                                     >
                                         <div className="flex items-center gap-2.5 min-w-0">
                                             <div className={`p-2 rounded-lg flex-shrink-0 ${
-                                                activeTab === 'revenue' ? 'bg-white/20 text-white' : 'bg-emerald-500/10 text-emerald-400'
+                                                activeTab === 'revenue' ? 'bg-white/20 text-white' : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
                                             }`}>
                                                 <TrendingUpIcon className="w-4.5 h-4.5" />
                                             </div>
-                                            <span className="font-bold text-sm truncate">Quản lý Doanh Thu</span>
+                                            <span className="font-bold text-sm truncate">Báo Cáo Doanh Thu</span>
                                         </div>
                                         <span className={`px-2 py-0.5 rounded-full text-xs font-bold flex-shrink-0 whitespace-nowrap ${
-                                            activeTab === 'revenue' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-300 border border-slate-700'
+                                            activeTab === 'revenue' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
                                         }`}>
-                                            {totalRevenueRealized > 0 ? `${(totalRevenueRealized / 1000000).toFixed(1)}M đ` : 'Tài chính'}
+                                            Tài chính
                                         </span>
                                     </button>
                                 </nav>
@@ -494,7 +494,7 @@ function App() {
                                             }
                                         }}
                                         title="Xem lịch sử đặt phòng"
-                                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-500/15 hover:bg-blue-500/25 active:bg-blue-500/35 text-blue-300 border border-blue-500/30 text-sm sm:text-base font-bold shadow-lg transition-all cursor-pointer"
+                                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-50 dark:bg-blue-500/15 hover:bg-blue-100 dark:hover:bg-blue-500/25 active:bg-blue-200 dark:active:bg-blue-500/35 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-500/30 text-sm sm:text-base font-bold shadow-sm dark:shadow-lg transition-all cursor-pointer"
                                     >
                                         <HistoryIcon className="w-4 h-4" />
                                         <span>Lịch Sử</span>
