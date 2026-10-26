@@ -12,8 +12,6 @@ import {
     CustomerBookingHistoryModal,
     HotelFloorPlan2D,
     RevenueManagement,
-    HotelElectricLogo,
-    ParticleText,
     MorphMenuButton,
     UsersIcon,
     BedIcon,
@@ -260,55 +258,26 @@ function App() {
                     {/* Background subtle glow */}
                     <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
 
-                    {/* HÀNG 1: LOGO VÀ TIÊU ĐỀ TO TRÀN ĐẦY 1 DÒNG */}
-                    <div className="relative z-10 flex flex-col md:flex-row items-center justify-center md:justify-start gap-4 sm:gap-8 w-full py-2">
-                        {/* === [BẮT ĐẦU: HIỆU ỨNG ELECTRIC LOGO (REACT BITS)] ===
-                            Thư mục chứa hiệu ứng: src/components/electric-logo/
-                            Khi không cần dùng nữa: chỉ việc xóa component này và thư mục trên! */}
-                        <HotelElectricLogo
-                            src="/hotel-building-logo.png"
-                            size="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72"
-                            glowColor="#1173fb"
-                            scale={1}
-                            intensity={0.5}
-                            glow={0.8}
-                            fill={0}
-                            thickness={0.5}
-                            strands={6}
-                            bend={0}
-                            crackle={0}
-                            arcs={0.4}
-                            flicker={0.6}
-                            speed={0}
-                            interactive={true}
-                            cursorIntensity={2}
-                            cursorRadius={180}
-                        />
-                        {/* === [KẾT THÚC: HIỆU ỨNG ELECTRIC LOGO] === */}
-
-                        {/* === [BẮT ĐẦU: HIỆU ỨNG PARTICLE TEXT (REACT BITS)] ===
-                            Thư mục chứa hiệu ứng: src/components/particle-text/
-                            Khi không cần dùng nữa: chỉ việc xóa component này và thư mục trên! */}
-                        <div className="flex-1 w-full min-w-0 h-36 sm:h-48 md:h-56 lg:h-64 flex items-center justify-center">
-                            <ParticleText
-                                text="HOTEL MANAGEMENT"
-                                fontSize="clamp(2.5rem, 5.5vw, 5rem)"
-                                fontWeight={900}
-                                fontFamily="'Playfair Display SC', Georgia, serif"
-                                color="#ffffff"
-                                highlightColor="#f59e0b" // hoặc #eab308, #d97706
-                                particleSize={3.2}
-                                density={2}
-                                scatter={110}
-                                gatherDuration={1300}
-                                pointerRepel={50}
-                                repelRadius={120}
-                                idleDrift={0.15}
-                                glow={true}
-                                className="w-full h-full"
+                    {/* HÀNG 1: LOGO VÀ TIÊU ĐỀ */}
+                    <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-5 sm:gap-6 w-full py-2">
+                        {/* Logo Khách Sạn */}
+                        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white/5 border border-slate-700/60 p-2 flex items-center justify-center flex-shrink-0 shadow-xl shadow-blue-900/10 backdrop-blur-sm">
+                            <img
+                                src="/hotel-building-logo.png"
+                                alt="Hotel Management Logo"
+                                className="w-full h-full object-contain"
                             />
                         </div>
-                        {/* === [KẾT THÚC: HIỆU ỨNG PARTICLE TEXT] === */}
+
+                        {/* Tiêu đề Khách Sạn */}
+                        <div className="text-center sm:text-left">
+                            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-wide text-white uppercase font-luxury">
+                                Hotel Management
+                            </h1>
+                            <p className="text-xs sm:text-sm text-slate-400 mt-1 font-medium tracking-wider">
+                                Hệ thống quản trị và điều hành khách sạn
+                            </p>
+                        </div>
                     </div>
 
                     {/* Thanh điều khiển Danh mục & Nút MorphMenuButton */}

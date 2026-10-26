@@ -21,6 +21,3 @@ export { default as GlideSelect } from './glide-select/GlideSelect.jsx';
 export { MorphMenuButton, MorphIconButton, MorphIcon } from './morph-icons/MorphingButton.jsx';
 export * from './icons/Icons.jsx';
 
-// === HIỆU ỨNG ĐỒ HỌA ===
-export { default as HotelElectricLogo } from './electric-logo/HotelElectricLogo.jsx';
-export { default as ParticleText } from './particle-text/ParticleText.jsx';
