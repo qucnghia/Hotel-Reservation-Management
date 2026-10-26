@@ -1206,35 +1206,38 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
 
             {/* === HÀNG 5: SỔ GIAO DỊCH DOANH THU CHI TIẾT (FINANCIAL LEDGER) === */}
             <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-5 relative z-20">
-                <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-slate-800 pb-5 relative z-30">
-                    <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-2xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400">
-                            <CreditCardIcon className="w-6 h-6" />
-                        </div>
-                        <div>
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                <span>Sổ Nhật Ký Doanh Thu & Giao Dịch</span>
-                                <span className="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-slate-800 text-slate-300 border border-slate-700">
-                                    {filteredLedger.length} giao dịch
-                                </span>
-                            </h3>
-                            <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
-                                Chi tiết toàn bộ chứng từ thanh toán, trạng thái phòng và dòng tiền theo từng đơn đặt
-                            </p>
+                <div className="border-b border-slate-800 pb-5 relative z-30 space-y-4">
+                    {/* Tiêu đề & Thông tin sổ quỹ */}
+                    <div className="flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                            <div className="w-11 h-11 rounded-2xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400 shrink-0">
+                                <CreditCardIcon className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+                                    <span>Sổ Nhật Ký Doanh Thu & Giao Dịch</span>
+                                    <span className="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-slate-800 text-slate-300 border border-slate-700">
+                                        {filteredLedger.length} giao dịch
+                                    </span>
+                                </h3>
+                                <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+                                    Chi tiết toàn bộ chứng từ thanh toán, trạng thái phòng và dòng tiền theo từng đơn đặt
+                                </p>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Bộ lọc trong sổ nhật ký - Giữ nguyên chung 1 dòng duy nhất */}
-                    <div className="flex items-center gap-2 sm:gap-2.5 flex-nowrap overflow-x-auto no-scrollbar w-full xl:w-auto">
-                        {/* Ô tìm kiếm */}
-                        <div className="relative w-44 sm:w-52 md:w-60 lg:w-64 min-w-[140px] shrink">
+                    {/* Bộ lọc trong sổ nhật ký - 1 dòng duy nhất rộng rãi, không bị che khuất menu hoặc scrollbar */}
+                    <div className="flex items-center gap-3">
+                        {/* Ô tìm kiếm mở rộng đầy đủ chữ, không bị cắt cụt */}
+                        <div className="relative flex-1 min-w-[220px]">
                             <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
                             <input
                                 type="text"
                                 placeholder="Tìm mã đơn, phòng, tên khách..."
                                 value={ledgerSearch}
                                 onChange={(e) => setLedgerSearch(e.target.value)}
-                                className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-teal-500/60 transition-colors"
+                                className="w-full h-[42px] pl-10 pr-4 rounded-xl bg-slate-950/80 border border-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-teal-500/60 transition-colors shadow-sm"
                             />
                         </div>
 
