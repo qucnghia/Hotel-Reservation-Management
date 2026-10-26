@@ -12,6 +12,7 @@ import {
     CustomerBookingHistoryModal,
     HotelFloorPlan2D,
     RevenueManagement,
+    ThemeToggle,
     MorphMenuButton,
     UsersIcon,
     BedIcon,
@@ -258,25 +259,32 @@ function App() {
                     {/* Background subtle glow */}
                     <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
 
-                    {/* HÀNG 1: LOGO VÀ TIÊU ĐỀ */}
-                    <div className="relative z-10 flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-5 sm:gap-6 w-full py-2">
-                        {/* Logo Khách Sạn */}
-                        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white/5 border border-slate-700/60 p-2 flex items-center justify-center flex-shrink-0 shadow-xl shadow-blue-900/10 backdrop-blur-sm">
-                            <img
-                                src="/hotel-building-logo.png"
-                                alt="Hotel Management Logo"
-                                className="w-full h-full object-contain"
-                            />
+                    {/* HÀNG 1: LOGO VÀ TIÊU ĐỀ & CHUYỂN ĐỔI GIAO DIỆN */}
+                    <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-5 sm:gap-6 w-full py-2">
+                        <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-6">
+                            {/* Logo Khách Sạn */}
+                            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white/5 border border-slate-700/60 p-2 flex items-center justify-center flex-shrink-0 shadow-xl shadow-blue-900/10 backdrop-blur-sm">
+                                <img
+                                    src="/hotel-building-logo.png"
+                                    alt="Hotel Management Logo"
+                                    className="w-full h-full object-contain"
+                                />
+                            </div>
+
+                            {/* Tiêu đề Khách Sạn */}
+                            <div className="text-center sm:text-left">
+                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-wide text-white uppercase font-luxury">
+                                    Hotel Management
+                                </h1>
+                                <p className="text-xs sm:text-sm text-slate-400 mt-1 font-medium tracking-wider">
+                                    Hệ thống quản trị và điều hành khách sạn
+                                </p>
+                            </div>
                         </div>
 
-                        {/* Tiêu đề Khách Sạn */}
-                        <div className="text-center sm:text-left">
-                            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-wide text-white uppercase font-luxury">
-                                Hotel Management
-                            </h1>
-                            <p className="text-xs sm:text-sm text-slate-400 mt-1 font-medium tracking-wider">
-                                Hệ thống quản trị và điều hành khách sạn
-                            </p>
+                        {/* Nút Chuyển Đổi Giao Diện Sáng / Tối */}
+                        <div className="flex items-center self-center sm:self-auto">
+                            <ThemeToggle />
                         </div>
                     </div>
 

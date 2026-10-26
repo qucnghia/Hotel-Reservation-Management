@@ -47,6 +47,237 @@
   }
 }
 
+/* ==========================================================================
+   CHẾ ĐỘ SÁNG (LUXURY LIGHT THEME)
+   ========================================================================== */
+html.light {
+  color-scheme: light;
+}
+
+html.light body {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+/* Background chính của ứng dụng */
+html.light .bg-\[\#080d1a\],
+html.light .bg-\[\#0b0f19\] {
+  background-color: #f8fafc !important;
+}
+
+/* Card, Header, Sidebar, Right Content Container */
+html.light header.bg-slate-900\/80,
+html.light aside .bg-slate-900\/80,
+html.light .bg-slate-900,
+html.light .bg-slate-900\/80,
+html.light .bg-slate-900\/90,
+html.light .bg-slate-900\/95,
+html.light .bg-slate-900\/50,
+html.light .bg-slate-900\/40 {
+  background-color: #ffffff !important;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.03) !important;
+}
+
+/* Các khung con, Card đếm số, Filter bar, Inset boxes */
+html.light .bg-slate-950,
+html.light .bg-slate-950\/40,
+html.light .bg-slate-950\/50,
+html.light .bg-slate-950\/60,
+html.light .bg-slate-950\/70,
+html.light .bg-slate-950\/80,
+html.light .bg-slate-950\/90 {
+  background-color: #f8fafc !important;
+}
+
+/* Đường viền bảng và các khối */
+html.light .border-slate-800,
+html.light .border-slate-800\/80,
+html.light .border-slate-800\/60,
+html.light .border-slate-700,
+html.light .border-slate-700\/60,
+html.light .border-slate-700\/80,
+html.light .border-slate-700\/50 {
+  border-color: #e2e8f0 !important;
+}
+
+/* Tiêu đề trong chế độ sáng */
+html.light h1:not([class*="bg-"]):not(button *),
+html.light h2:not([class*="bg-"]):not(button *),
+html.light h3:not([class*="bg-"]):not(button *),
+html.light h4:not([class*="bg-"]):not(button *),
+html.light h5:not([class*="bg-"]):not(button *),
+html.light h6:not([class*="bg-"]):not(button *) {
+  color: #0f172a !important;
+}
+
+/* Thứ bậc văn bản */
+html.light .text-slate-100 {
+  color: #0f172a !important;
+}
+
+html.light .text-slate-200,
+html.light .text-slate-300 {
+  color: #1e293b !important;
+}
+
+html.light .text-slate-400 {
+  color: #64748b !important;
+}
+
+html.light .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+/* Chữ trắng thông thường chuyển sang màu tối (loại trừ button & badge) */
+html.light header h1.text-white,
+html.light .bg-slate-900 h1.text-white,
+html.light .bg-slate-900 h2.text-white,
+html.light .bg-slate-900 h3.text-white,
+html.light p.text-white,
+html.light td.text-white,
+html.light th.text-white,
+html.light span.text-2xl.text-white,
+html.light span.text-3xl.text-white,
+html.light span.text-xl.text-white {
+  color: #0f172a !important;
+}
+
+/* Bảo toàn màu chữ trắng cho các nút / badge có nền màu đậm */
+html.light .bg-blue-600,
+html.light .bg-blue-600 *,
+html.light .bg-indigo-600,
+html.light .bg-indigo-600 *,
+html.light .bg-emerald-600,
+html.light .bg-emerald-600 *,
+html.light .bg-rose-600,
+html.light .bg-rose-600 *,
+html.light .bg-amber-600,
+html.light .bg-amber-600 *,
+html.light .bg-purple-600,
+html.light .bg-purple-600 *,
+html.light .bg-red-600,
+html.light .bg-red-600 *,
+html.light button.bg-blue-600 span,
+html.light button.bg-indigo-600 span,
+html.light button.bg-rose-600 span {
+  color: #ffffff !important;
+}
+
+/* Sidebar navigation buttons in light mode */
+html.light aside button.bg-slate-950\/60 {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+  color: #334155 !important;
+}
+html.light aside button.bg-slate-950\/60:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* Bảng dữ liệu trong Light Mode */
+html.light thead,
+html.light thead.bg-slate-950\/90,
+html.light thead.bg-slate-950\/80 {
+  background-color: #f8fafc !important;
+  border-bottom-color: #e2e8f0 !important;
+}
+
+html.light thead th {
+  color: #475569 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+html.light tbody tr {
+  border-bottom-color: #e2e8f0 !important;
+}
+
+html.light tbody tr:hover {
+  background-color: #f8fafc !important;
+}
+
+/* Form inputs, textareas, selects */
+html.light input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+html.light textarea,
+html.light select {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+html.light input:not([type="checkbox"]):not([type="radio"]):focus,
+html.light textarea:focus,
+html.light select:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15) !important;
+}
+
+html.light input::placeholder,
+html.light textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Hover effects */
+html.light .hover\:bg-slate-800:hover,
+html.light .hover\:bg-slate-800\/60:hover,
+html.light .hover\:bg-slate-800\/80:hover,
+html.light .hover\:bg-slate-800\/30:hover,
+html.light .hover\:bg-slate-700:hover,
+html.light .hover\:bg-slate-700\/60:hover {
+  background-color: #e2e8f0 !important;
+}
+
+/* Sơ đồ phòng 2D (Hotel Floor Plan) trong Light Mode */
+html.light .bg-emerald-950\/20 {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+}
+html.light .hover\:bg-emerald-900\/30:hover {
+  background-color: #d1fae5 !important;
+}
+html.light .bg-amber-950\/20 {
+  background-color: #fffbeb !important;
+  border-color: #fde68a !important;
+}
+html.light .hover\:bg-amber-900\/30:hover {
+  background-color: #fef3c7 !important;
+}
+html.light .bg-rose-950\/20 {
+  background-color: #fff1f2 !important;
+  border-color: #fecdd3 !important;
+}
+html.light .hover\:bg-rose-900\/30:hover {
+  background-color: #ffe4e6 !important;
+}
+html.light .bg-slate-950\/40 {
+  background-color: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* Modal Backdrop */
+html.light .bg-slate-950\/80 {
+  background-color: rgba(15, 23, 42, 0.45) !important;
+}
+
+/* Hộp Logo */
+html.light .bg-white\/5 {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Custom Scrollbar */
+html.light ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+html.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
 @media print {
   header, nav, button, .no-print {
     display: none !important;
