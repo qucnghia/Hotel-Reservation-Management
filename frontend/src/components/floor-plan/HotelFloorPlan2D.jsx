@@ -730,7 +730,7 @@ export default function HotelFloorPlan2D({
                             {/* Giá niêm yết */}
                             <div className="room-inspector-price-box p-4.5 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50/70 to-emerald-50/40 border border-emerald-200/90 dark:from-slate-950/80 dark:via-slate-950/70 dark:to-slate-950/80 dark:border-slate-800 flex items-center justify-between shadow-xs">
                                 <div>
-                                    <div className="text-xs font-extrabold uppercase tracking-wider text-emerald-800 dark:text-slate-400">Giá niêm yết mỗi đêm</div>
+                                    <div className="text-xs font-extrabold uppercase tracking-wider text-emerald-800 dark:text-slate-400">Giá phòng/đêm</div>
                                     <div className="text-2xl sm:text-3xl font-black text-emerald-700 dark:text-emerald-400 mt-0.5 tracking-tight font-mono">
                                         {formatCurrency(inspectedRoom.basePrice)}
                                     </div>
@@ -858,7 +858,7 @@ function Room2DPod({
                 e.stopPropagation();
                 if (onInspect) onInspect(room);
             }}
-            className={`room-2d-card group relative rounded-2xl p-4 transition-all duration-300 cursor-pointer select-none border-2 flex flex-col justify-between min-h-[175px] ${
+            className={`room-2d-card group relative rounded-2xl p-4 transition-all duration-300 cursor-pointer select-none border-2 flex flex-col justify-between min-h-[115px] sm:min-h-[120px] ${
                 isSelected
                     ? 'border-indigo-500 ring-2 ring-indigo-400/80 bg-indigo-50/70 dark:bg-indigo-950/40 shadow-xl scale-[1.02] z-20'
                     : isDimmed
@@ -897,32 +897,10 @@ function Room2DPod({
                 </span>
             </div>
 
-            {/* MẶT BẰNG NỘI THẤT 2D (STYLIZED 2D FURNITURE) */}
-            <div className="my-2.5 py-2 px-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/90 dark:border-slate-800/80 flex items-center justify-between gap-3 shadow-inner">
-                {/* Giường 2D */}
-                <div className="flex items-center gap-2.5 flex-1">
-                    <div className="w-10 h-9 rounded-lg bg-indigo-50/80 dark:bg-slate-800/90 border border-indigo-200/80 dark:border-slate-700/80 flex flex-col items-center justify-center relative shadow-xs">
-                        {/* Gối 2D */}
-                        <div className="w-7 h-1.5 bg-indigo-200 dark:bg-slate-600 rounded-sm mb-1" />
-                        <Bed className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                    </div>
-                    <div className="text-[11px] leading-tight">
-                        <div className="font-bold text-slate-900 dark:text-slate-100">{typeConfig.vietnameseName}</div>
-                        <div className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">{typeConfig.capacity}</div>
-                    </div>
-                </div>
-
-                {/* Tiện ích icon */}
-                <div className="flex flex-col items-end gap-1 text-slate-400 dark:text-slate-500">
-                    <Tv className="w-3.5 h-3.5" />
-                    <Bath className="w-3.5 h-3.5" />
-                </div>
-            </div>
-
             {/* PHẦN CHÂN PHÒNG: GIÁ TIỀN & THÔNG TIN KHÁCH (NẾU CÓ) */}
-            <div className="pt-2 border-t border-slate-200/90 dark:border-slate-800/80 flex items-center justify-between text-xs">
+            <div className="pt-2.5 border-t border-slate-200/90 dark:border-slate-800/80 flex items-center justify-between text-xs mt-3">
                 <div>
-                    <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider block leading-none">Giá niêm yết</span>
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider block leading-none">Giá phòng/đêm</span>
                     <span className="text-sm sm:text-base font-black text-emerald-700 dark:text-emerald-400 font-mono mt-0.5 inline-block">
                         {formatCurrency(room.basePrice)}
                     </span>
