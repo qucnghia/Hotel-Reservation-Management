@@ -116,10 +116,10 @@ export default function CustomerTable({ guests, selectedCustomer, onSelectCustom
                                             if (onEdit) onEdit(guest);
                                         }}
                                         title="Nhấn trực tiếp để chỉnh sửa thông tin hoặc xem lịch sử đặt phòng"
-                                        className={`transition-colors duration-150 cursor-pointer ${
+                                        className={`border-l-4 transition-all duration-150 cursor-pointer ${
                                             isSelected
-                                                ? 'bg-blue-600/25 border-l-4 border-l-blue-500 shadow-md'
-                                                : 'hover:bg-slate-800/70 hover:border-l-4 hover:border-l-blue-400/60'
+                                                ? 'bg-blue-500/15 dark:bg-blue-600/25 border-l-blue-500 shadow-sm'
+                                                : 'border-l-transparent hover:border-l-blue-500 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
                                         }`}
                                     >
                                         <td className="px-5 py-4 text-center">

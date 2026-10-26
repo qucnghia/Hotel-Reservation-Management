@@ -334,7 +334,7 @@ function App() {
                 <div className="w-full flex flex-col lg:flex-row items-start gap-6">
                     {/* CỘT TRÁI: THANH MENU ĐIỀU HÀNH (SIDEBAR NAVIGATION) */}
                     {menuOpen && (
-                        <aside className="w-full lg:w-72 xl:w-80 flex-shrink-0 flex flex-col gap-4 animate-fadeIn lg:sticky lg:top-6 z-20">
+                        <aside className="w-full lg:w-[320px] xl:w-[340px] flex-shrink-0 flex flex-col gap-4 animate-fadeIn lg:sticky lg:top-6 z-20">
                             <div className="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 sm:p-5 shadow-2xl backdrop-blur-xl flex flex-col gap-3 relative overflow-hidden">
                                 <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
                                     <span className="text-xs uppercase tracking-wider text-slate-400 font-extrabold flex items-center gap-2">
@@ -367,7 +367,7 @@ function App() {
                                             }`}>
                                                 <UsersIcon className="w-4.5 h-4.5" />
                                             </div>
-                                            <span className="font-bold text-sm truncate">Quản lý Khách Hàng</span>
+                                            <span className="font-bold text-sm whitespace-nowrap">Quản lý Khách Hàng</span>
                                         </div>
                                         <span className={`px-2 py-0.5 rounded-full text-xs font-bold flex-shrink-0 whitespace-nowrap ${
                                             activeTab === 'guests' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
@@ -395,7 +395,7 @@ function App() {
                                             }`}>
                                                 <BedIcon className="w-4.5 h-4.5" />
                                             </div>
-                                            <span className="font-bold text-sm truncate">Quản lý Phòng</span>
+                                            <span className="font-bold text-sm whitespace-nowrap">Quản lý Phòng</span>
                                         </div>
                                         <span className={`px-2 py-0.5 rounded-full text-xs font-bold flex-shrink-0 whitespace-nowrap ${
                                             activeTab === 'rooms' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
@@ -420,7 +420,7 @@ function App() {
                                             }`}>
                                                 <BookmarkIcon className="w-4.5 h-4.5" />
                                             </div>
-                                            <span className="font-bold text-sm truncate">Quản lý Đặt Phòng</span>
+                                            <span className="font-bold text-sm whitespace-nowrap">Quản lý Đặt Phòng</span>
                                         </div>
                                         <span className={`px-2 py-0.5 rounded-full text-xs font-bold flex-shrink-0 whitespace-nowrap ${
                                             activeTab === 'bookings' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
@@ -445,7 +445,7 @@ function App() {
                                             }`}>
                                                 <TrendingUpIcon className="w-4.5 h-4.5" />
                                             </div>
-                                            <span className="font-bold text-sm truncate">Báo Cáo Doanh Thu</span>
+                                            <span className="font-bold text-sm whitespace-nowrap">Báo Cáo Doanh Thu</span>
                                         </div>
                                         <span className={`px-2 py-0.5 rounded-full text-xs font-bold flex-shrink-0 whitespace-nowrap ${
                                             activeTab === 'revenue' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'

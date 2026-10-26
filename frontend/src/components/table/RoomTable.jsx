@@ -156,10 +156,10 @@ export default function RoomTable({ rooms, selectedRoom, onSelectRoom, onEdit, o
                                             if (onEdit) onEdit(room);
                                         }}
                                         title="Nhấn trực tiếp để chỉnh sửa thông tin phòng"
-                                        className={`transition-colors duration-150 cursor-pointer ${
+                                        className={`border-l-4 transition-all duration-150 cursor-pointer ${
                                             isSelected
-                                                ? 'bg-indigo-600/25 border-l-4 border-l-indigo-500 shadow-md'
-                                                : 'hover:bg-slate-800/70 hover:border-l-4 hover:border-l-indigo-400/60'
+                                                ? 'bg-indigo-500/15 dark:bg-indigo-600/25 border-l-indigo-500 shadow-sm'
+                                                : 'border-l-transparent hover:border-l-indigo-500 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
                                         }`}
                                     >
                                         <td className="px-5 py-4">

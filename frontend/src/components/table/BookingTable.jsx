@@ -158,7 +158,7 @@ export default function BookingTable({ bookings = [], loading = false, onReload 
                                 const isCycable = Boolean(nextStatus);
 
                                 return (
-                                    <tr key={b.id} className="hover:bg-slate-800/30 transition-colors">
+                                    <tr key={b.id} className="hover:bg-slate-100/80 dark:hover:bg-slate-800/30 transition-colors">
                                         {/* Mã đơn */}
                                         <td className="py-4 px-4 font-bold text-base text-indigo-600 dark:text-indigo-400 whitespace-nowrap">
                                             #{b.id}
