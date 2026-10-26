@@ -1206,7 +1206,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
 
             {/* === HÀNG 5: SỔ GIAO DỊCH DOANH THU CHI TIẾT (FINANCIAL LEDGER) === */}
             <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-5 relative z-20">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5 relative z-30">
+                <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-slate-800 pb-5 relative z-30">
                     <div className="flex items-center gap-3">
                         <div className="w-11 h-11 rounded-2xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400">
                             <CreditCardIcon className="w-6 h-6" />
@@ -1224,53 +1224,57 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                         </div>
                     </div>
 
-                    {/* Bộ lọc trong sổ nhật ký */}
-                    <div className="flex flex-wrap items-center gap-2.5">
+                    {/* Bộ lọc trong sổ nhật ký - Giữ nguyên chung 1 dòng duy nhất */}
+                    <div className="flex items-center gap-2 sm:gap-2.5 flex-nowrap overflow-x-auto no-scrollbar w-full xl:w-auto">
                         {/* Ô tìm kiếm */}
-                        <div className="relative min-w-[200px] flex-1 sm:flex-initial">
+                        <div className="relative w-44 sm:w-52 md:w-60 lg:w-64 min-w-[140px] shrink">
                             <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
                             <input
                                 type="text"
                                 placeholder="Tìm mã đơn, phòng, tên khách..."
                                 value={ledgerSearch}
                                 onChange={(e) => setLedgerSearch(e.target.value)}
-                                className="w-full pl-10 pr-3.5 py-2 rounded-xl bg-slate-950/80 border border-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-teal-500/60 transition-colors"
+                                className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-teal-500/60 transition-colors"
                             />
                         </div>
 
                         {/* GlideSelect Trạng Thái Thanh Toán */}
-                        <GlideSelect
-                            options={LEDGER_STATUS_OPTIONS}
-                            value={ledgerStatusFilter}
-                            onChange={(val) => setLedgerStatusFilter(val)}
-                            ariaLabel="Lọc theo trạng thái thanh toán"
-                            size="md"
-                            align="right"
-                            menuWidth={240}
-                            showTags={false}
-                            surfaceColor="#0f172a"
-                            highlightColor="#1e293b"
-                            accentColor="#14b8a6"
-                            textColor="#f8fafc"
-                            radius={14}
-                        />
+                        <div className="shrink-0">
+                            <GlideSelect
+                                options={LEDGER_STATUS_OPTIONS}
+                                value={ledgerStatusFilter}
+                                onChange={(val) => setLedgerStatusFilter(val)}
+                                ariaLabel="Lọc theo trạng thái thanh toán"
+                                size="md"
+                                align="right"
+                                menuWidth={240}
+                                showTags={false}
+                                surfaceColor="#0f172a"
+                                highlightColor="#1e293b"
+                                accentColor="#14b8a6"
+                                textColor="#f8fafc"
+                                radius={14}
+                            />
+                        </div>
 
                         {/* GlideSelect Hạng Phòng */}
-                        <GlideSelect
-                            options={LEDGER_ROOM_TYPE_OPTIONS}
-                            value={ledgerRoomTypeFilter}
-                            onChange={(val) => setLedgerRoomTypeFilter(val)}
-                            ariaLabel="Lọc theo hạng phòng"
-                            size="md"
-                            align="right"
-                            menuWidth={210}
-                            showTags={false}
-                            surfaceColor="#0f172a"
-                            highlightColor="#1e293b"
-                            accentColor="#14b8a6"
-                            textColor="#f8fafc"
-                            radius={14}
-                        />
+                        <div className="shrink-0">
+                            <GlideSelect
+                                options={LEDGER_ROOM_TYPE_OPTIONS}
+                                value={ledgerRoomTypeFilter}
+                                onChange={(val) => setLedgerRoomTypeFilter(val)}
+                                ariaLabel="Lọc theo hạng phòng"
+                                size="md"
+                                align="right"
+                                menuWidth={210}
+                                showTags={false}
+                                surfaceColor="#0f172a"
+                                highlightColor="#1e293b"
+                                accentColor="#14b8a6"
+                                textColor="#f8fafc"
+                                radius={14}
+                            />
+                        </div>
                     </div>
                 </div>
 
