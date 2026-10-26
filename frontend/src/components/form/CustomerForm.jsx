@@ -224,7 +224,6 @@ export default function CustomerForm({ editingCustomer, existingGuests = [], onS
                                 showPresets={true}
                                 presetsType="birthday"
                             />
-                            <span className="text-xs text-slate-400">Định dạng chuẩn: ngày/tháng/năm (vd: 22/01/2006)</span>
                         </div>
 
                         {/* Email */}
