@@ -20,13 +20,10 @@ import {
     RefreshIcon,
     ExclamationTriangleIcon,
     PlusIcon,
-    PencilIcon,
-    TrashIcon,
     HistoryIcon,
     MapIcon,
     TableIcon,
-    TrendingUpIcon,
-    BanknotesIcon
+    TrendingUpIcon
 } from './components';
 
 function App() {
@@ -40,13 +37,13 @@ function App() {
 
     // Customer state
     const [guests, setGuests] = useState([]);
-    const [selectedCustomer, setSelectedCustomer] = useState(null);
+    const [pickedCustomer, setSelectedCustomer] = useState(null);
     const [editingCustomer, setEditingCustomer] = useState(null);
     const [viewingHistoryCustomer, setViewingHistoryCustomer] = useState(null);
 
     // Room state
     const [rooms, setRooms] = useState([]);
-    const [selectedRoom, setSelectedRoom] = useState(null);
+    const [pickedRoom, setSelectedRoom] = useState(null);
     const [editingRoom, setEditingRoom] = useState(null);
 
     // Booking state
@@ -56,23 +53,9 @@ function App() {
     const [loading, setLoading] = useState(false);
     const [serverError, setServerError] = useState(null);
 
-    // Đồng bộ khách hàng đang chọn khi danh sách khách thay đổi (nếu có khách đang được chọn)
-    useEffect(() => {
-        if (selectedCustomer) {
-            const found = guests.find(g => g.id === selectedCustomer.id);
-            if (!found) setSelectedCustomer(null);
-            else setSelectedCustomer(found);
-        }
-    }, [guests]);
-
-    // Đồng bộ phòng đang chọn khi danh sách phòng thay đổi (nếu có phòng đang được chọn)
-    useEffect(() => {
-        if (selectedRoom) {
-            const found = rooms.find(r => r.roomNumber === selectedRoom.roomNumber);
-            if (!found) setSelectedRoom(null);
-            else setSelectedRoom(found);
-        }
-    }, [rooms]);
+    // Lấy bản mới nhất của khách/phòng đang chọn từ danh sách vừa tải (biến mất nếu đã bị xoá)
+    const selectedCustomer = pickedCustomer ? guests.find(g => g.id === pickedCustomer.id) ?? null : null;
+    const selectedRoom = pickedRoom ? rooms.find(r => r.roomNumber === pickedRoom.roomNumber) ?? null : null;
 
     // Xóa khách hàng
     const handleDeleteCustomer = async (id, name) => {
@@ -190,38 +173,15 @@ function App() {
         };
     }, []);
 
-    // 1. Tự động làm mới dữ liệu khi người dùng chuyển tab (không cần bấm nút)
-    useEffect(() => {
-        if (activeTab === 'guests') fetchGuests();
-        else if (activeTab === 'rooms') fetchRooms();
-        else if (activeTab === 'bookings') {
-            fetchBookings();
-            fetchRooms(true);
-            fetchGuests(true);
-        } else if (activeTab === 'revenue') {
-            fetchBookings(true);
-            fetchRooms(true);
-            fetchGuests(true);
-        }
-    }, [activeTab]);
+    // Làm mới ngầm toàn bộ dữ liệu khi người dùng chuyển tab
+    const switchTab = (tab) => {
+        setActiveTab(tab);
+        fetchGuests(true);
+        fetchRooms(true);
+        fetchBookings(true);
+    };
 
-    // 2. Tự động làm mới dữ liệu ngầm định kỳ (mỗi 5 giây) để cập nhật dữ liệu mới nhất
-    useEffect(() => {
-        const interval = setInterval(() => {
-            if (activeTab === 'guests') {
-                fetchGuests(true);
-            } else if (activeTab === 'rooms') {
-                fetchRooms(true);
-            } else if (activeTab === 'bookings' || activeTab === 'revenue') {
-                fetchBookings(true);
-                fetchRooms(true);
-                fetchGuests(true);
-            }
-        }, 5000);
-        return () => clearInterval(interval);
-    }, [activeTab]);
-
-    // 3. Tự động làm mới ngay khi người dùng quay lại cửa sổ ứng dụng
+    // Tự động làm mới ngay khi người dùng quay lại cửa sổ ứng dụng
     useEffect(() => {
         const handleFocus = () => {
             fetchGuests(true);
@@ -231,13 +191,6 @@ function App() {
         window.addEventListener('focus', handleFocus);
         return () => window.removeEventListener('focus', handleFocus);
     }, []);
-
-    // Thống kê nhanh
-    const availableRoomsCount = rooms.filter(r => r.roomStatus === 'AVAILABLE').length;
-    const activeBookingsCount = bookings.filter(b => b.bookingStatus === 'CONFIRMED' || b.bookingStatus === 'CHECKED_IN').length;
-    const totalRevenueRealized = bookings
-        .filter(b => b.bookingStatus === 'CHECKED_OUT' || b.bookingStatus === 'CHECKED_IN')
-        .reduce((sum, b) => sum + Number(b.totalPrice || 0), 0);
 
     const handleRefreshCurrentTab = () => {
         if (activeTab === 'guests') fetchGuests();
@@ -352,7 +305,7 @@ function App() {
                                     <button
                                         type="button"
                                         onClick={() => {
-                                            setActiveTab('guests');
+                                            switchTab('guests');
                                             setEditingCustomer(null);
                                         }}
                                         className={`w-full px-3.5 py-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 group whitespace-nowrap ${
@@ -380,7 +333,7 @@ function App() {
                                     <button
                                         type="button"
                                         onClick={() => {
-                                            setActiveTab('rooms');
+                                            switchTab('rooms');
                                             setEditingRoom(null);
                                         }}
                                         className={`w-full px-3.5 py-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 group whitespace-nowrap ${
@@ -407,7 +360,7 @@ function App() {
                                     {/* Mục 3: Đặt Phòng */}
                                     <button
                                         type="button"
-                                        onClick={() => setActiveTab('bookings')}
+                                        onClick={() => switchTab('bookings')}
                                         className={`w-full px-3.5 py-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 group whitespace-nowrap ${
                                             activeTab === 'bookings'
                                                 ? 'bg-gradient-to-r from-purple-600 via-fuchsia-600 to-purple-600 text-white border-purple-400/40 shadow-lg shadow-purple-600/25 ring-1 ring-purple-400/30'
@@ -432,7 +385,7 @@ function App() {
                                     {/* Mục 4: Doanh Thu */}
                                     <button
                                         type="button"
-                                        onClick={() => setActiveTab('revenue')}
+                                        onClick={() => switchTab('revenue')}
                                         className={`w-full px-3.5 py-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 group whitespace-nowrap ${
                                             activeTab === 'revenue'
                                                 ? 'bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 text-white border-emerald-400/40 shadow-lg shadow-emerald-600/25 ring-1 ring-emerald-400/30'
@@ -524,11 +477,6 @@ function App() {
                                         setSelectedCustomer(null);
                                         setShowCustomerForm(false);
                                         fetchGuests();
-                                    }}
-                                    onCancelEdit={() => {
-                                        setEditingCustomer(null);
-                                        setSelectedCustomer(null);
-                                        setShowCustomerForm(false);
                                     }}
                                     onClose={() => {
                                         setEditingCustomer(null);
@@ -643,11 +591,6 @@ function App() {
                                         setSelectedRoom(null);
                                         setShowRoomForm(false);
                                         fetchRooms();
-                                    }}
-                                    onCancelEdit={() => {
-                                        setEditingRoom(null);
-                                        setSelectedRoom(null);
-                                        setShowRoomForm(false);
                                     }}
                                     onClose={() => {
                                         setEditingRoom(null);

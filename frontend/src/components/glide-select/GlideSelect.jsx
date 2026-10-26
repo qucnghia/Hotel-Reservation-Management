@@ -1,4 +1,4 @@
-import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowDown01Icon, Tick02Icon } from '@hugeicons/core-free-icons';
 
@@ -143,7 +143,7 @@ export default function GlideSelect({
     setPhase('open');
   };
 
-  const close = mode => {
+  const close = useCallback(mode => {
     setActive(null);
     clearTimeout(closeTimer.current);
     const el = menuRef.current;
@@ -155,7 +155,7 @@ export default function GlideSelect({
     el.dataset.state = 'closed';
     setPhase('closing');
     closeTimer.current = setTimeout(() => setPhase('closed'), popOut + 20);
-  };
+  }, [popOut]);
 
   const pick = (i, viaKey) => {
     const it = items[i];
@@ -206,11 +206,13 @@ export default function GlideSelect({
     };
     document.addEventListener('pointerdown', onDown, true);
     return () => document.removeEventListener('pointerdown', onDown, true);
-  }, [phase]);
+  }, [phase, close]);
 
-  useEffect(() => {
-    if (disabled && phase !== 'closed') close('instant');
-  }, [disabled]);
+  // Bị vô hiệu hoá khi đang mở thì đóng ngay (điều chỉnh state trong lúc render, không cần effect)
+  if (disabled && phase !== 'closed') {
+    setActive(null);
+    setPhase('closed');
+  }
 
   useEffect(() => () => clearTimeout(closeTimer.current), []);
 
@@ -225,7 +227,9 @@ export default function GlideSelect({
     if (scrub.current) return;
     try {
       e.currentTarget.setPointerCapture(e.pointerId);
-    } catch {}
+    } catch {
+      // trình duyệt cũ không hỗ trợ pointer capture: bỏ qua
+    }
     scrub.current = { id: e.pointerId, top: e.currentTarget.getBoundingClientRect().top };
     instant.current = true;
     setActive(rowAt(e.clientY));

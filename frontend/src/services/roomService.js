@@ -33,14 +33,6 @@ export const updateRoom = (id, roomData) => {
 };
 
 // 4. DELETE: Xóa phòng theo ID (số phòng)
-export const deleteRoom = async (id) => {
-    try {
-        return await axios.delete(`${API_URL}/${id}`);
-    } catch (err) {
-        // Fallback dự phòng do khai báo @DeleteMapping("/id") trong RoomController
-        if (err.response && err.response.status === 404) {
-            return await axios.delete(`${API_URL}/id`, { params: { id } });
-        }
-        throw err;
-    }
+export const deleteRoom = (id) => {
+    return axios.delete(`${API_URL}/${id}`);
 };

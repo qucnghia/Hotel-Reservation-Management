@@ -25,7 +25,8 @@ public class Customer {
     @Column(unique = true, nullable = false)
     private String email;
 
-    private Long payedPrice = 0L;
+    @Column(name = "payed_price") // giữ tên cột cũ để không mất dữ liệu
+    private Long paidPrice = 0L;
 
     @Enumerated(EnumType.STRING)
     private CustomerMembership membership;
@@ -35,7 +36,7 @@ public class Customer {
     private List<Booking> bookings = new ArrayList<>();
 
     public Customer() {
-        this.payedPrice = 0L;
+        this.paidPrice = 0L;
         this.membership = CustomerMembership.CUSTOMER;
     }
 
@@ -43,7 +44,7 @@ public class Customer {
         this.fullName = fullName;
         this.dob = dob;
         this.email = email;
-        this.payedPrice = 0L;
+        this.paidPrice = 0L;
         this.membership = CustomerMembership.CUSTOMER;
     }
 
@@ -95,35 +96,35 @@ public class Customer {
         this.bookings = bookings;
     }
 
-    public Long getPayedPrice() {
-        return payedPrice != null ? payedPrice : 0L;
+    public Long getPaidPrice() {
+        return paidPrice != null ? paidPrice : 0L;
     }
 
-    public void setPayedPrice(Long payedPrice) {
-        this.payedPrice = payedPrice != null ? payedPrice : 0L;
+    public void setPaidPrice(Long paidPrice) {
+        this.paidPrice = paidPrice != null ? paidPrice : 0L;
         recalculateMembership();
     }
 
-    public void addPayedPrice(Long amount) {
+    public void addPaidPrice(Long amount) {
         if (amount == null || amount <= 0) return;
-        if (this.payedPrice == null) {
-            this.payedPrice = 0L;
+        if (this.paidPrice == null) {
+            this.paidPrice = 0L;
         }
-        this.payedPrice += amount;
+        this.paidPrice += amount;
         recalculateMembership();
     }
 
-    public void deductPayedPrice(Long amount) {
+    public void deductPaidPrice(Long amount) {
         if (amount == null || amount <= 0) return;
-        if (this.payedPrice == null) {
-            this.payedPrice = 0L;
+        if (this.paidPrice == null) {
+            this.paidPrice = 0L;
         }
-        this.payedPrice = Math.max(0L, this.payedPrice - amount);
+        this.paidPrice = Math.max(0L, this.paidPrice - amount);
         recalculateMembership();
     }
 
     public void recalculateMembership() {
-        long total = this.payedPrice != null ? this.payedPrice : 0L;
+        long total = this.paidPrice != null ? this.paidPrice : 0L;
         if (total >= 10000000L) {
             this.membership = CustomerMembership.VIP;
         } else if (total >= 5000000L) {

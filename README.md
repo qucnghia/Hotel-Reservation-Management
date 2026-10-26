@@ -143,10 +143,14 @@ HotelManagement/
    ```sql
    CREATE DATABASE IF NOT EXISTS hotels CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
    ```
-2. Cập nhật mật khẩu MySQL tại `backend/src/main/resources/application.properties`:
-   ```properties
-   spring.datasource.password=MẬT_KHẨU_MYSQL_CỦA_BẠN
+2. Đặt mật khẩu MySQL qua biến môi trường `DB_PASSWORD` (tuỳ chọn `DB_USERNAME`, mặc định `root`) trước khi chạy backend:
+   ```bash
+   # Windows PowerShell:
+   $env:DB_PASSWORD="MẬT_KHẨU_MYSQL_CỦA_BẠN"
+   # macOS / Linux:
+   export DB_PASSWORD="MẬT_KHẨU_MYSQL_CỦA_BẠN"
    ```
+   Khi chạy bằng IntelliJ, thêm `DB_PASSWORD` vào mục *Environment variables* của Run Configuration.
 
 ### 3. Chạy Backend (Port 8080)
 ```bash

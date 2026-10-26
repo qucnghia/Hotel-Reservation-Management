@@ -2,9 +2,6 @@ package in.app.hotelmanagement.dto.customerDTO;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import in.app.hotelmanagement.enums.CustomerMembership;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 
 import java.time.LocalDate;
 
@@ -16,20 +13,16 @@ public class CustomerResponse {
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dob;
 
-    @Column(unique = true, nullable = false)
     private String email;
-
-    @Enumerated(EnumType.STRING)
     private CustomerMembership membership;
+    private Long paidPrice;
 
-    private Long payedPrice;
-
-    public Long getPayedPrice() {
-        return payedPrice;
+    public Long getPaidPrice() {
+        return paidPrice;
     }
 
-    public void setPayedPrice(Long payedPrice) {
-        this.payedPrice = payedPrice;
+    public void setPaidPrice(Long paidPrice) {
+        this.paidPrice = paidPrice;
     }
 
     public Long getId() {

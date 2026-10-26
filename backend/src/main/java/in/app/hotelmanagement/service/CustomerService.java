@@ -5,19 +5,25 @@ import in.app.hotelmanagement.dto.customerDTO.CustomerResponse;
 import in.app.hotelmanagement.entity.Customer;
 import in.app.hotelmanagement.enums.CustomerMembership;
 import in.app.hotelmanagement.exception.DuplicateResourceException;
+import in.app.hotelmanagement.exception.InvalidBookingException;
 import in.app.hotelmanagement.exception.ResourceNotFoundException;
+import in.app.hotelmanagement.repository.BookingRepository;
 import in.app.hotelmanagement.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final BookingRepository bookingRepository;
 
-    public CustomerService(CustomerRepository customerRepository) {
+    public CustomerService(CustomerRepository customerRepository, BookingRepository bookingRepository) {
         this.customerRepository = customerRepository;
+        this.bookingRepository = bookingRepository;
     }
 
     public CustomerResponse createGuest(CustomerRequest guest) {
@@ -56,7 +62,6 @@ public class CustomerService {
         customerToUpdate.setFullName(customer.getFullName());
         customerToUpdate.setEmail(customer.getEmail());
         customerToUpdate.setDob(customer.getDob());
-        customerToUpdate.setMembership(customerToUpdate.getMembership());
         return mapToDTO(customerRepository.save(customerToUpdate));
     }
 
@@ -64,17 +69,20 @@ public class CustomerService {
         Customer customerToDelete = customerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer with id " + id + " not found"));
 
+        // Xoá khách sẽ xoá dây chuyền các đơn của họ, nên chặn khi còn đơn đang hiệu lực để phòng không bị kẹt trạng thái
+        if (bookingRepository.hasActiveBookingForCustomer(id)) {
+            throw new InvalidBookingException("Khách hàng \"" + customerToDelete.getFullName() + "\" đang lưu trú hoặc có đơn đã xác nhận, không thể xoá. Hãy trả phòng hoặc huỷ đơn trước.");
+        }
         customerRepository.delete(customerToDelete);
     }
 
     public Customer mapToEntity(CustomerRequest customerRequest) {
         Customer customer = new Customer();
-        customer.setId(customerRequest.getId());
         customer.setFullName(customerRequest.getFullName());
         customer.setEmail(customerRequest.getEmail());
         customer.setDob(customerRequest.getDob());
         customer.setMembership(CustomerMembership.CUSTOMER);
-        customer.setPayedPrice(0L);
+        customer.setPaidPrice(0L);
         return customer;
     }
 
@@ -85,7 +93,7 @@ public class CustomerService {
         customerResponse.setEmail(customer.getEmail());
         customerResponse.setDob(customer.getDob());
         customerResponse.setMembership(customer.getMembership() != null ? customer.getMembership() : CustomerMembership.CUSTOMER);
-        customerResponse.setPayedPrice(customer.getPayedPrice() != null ? customer.getPayedPrice() : 0L);
+        customerResponse.setPaidPrice(customer.getPaidPrice() != null ? customer.getPaidPrice() : 0L);
         return customerResponse;
     }
 }

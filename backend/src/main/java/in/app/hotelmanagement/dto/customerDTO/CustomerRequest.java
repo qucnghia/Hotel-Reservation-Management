@@ -1,27 +1,23 @@
 package in.app.hotelmanagement.dto.customerDTO;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.Column;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
 
 import java.time.LocalDate;
 
 public class CustomerRequest {
-    private Long id;
+    @NotBlank(message = "Vui lòng nhập họ tên khách hàng")
     private String fullName;
 
     @JsonFormat(pattern = "dd/MM/yyyy")
+    @Past(message = "Ngày sinh phải ở trong quá khứ")
     private LocalDate dob;
 
-    @Column(unique = true, nullable = false)
+    @NotBlank(message = "Vui lòng nhập email")
+    @Email(message = "Email không đúng định dạng")
     private String email;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getFullName() {
         return fullName;

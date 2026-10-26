@@ -69,17 +69,7 @@ public class Booking {
                     ? customer.getMembership()
                     : CustomerMembership.CUSTOMER;
 
-            if (mem == CustomerMembership.CUSTOMER) {
-                totalPrice = room.getBasePrice() * days;
-            } else if (mem == CustomerMembership.ECONOMY) {
-                totalPrice = room.getBasePrice() * days * 95 / 100;
-            } else if (mem == CustomerMembership.PLUS) {
-                totalPrice = room.getBasePrice() * days * 90 / 100;
-            } else if (mem == CustomerMembership.VIP) {
-                totalPrice = room.getBasePrice() * days * 85 / 100;
-            } else {
-                totalPrice = room.getBasePrice() * days;
-            }
+            totalPrice = mem.applyDiscount(room.getBasePrice() * days);
         }
     }
 

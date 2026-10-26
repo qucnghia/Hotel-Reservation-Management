@@ -75,10 +75,6 @@ public class BookingService {
             throw new InvalidBookingException("Phòng #" + room.getRoomNumber() + " hiện đang được bảo trì, không thể tiếp nhận đặt phòng!");
         }
 
-        if (room.getRoomStatus() == RoomStatus.OCCUPIED || room.getRoomStatus() == RoomStatus.BOOKED) {
-            throw new InvalidBookingException("Phòng #" + room.getRoomNumber() + " hiện không có sẵn (đang có khách hoặc đã có người đặt)!");
-        }
-
         // 1. Kiểm tra trùng lịch đặt phòng (Overlap Date Validation - hỗ trợ cả đặt trong ngày)
         LocalDate effectiveCheckOut = request.getCheckInDate().isEqual(request.getCheckOutDate())
                 ? request.getCheckInDate().plusDays(1)
@@ -104,7 +100,7 @@ public class BookingService {
 
         // 3. Tích lũy tiền chi tiêu và tự động nâng hạng hội viên
         if (saved.getTotalPrice() != null && saved.getTotalPrice() > 0) {
-            customer.addPayedPrice(saved.getTotalPrice());
+            customer.addPaidPrice(saved.getTotalPrice());
             customerRepository.save(customer);
         }
 
@@ -138,20 +134,18 @@ public class BookingService {
         if (oldStatus == newStatus) {
             return BookingResponse.fromEntity(booking);
         }
+        if (!oldStatus.canMoveTo(newStatus)) {
+            throw new InvalidBookingException("Không thể chuyển đơn #" + id + " từ " + oldStatus + " sang " + newStatus);
+        }
 
         booking.setBookingStatus(newStatus);
         Room room = booking.getRoom();
         Customer customer = booking.getCustomer();
 
-        // 1. Cập nhật chi tiêu tích luỹ nếu huỷ đơn hoặc khôi phục đơn huỷ
-        if (customer != null && booking.getTotalPrice() != null) {
-            if (oldStatus != BookingStatus.CANCELLED && newStatus == BookingStatus.CANCELLED) {
-                customer.deductPayedPrice(booking.getTotalPrice());
-                customerRepository.save(customer);
-            } else if (oldStatus == BookingStatus.CANCELLED && newStatus != BookingStatus.CANCELLED) {
-                customer.addPayedPrice(booking.getTotalPrice());
-                customerRepository.save(customer);
-            }
+        // 1. Trừ chi tiêu tích luỹ khi huỷ đơn (đơn đã huỷ không thể khôi phục)
+        if (newStatus == BookingStatus.CANCELLED && customer != null && booking.getTotalPrice() != null) {
+            customer.deductPaidPrice(booking.getTotalPrice());
+            customerRepository.save(customer);
         }
 
         // 2. Cập nhật trạng thái phòng an toàn và chính xác
@@ -170,7 +164,7 @@ public class BookingService {
         // Hoàn lại tiền chi tiêu tích luỹ nếu đơn chưa bị huỷ trước đó
         if (booking.getBookingStatus() != BookingStatus.CANCELLED && booking.getCustomer() != null && booking.getTotalPrice() != null) {
             Customer customer = booking.getCustomer();
-            customer.deductPayedPrice(booking.getTotalPrice());
+            customer.deductPaidPrice(booking.getTotalPrice());
             customerRepository.save(customer);
         }
 

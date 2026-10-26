@@ -9,13 +9,11 @@ import {
     CalendarIcon as Calendar, 
     SearchIcon as Search, 
     XMarkIcon as X,
-    TvIcon as Tv,
     BathIcon as Bath,
     WifiIcon as Wifi,
     WindIcon as Wind,
     ShieldAlertIcon as ShieldAlert
 } from '../icons/Icons.jsx';
-import GlideSelect from '../glide-select/GlideSelect.jsx';
 
 // Cấu hình trạng thái phòng
 const ROOM_STATUS_CONFIG = {
@@ -72,41 +70,21 @@ const ROOM_TYPE_CONFIG = {
         vietnameseName: 'Tiêu Chuẩn',
         badge: 'room-badge-standard',
         accent: 'from-blue-500/20 to-indigo-500/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-500/30',
-        bedType: 'Giường Queen Size',
-        capacity: '2 Người Lớn',
-        area: '32 m²',
-        view: 'Hướng Vườn Sinh Thái'
     },
     VIP: {
         label: 'VIP',
         vietnameseName: 'Cao Cấp',
         badge: 'room-badge-vip',
         accent: 'from-indigo-500/20 to-purple-500/20 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-500/40',
-        bedType: 'Giường King Size Luxury',
-        capacity: '2 - 3 Người Lớn',
-        area: '48 m²',
-        view: 'Ban Công Hướng Biển'
     },
     LUXURY: {
         label: 'LUXURY',
         vietnameseName: 'Sang Trọng',
         badge: 'room-badge-luxury',
         accent: 'from-amber-500/20 to-yellow-500/20 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-500/40',
-        bedType: 'Giường Hoàng Gia Suite',
-        capacity: '4 Người Lớn',
-        area: '68 m²',
-        view: 'Panorama 360° Toàn Cảnh'
     }
 };
 
-// Tên đại diện cho các tầng kiến trúc
-const FLOOR_NAMES = {
-    1: 'Sảnh Đón Tiếp & Deluxe Wing',
-    2: 'Cánh Hoàng Gia & Executive VIP',
-    3: 'Tầng Thượng & Sky Penthouse',
-    4: 'Sky Villas & Lounge VIP',
-    5: 'Presidential Suites'
-};
 
 export default function HotelFloorPlan2D({
     rooms = [],
@@ -207,9 +185,7 @@ export default function HotelFloorPlan2D({
     };
 
     // Số lượng phòng khớp với bộ lọc
-    const matchingRoomsCount = useMemo(() => {
-        return rooms.filter(isRoomMatchingFilter).length;
-    }, [rooms, isFilterActive, statusFilter, typeFilter, searchTerm]);
+    const matchingRoomsCount = rooms.filter(isRoomMatchingFilter).length;
 
     const getStatusCount = (st) => {
         switch (st) {
@@ -593,8 +569,6 @@ export default function HotelFloorPlan2D({
                                                                 doorPosition="bottom" // Cửa mở xuống hành lang
                                                                 onSelect={() => handleRoomClick(room)}
                                                                 onInspect={() => setInspectedRoom(room)}
-                                                                onEdit={() => onEdit && onEdit(room)}
-                                                                onBook={() => onBookRoom && onBookRoom(room)}
                                                             />
                                                         );
                                                     })}
@@ -665,8 +639,6 @@ export default function HotelFloorPlan2D({
                                                                 doorPosition="top" // Cửa mở lên hành lang
                                                                 onSelect={() => handleRoomClick(room)}
                                                                 onInspect={() => setInspectedRoom(room)}
-                                                                onEdit={() => onEdit && onEdit(room)}
-                                                                onBook={() => onBookRoom && onBookRoom(room)}
                                                             />
                                                         );
                                                     })}
@@ -750,14 +722,14 @@ export default function HotelFloorPlan2D({
                                     <Bed className="w-4 h-4 text-indigo-400" />
                                     <div>
                                         <div className="text-slate-400 font-medium">Giường ngủ</div>
-                                        <div className="font-bold text-slate-800 dark:text-slate-200">{ROOM_TYPE_CONFIG[inspectedRoom.roomType]?.bedType}</div>
+                                        <div className="font-bold text-slate-800 dark:text-slate-200">{inspectedRoom.bedType}</div>
                                     </div>
                                 </div>
                                 <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center gap-2.5">
                                     <Wind className="w-4 h-4 text-blue-400" />
                                     <div>
                                         <div className="text-slate-400 font-medium">Diện tích phòng</div>
-                                        <div className="font-bold text-slate-800 dark:text-slate-200">{ROOM_TYPE_CONFIG[inspectedRoom.roomType]?.area}</div>
+                                        <div className="font-bold text-slate-800 dark:text-slate-200">{inspectedRoom.areaSquareMeters} m²</div>
                                     </div>
                                 </div>
                                 <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center gap-2.5">
@@ -839,9 +811,7 @@ function Room2DPod({
     activeBooking, 
     doorPosition = 'bottom',
     onSelect, 
-    onInspect, 
-    onEdit, 
-    onBook 
+    onInspect
 }) {
     const statusConfig = ROOM_STATUS_CONFIG[room.roomStatus] || ROOM_STATUS_CONFIG.AVAILABLE;
     const typeConfig = ROOM_TYPE_CONFIG[room.roomType] || ROOM_TYPE_CONFIG.STANDARD;

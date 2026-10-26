@@ -25,12 +25,6 @@ export default function BookingForm({ guests = [], rooms = [], bookings = [], in
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [onClose]);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
-        if (error) setError(null);
-    };
-
     // Chuyển đổi dd/MM/yyyy sang YYYY-MM-DD cho input type="date"
     const toISODate = (str) => {
         if (!str || !/^\d{2}\/\d{2}\/\d{4}$/.test(str)) return '';
@@ -170,27 +164,10 @@ export default function BookingForm({ guests = [], rooms = [], bookings = [], in
         }));
     }, [availableGuests]);
 
-    // 2. Lọc phòng: Phòng đã có người đặt (CONFIRMED), đang có khách (CHECKED_IN/OCCUPIED) hoặc đang bảo trì sẽ không có trong danh sách chọn
-    const occupiedOrBookedRoomNumbers = useMemo(() => {
-        const nums = new Set();
-        bookings.forEach((b) => {
-            const status = b.bookingStatus;
-            if (status === 'CONFIRMED' || status === 'CHECKED_IN') {
-                if (b.roomNumber != null) {
-                    nums.add(Number(b.roomNumber));
-                }
-            }
-        });
-        return nums;
-    }, [bookings]);
-
+    // 2. Lọc phòng: chỉ ẩn phòng đang bảo trì; trùng lịch theo ngày do backend kiểm tra
     const availableRooms = useMemo(() => {
-        return rooms.filter((r) => {
-            const isStatusAvailable = r.roomStatus === 'AVAILABLE';
-            const isNotBooked = !occupiedOrBookedRoomNumbers.has(Number(r.roomNumber));
-            return isStatusAvailable && isNotBooked;
-        });
-    }, [rooms, occupiedOrBookedRoomNumbers]);
+        return rooms.filter((r) => r.roomStatus !== 'UNDER_MAINTENANCE');
+    }, [rooms]);
 
     const roomOptions = useMemo(() => {
         return availableRooms.map((r) => ({
@@ -199,19 +176,6 @@ export default function BookingForm({ guests = [], rooms = [], bookings = [], in
             tag: `${Number(r.basePrice || 0).toLocaleString('vi-VN')} ₫`
         }));
     }, [availableRooms]);
-
-    // Tự động bỏ chọn nếu khách hàng hoặc phòng không còn khả dụng
-    useEffect(() => {
-        if (formData.customerId && activeCustomerIds.has(Number(formData.customerId))) {
-            setFormData(prev => ({ ...prev, customerId: '' }));
-        }
-    }, [activeCustomerIds, formData.customerId]);
-
-    useEffect(() => {
-        if (formData.roomNumber && occupiedOrBookedRoomNumbers.has(Number(formData.roomNumber))) {
-            setFormData(prev => ({ ...prev, roomNumber: '' }));
-        }
-    }, [occupiedOrBookedRoomNumbers, formData.roomNumber]);
 
     return (
         <div

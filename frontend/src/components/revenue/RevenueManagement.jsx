@@ -2,16 +2,13 @@ import { useState, useMemo } from 'react';
 import GlideSelect from '../glide-select/GlideSelect.jsx';
 import {
     TrendingUpIcon,
-    TrendingDownIcon,
     BanknotesIcon,
     CreditCardIcon,
     PieChartIcon,
     BuildingOfficeIcon,
     BedIcon,
-    UsersIcon,
     BookmarkIcon,
     StarIcon,
-    CalendarIcon,
     ArrowDownTrayIcon,
     PrinterIcon,
     SearchIcon,
@@ -331,6 +328,9 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
         });
     }, [filteredBookings, rooms, metrics.realizedRevenue]);
 
+    // Hạng phòng mang lại nhiều doanh thu nhất (dùng cho phần khuyến nghị)
+    const topRoomType = roomTypeStats.reduce((top, s) => (!top || s.revenue > top.revenue ? s : top), null);
+
     // 4. Biểu đồ dòng doanh thu theo trình tự thời gian (SVG Area & Line Chart)
     const chartData = useMemo(() => {
         // Lấy danh sách đơn hợp lệ (bỏ qua CANCELLED)
@@ -477,11 +477,8 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
         });
 
         // Tạo path trơn mượt cho đường cong
-        let linePath = '';
-        if (points.length === 1) {
-            linePath = `M ${points[0].x} ${points[0].y}`;
-        } else {
-            linePath = `M ${points[0].x} ${points[0].y}`;
+        let linePath = `M ${points[0].x} ${points[0].y}`;
+        if (points.length > 1) {
             for (let i = 0; i < points.length - 1; i++) {
                 const curr = points[i];
                 const next = points[i + 1];
@@ -492,12 +489,9 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
 
         // Tạo vùng gradient fill (Area path)
         const groundY = padding.top + innerHeight;
-        let areaPath = '';
-        if (points.length === 1) {
-            areaPath = '';
-        } else {
-            areaPath = linePath + ` L ${points[points.length - 1].x} ${groundY} L ${points[0].x} ${groundY} Z`;
-        }
+        const areaPath = points.length === 1
+            ? ''
+            : linePath + ` L ${points[points.length - 1].x} ${groundY} L ${points[0].x} ${groundY} Z`;
 
         return { points, linePath, areaPath, maxY, width, height, padding };
     }, [chartData, chartMetric]);
@@ -522,11 +516,10 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
         // Kết hợp dữ liệu khách từ danh sách guests và tổng chi tiêu thực tế
         return [...guests]
             .map(g => {
-                // Backend Customer entity trả về trường `payedPrice`
-                const backendPayed = Number(g.payedPrice ?? g.PayedPrice ?? g.payed ?? g.Payed ?? 0);
+                const backendPaid = Number(g.paidPrice ?? 0);
                 const fromBookings = spentFromBookings[g.id] ?? 0;
                 // Lấy giá trị lớn nhất giữa số liệu tích lũy và số liệu tổng các đơn đặt
-                const totalSpent = Math.max(backendPayed, fromBookings);
+                const totalSpent = Math.max(backendPaid, fromBookings);
 
                 return {
                     id: g.id,
@@ -607,7 +600,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                     </div>
 
                     {/* Bộ điều khiển khoảng thời gian GlideSelect & Nút xuất báo cáo */}
-                    <div className="flex items-center gap-2 sm:gap-2.5 flex-nowrap relative z-40 shrink-0">
+                    <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-2.5 relative z-40 shrink-0">
                         {/* GlideSelect Thời Gian */}
                         <GlideSelect
                             options={TIME_RANGE_OPTIONS}
@@ -1159,7 +1152,9 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                                     <span>Tối ưu giá phòng (ADR)</span>
                                 </div>
                                 <p className="text-xs text-slate-300 mt-1 leading-relaxed">
-                                    Hạng phòng VIP Suite chiếm tỷ trọng doanh thu cao với mức ADR đạt {metrics.adr > 0 ? metrics.adr.toLocaleString('vi-VN') : '1.200.000'} đ. Khuyến nghị duy trì gói dịch vụ cao cấp kèm bữa sáng.
+                                    {topRoomType && topRoomType.revenue > 0
+                                        ? `Hạng phòng ${topRoomType.name} đóng góp nhiều doanh thu nhất (${topRoomType.percentage}%) với ADR ${topRoomType.adr.toLocaleString('vi-VN')} đ. ADR toàn khách sạn: ${metrics.adr.toLocaleString('vi-VN')} đ.`
+                                        : 'Chưa có doanh thu thực nhận trong khoảng thời gian này.'}
                                 </p>
                             </div>
 

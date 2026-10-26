@@ -3,6 +3,7 @@ package in.app.hotelmanagement.controller;
 import in.app.hotelmanagement.dto.customerDTO.CustomerRequest;
 import in.app.hotelmanagement.dto.customerDTO.CustomerResponse;
 import in.app.hotelmanagement.service.CustomerService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<CustomerResponse> createGuest(@RequestBody CustomerRequest guest) {
+    public ResponseEntity<CustomerResponse> createGuest(@Valid @RequestBody CustomerRequest guest) {
         CustomerResponse customer = customerService.createGuest(guest);
         return ResponseEntity.status(HttpStatus.CREATED).body(customer);
     }
@@ -39,7 +40,7 @@ public class CustomerController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustomerResponse> updateCustomer(@PathVariable Long id, @RequestBody CustomerRequest customer) {
+    public ResponseEntity<CustomerResponse> updateCustomer(@PathVariable Long id, @Valid @RequestBody CustomerRequest customer) {
         CustomerResponse updatedCustomer = customerService.updateCustomer(id, customer);
         return ResponseEntity.ok(updatedCustomer);
     }

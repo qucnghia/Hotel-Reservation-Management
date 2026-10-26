@@ -104,7 +104,7 @@ export default function CustomerTable({ guests, selectedCustomer, onSelectCustom
                                 const guestEmail = guest.email || guest.Email || '---';
                                 const memKey = guest.membership || 'CUSTOMER';
                                 const memStyle = MEMBERSHIP_STYLES[memKey] || MEMBERSHIP_STYLES.CUSTOMER;
-                                const payed = Number(guest.payedPrice || 0);
+                                const paid = Number(guest.paidPrice || 0);
                                 const isSelected = selectedCustomer?.id === guestId;
 
                                 return (
@@ -142,7 +142,7 @@ export default function CustomerTable({ guests, selectedCustomer, onSelectCustom
                                         </td>
                                         <td className="px-5 py-4 font-bold text-emerald-400 text-base whitespace-nowrap">
                                             <span className="inline-flex items-baseline gap-1">
-                                                <span>{payed.toLocaleString('vi-VN')}</span>
+                                                <span>{paid.toLocaleString('vi-VN')}</span>
                                                 <span className="text-xs font-semibold text-emerald-500">đ</span>
                                             </span>
                                         </td>

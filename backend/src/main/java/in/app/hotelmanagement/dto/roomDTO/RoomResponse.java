@@ -1,21 +1,28 @@
 package in.app.hotelmanagement.dto.roomDTO;
 
+import in.app.hotelmanagement.entity.room.Room;
 import in.app.hotelmanagement.enums.RoomStatus;
 import in.app.hotelmanagement.enums.RoomType;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 
 public class RoomResponse {
 
     private Long roomNumber;
-
-    @Enumerated(EnumType.STRING)
     private RoomType roomType;
-
     private Long basePrice;
-
-    @Enumerated(EnumType.STRING)
     private RoomStatus roomStatus;
+    private String bedType;
+    private int areaSquareMeters;
+
+    public static RoomResponse fromEntity(Room room) {
+        RoomResponse res = new RoomResponse();
+        res.setRoomNumber(room.getRoomNumber());
+        res.setRoomType(room.getRoomType());
+        res.setBasePrice(room.getBasePrice());
+        res.setRoomStatus(room.getRoomStatus());
+        res.setBedType(room.getBedType());
+        res.setAreaSquareMeters(room.getAreaSquareMeters());
+        return res;
+    }
 
     public Long getRoomNumber() {
         return roomNumber;
@@ -47,5 +54,21 @@ public class RoomResponse {
 
     public void setRoomStatus(RoomStatus roomStatus) {
         this.roomStatus = roomStatus;
+    }
+
+    public String getBedType() {
+        return bedType;
+    }
+
+    public void setBedType(String bedType) {
+        this.bedType = bedType;
+    }
+
+    public int getAreaSquareMeters() {
+        return areaSquareMeters;
+    }
+
+    public void setAreaSquareMeters(int areaSquareMeters) {
+        this.areaSquareMeters = areaSquareMeters;
     }
 }

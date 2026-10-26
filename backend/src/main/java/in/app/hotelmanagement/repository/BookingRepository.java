@@ -8,11 +8,23 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByCustomer_IdOrderByIdDesc(Long customerId);
+
+    boolean existsByRoom_RoomNumber(Long roomNumber);
+
+    @Query("SELECT DISTINCT b.room.roomNumber FROM Booking b " +
+           "WHERE b.bookingStatus = in.app.hotelmanagement.enums.BookingStatus.CHECKED_IN")
+    Set<Long> findCheckedInRoomNumbers();
+
+    @Query("SELECT DISTINCT b.room.roomNumber FROM Booking b " +
+           "WHERE b.bookingStatus = in.app.hotelmanagement.enums.BookingStatus.CONFIRMED " +
+           "AND b.checkOutDate >= :today")
+    Set<Long> findActiveConfirmedRoomNumbers(@Param("today") LocalDate today);
 
     /**
      * Thuật toán kiểm tra trùng lịch đặt phòng (Overlap Check):

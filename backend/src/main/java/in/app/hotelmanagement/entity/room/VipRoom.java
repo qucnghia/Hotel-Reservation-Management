@@ -1,20 +1,24 @@
 package in.app.hotelmanagement.entity.room;
 
-import in.app.hotelmanagement.enums.RoomStatus;
 import in.app.hotelmanagement.enums.RoomType;
 import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.Entity;
 
-//@Entity
+@Entity
 @DiscriminatorValue("VIP")
-@PrimaryKeyJoinColumn(name = "roomNumber")
 public class VipRoom extends Room {
 
     public VipRoom() {
-        super();
+        super(RoomType.VIP);
     }
 
-    public VipRoom(Long roomNumber, RoomType roomType, Long basePrice, RoomStatus roomStatus) {
-        super(roomNumber, roomType, basePrice, roomStatus);
+    @Override
+    public String getBedType() {
+        return "Giường King Size Luxury";
+    }
+
+    @Override
+    public int getAreaSquareMeters() {
+        return 48;
     }
 }

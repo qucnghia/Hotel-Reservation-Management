@@ -1,20 +1,24 @@
 package in.app.hotelmanagement.entity.room;
 
-import in.app.hotelmanagement.enums.RoomStatus;
 import in.app.hotelmanagement.enums.RoomType;
 import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.Entity;
 
-//@Entity
+@Entity
 @DiscriminatorValue("STANDARD")
-@PrimaryKeyJoinColumn(name = "roomNumber")
 public class StandardRoom extends Room {
 
     public StandardRoom() {
-        super();
+        super(RoomType.STANDARD);
     }
 
-    public StandardRoom(Long roomNumber, RoomType roomType, Long basePrice, RoomStatus roomStatus) {
-        super(roomNumber, roomType, basePrice, roomStatus);
+    @Override
+    public String getBedType() {
+        return "Giường Queen Size";
+    }
+
+    @Override
+    public int getAreaSquareMeters() {
+        return 32;
     }
 }

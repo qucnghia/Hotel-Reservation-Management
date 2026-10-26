@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createRoom, updateRoom } from '../../services/roomService.js';
-import { PlusIcon, PencilIcon, ExclamationTriangleIcon, XMarkIcon, TrashIcon, BedIcon } from '../icons/Icons.jsx';
+import { PlusIcon, PencilIcon, ExclamationTriangleIcon, XMarkIcon, TrashIcon } from '../icons/Icons.jsx';
 import GlideSelect from '../glide-select/GlideSelect.jsx';
 
 const ROOM_TYPES = [
@@ -9,7 +9,7 @@ const ROOM_TYPES = [
     { value: 'LUXURY', label: 'LUXURY (Sang trọng)', tag: 'Sang trọng' }
 ];
 
-export default function RoomForm({ editingRoom, existingRooms = [], onSaved, onCancelEdit, onClose, onDelete }) {
+export default function RoomForm({ editingRoom, existingRooms = [], onSaved, onClose, onDelete }) {
     const [formData, setFormData] = useState({
         roomNumber: editingRoom?.roomNumber ?? '',
         roomType: editingRoom?.roomType || 'STANDARD',

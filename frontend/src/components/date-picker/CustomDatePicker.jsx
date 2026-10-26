@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { MorphIcon } from 'morphicons/react';
-import { Calendar, X, ChevronLeft, ChevronRight, Check, Clock } from 'lucide';
+import { Calendar, X, ChevronLeft, ChevronRight } from 'lucide';
 
 const VI_WEEKDAYS = [
     { label: 'T2', name: 'Thứ 2' },
@@ -20,7 +20,7 @@ const VI_MONTHS = [
 ];
 
 // Chuyển đổi chuỗi dd/MM/yyyy hoặc YYYY-MM-DD sang Date
-export const parseAnyDate = (val) => {
+const parseAnyDate = (val) => {
     if (!val || typeof val !== 'string') return null;
     const trimmed = val.trim();
     if (/^\d{2}\/\d{2}\/\d{4}$/.test(trimmed)) {
@@ -40,7 +40,7 @@ export const parseAnyDate = (val) => {
 };
 
 // Định dạng Date sang dd/MM/yyyy
-export const formatToDDMMYYYY = (date) => {
+const formatToDDMMYYYY = (date) => {
     if (!date || isNaN(date.getTime())) return '';
     const d = String(date.getDate()).padStart(2, '0');
     const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -49,7 +49,7 @@ export const formatToDDMMYYYY = (date) => {
 };
 
 // So sánh 2 ngày cùng 1 ngày
-export const isSameDay = (d1, d2) => {
+const isSameDay = (d1, d2) => {
     if (!d1 || !d2) return false;
     return d1.getFullYear() === d2.getFullYear() &&
            d1.getMonth() === d2.getMonth() &&
@@ -72,12 +72,7 @@ export default function CustomDatePicker({
     className = ''
 }) {
     const [isOpen, setIsOpen] = useState(false);
-    const [mounted, setMounted] = useState(false);
     const inputRef = useRef(null);
-
-    useEffect(() => {
-        setMounted(true);
-    }, []);
 
     // Ngày đang chọn (Date object)
     const selectedDate = useMemo(() => parseAnyDate(value), [value]);
@@ -91,14 +86,6 @@ export default function CustomDatePicker({
     const [viewYear, setViewYear] = useState(() => (selectedDate || minParsed || today).getFullYear());
     const [viewMonth, setViewMonth] = useState(() => (selectedDate || minParsed || today).getMonth());
     const [viewMode, setViewMode] = useState('days'); // 'days' | 'months' | 'years'
-
-    // Đồng bộ góc nhìn tháng/năm khi value thay đổi từ ngoài
-    useEffect(() => {
-        if (selectedDate) {
-            setViewYear(selectedDate.getFullYear());
-            setViewMonth(selectedDate.getMonth());
-        }
-    }, [selectedDate]);
 
     // Bấm Escape để đóng modal lịch
     useEffect(() => {
@@ -139,7 +126,7 @@ export default function CustomDatePicker({
     };
 
     // Kiểm tra ngày có bị disabled không
-    const isDateDisabled = (date) => {
+    const isDateDisabled = useCallback((date) => {
         if (!date) return false;
         if (minParsed) {
             const minCopy = new Date(minParsed.getFullYear(), minParsed.getMonth(), minParsed.getDate());
@@ -152,7 +139,7 @@ export default function CustomDatePicker({
             if (targetCopy > maxCopy) return true;
         }
         return false;
-    };
+    }, [minParsed, maxParsed]);
 
     // Lưới 42 ô ngày (6 tuần x 7 ngày, bắt đầu từ Thứ 2)
     const calendarGrid = useMemo(() => {
@@ -195,7 +182,7 @@ export default function CustomDatePicker({
             }
         }
         return grid;
-    }, [viewYear, viewMonth, minParsed, maxParsed]);
+    }, [viewYear, viewMonth, isDateDisabled]);
 
     // Chọn ngày
     const handleSelectDay = (cell) => {
@@ -217,11 +204,8 @@ export default function CustomDatePicker({
     };
 
     // Danh sách năm cho Chế độ chọn năm (lưới 12 năm kiểu decade view)
+    // Đặt lại về thập kỷ của năm đang xem mỗi khi mở chế độ chọn năm
     const [decadeStartYear, setDecadeStartYear] = useState(() => Math.floor(viewYear / 12) * 12);
-
-    useEffect(() => {
-        setDecadeStartYear(Math.floor(viewYear / 12) * 12);
-    }, [viewYear, isOpen]);
 
     const decadeYears = useMemo(() => {
         const years = [];
@@ -273,6 +257,11 @@ export default function CustomDatePicker({
                     type="button"
                     onClick={(e) => {
                         e.stopPropagation();
+                        // Mở lịch tại tháng của ngày đang chọn (nếu có)
+                        if (selectedDate) {
+                            setViewYear(selectedDate.getFullYear());
+                            setViewMonth(selectedDate.getMonth());
+                        }
                         setIsOpen(true);
                         setViewMode('days');
                     }}
@@ -295,7 +284,7 @@ export default function CustomDatePicker({
             </div>
 
             {/* BẢNG LỊCH HIỆN RA TRƯỚC (Centered Floating Dialog via createPortal) */}
-            {mounted && isOpen && createPortal(
+            {isOpen && createPortal(
                 <div
                     className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-md animate-fadeIn select-none"
                     onClick={() => {
@@ -363,7 +352,10 @@ export default function CustomDatePicker({
 
                             <button
                                 type="button"
-                                onClick={() => setViewMode(v => v === 'years' ? 'days' : 'years')}
+                                onClick={() => {
+                                    setDecadeStartYear(Math.floor(viewYear / 12) * 12);
+                                    setViewMode(v => v === 'years' ? 'days' : 'years');
+                                }}
                                 className={`px-3.5 py-1.5 rounded-xl font-extrabold text-base sm:text-lg tracking-tight transition-all cursor-pointer border flex items-center gap-1.5 shadow-sm active:scale-95 ${
                                     viewMode === 'years'
                                         ? 'bg-indigo-600 text-white border-indigo-400 shadow-indigo-600/30 ring-2 ring-indigo-400/50'

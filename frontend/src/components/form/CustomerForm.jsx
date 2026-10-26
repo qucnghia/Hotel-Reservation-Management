@@ -22,7 +22,7 @@ const MEMBERSHIP_STYLES = {
     }
 };
 
-export default function CustomerForm({ editingCustomer, existingGuests = [], onSaved, onCancelEdit, onClose, onDelete, onViewHistory }) {
+export default function CustomerForm({ editingCustomer, existingGuests = [], onSaved, onClose, onDelete, onViewHistory }) {
     const [formData, setFormData] = useState({
         fullName: editingCustomer?.fullName || editingCustomer?.FullName || '',
         dob: editingCustomer?.dob || editingCustomer?.DOB || '',
@@ -168,7 +168,7 @@ export default function CustomerForm({ editingCustomer, existingGuests = [], onS
                                 <div>
                                     <span className="text-xs text-slate-400 uppercase tracking-wider font-bold block">Chi tiêu tích lũy</span>
                                     <span className="text-lg font-black text-emerald-400 whitespace-nowrap inline-flex items-baseline gap-1">
-                                        <span>{Number(editingCustomer.payedPrice || 0).toLocaleString('vi-VN')}</span>
+                                        <span>{Number(editingCustomer.paidPrice || 0).toLocaleString('vi-VN')}</span>
                                         <span className="text-xs font-semibold text-emerald-500">đ</span>
                                     </span>
                                 </div>
