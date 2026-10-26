@@ -93,7 +93,7 @@ export default function BookingTable({ bookings = [], loading = false, onReload 
                             placeholder="Tìm tên khách, số phòng, #ID..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full bg-slate-950/70 border border-slate-800 rounded-2xl pl-10 pr-4 py-2.5 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+                            className="w-full bg-slate-950/70 border border-slate-800 rounded-2xl pl-10 pr-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
                         />
                         <SearchIcon className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     </div>
@@ -118,7 +118,7 @@ export default function BookingTable({ bookings = [], loading = false, onReload 
 
             {/* Bảng Dữ Liệu */}
             <div className="overflow-x-auto rounded-2xl border border-slate-800/80 min-h-[360px]">
-                <table className="w-full text-left border-collapse text-base">
+                <table className="w-full text-left border-collapse text-base text-slate-700 dark:text-slate-200">
                     <thead>
                         <tr className="bg-slate-950/70 border-b border-slate-800 text-slate-300 uppercase text-sm font-bold tracking-wider">
                             <th className="py-4 px-4">Mã Đơn</th>
@@ -166,19 +166,19 @@ export default function BookingTable({ bookings = [], loading = false, onReload 
 
                                         {/* Khách hàng */}
                                         <td className="py-4 px-4">
-                                            <div className="font-bold text-base text-white">{b.customerName || `Khách #${b.customerId}`}</div>
+                                            <div className="font-bold text-base text-slate-900 dark:text-white">{b.customerName || `Khách #${b.customerId}`}</div>
                                             <div className="text-sm text-slate-400">{b.customerEmail}</div>
                                         </td>
 
                                         {/* Phòng */}
                                         <td className="py-4 px-4">
-                                            <div className="font-bold text-base text-white">Phòng {b.roomNumber}</div>
-                                            <div className="text-sm text-slate-300">{b.roomType}</div>
+                                            <div className="font-bold text-base text-slate-900 dark:text-white">Phòng {b.roomNumber}</div>
+                                            <div className="text-sm text-slate-600 dark:text-slate-300">{b.roomType}</div>
                                         </td>
 
                                         {/* Thời gian ở */}
                                         <td className="py-4 px-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-slate-200">
+                                            <div className="text-sm font-medium text-slate-700 dark:text-slate-200">
                                                 {b.checkInDate} <span className="text-slate-500">→</span> {b.checkOutDate}
                                             </div>
                                             <div className="text-xs text-blue-400 font-bold mt-0.5">

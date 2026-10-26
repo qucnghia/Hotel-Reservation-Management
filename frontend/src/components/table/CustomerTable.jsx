@@ -84,7 +84,7 @@ export default function CustomerTable({ guests, selectedCustomer, onSelectCustom
 
             {/* Table */}
             <div className="overflow-x-auto w-full">
-                <table className="w-full text-left text-base text-slate-200">
+                <table className="w-full text-left text-base text-slate-700 dark:text-slate-200">
                     <thead className="bg-slate-50 dark:bg-slate-950/70 text-sm uppercase tracking-wider text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-800 font-bold">
                         <tr>
                             <th scope="col" className="px-5 py-4 w-20 text-center">ID</th>

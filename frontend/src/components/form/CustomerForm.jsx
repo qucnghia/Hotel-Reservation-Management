@@ -122,7 +122,7 @@ export default function CustomerForm({ editingCustomer, existingGuests = [], onS
                             </div>
                             <div>
                                 <div className="flex items-center gap-2.5 flex-wrap">
-                                    <h3 className="font-bold text-white text-xl leading-tight">
+                                    <h3 className="font-bold text-slate-900 dark:text-white text-xl leading-tight">
                                         {editingCustomer ? 'Chỉnh Sửa Khách Hàng' : 'Tạo Hồ Sơ Khách Hàng'}
                                     </h3>
                                     {editingCustomer && (
@@ -134,7 +134,7 @@ export default function CustomerForm({ editingCustomer, existingGuests = [], onS
                                 </div>
                                 <p className="text-sm text-slate-400 mt-1">
                                     {editingCustomer ? (
-                                        <span>Khách hàng <strong className="text-white">#{editingCustomer.id}</strong> • {editingCustomer.fullName || editingCustomer.FullName}</span>
+                                        <span>Khách hàng <strong className="text-slate-900 dark:text-white">#{editingCustomer.id}</strong> • {editingCustomer.fullName || editingCustomer.FullName}</span>
                                     ) : (
                                         'Điền thông tin bên dưới để tạo hồ sơ lưu trú'
                                     )}
@@ -187,7 +187,7 @@ export default function CustomerForm({ editingCustomer, existingGuests = [], onS
 
                         {/* Họ và tên */}
                         <div className="flex flex-col gap-2">
-                            <label htmlFor="customer-fullName" className="text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1">
+                            <label htmlFor="customer-fullName" className="text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider flex items-center gap-1">
                                 <span>Họ và tên</span>
                                 <span className="text-rose-400 font-bold">*</span>
                             </label>
@@ -199,7 +199,7 @@ export default function CustomerForm({ editingCustomer, existingGuests = [], onS
                                 onChange={handleChange}
                                 placeholder="VD: Nguyễn Văn A"
                                 required
-                                className="w-full bg-slate-950/70 border border-slate-700/80 rounded-xl px-4 py-3 text-base text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-medium"
+                                className="w-full bg-slate-950/70 border border-slate-700/80 rounded-xl px-4 py-3 text-base text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-medium"
                             />
                         </div>
 

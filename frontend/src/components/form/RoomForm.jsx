@@ -121,7 +121,7 @@ export default function RoomForm({ editingRoom, existingRooms = [], onSaved, onC
                                 {editingRoom ? <PencilIcon className="w-6 h-6" /> : <PlusIcon className="w-6 h-6" />}
                             </div>
                             <div>
-                                <h3 className="font-bold text-white text-xl leading-tight">
+                                <h3 className="font-bold text-slate-900 dark:text-white text-xl leading-tight">
                                     {editingRoom ? `Chỉnh Sửa Phòng #${editingRoom.roomNumber}` : 'Tạo Phòng Ở Mới'}
                                 </h3>
                                 <p className="text-sm text-slate-400 mt-1">
@@ -154,7 +154,7 @@ export default function RoomForm({ editingRoom, existingRooms = [], onSaved, onC
 
                         {/* Số phòng */}
                         <div className="flex flex-col gap-2">
-                            <label htmlFor="room-number" className="text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1">
+                            <label htmlFor="room-number" className="text-sm font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider flex items-center gap-1">
                                 <span>Số phòng (Room Number)</span>
                                 <span className="text-rose-400 font-bold">*</span>
                             </label>
@@ -167,7 +167,7 @@ export default function RoomForm({ editingRoom, existingRooms = [], onSaved, onC
                                 placeholder="VD: 101, 202..."
                                 required
                                 disabled={!!editingRoom}
-                                className={`w-full bg-slate-950/70 border border-slate-700/80 rounded-xl px-4 py-3 text-base text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all font-medium ${
+                                className={`w-full bg-slate-950/70 border border-slate-700/80 rounded-xl px-4 py-3 text-base text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all font-medium ${
                                     editingRoom ? 'opacity-60 cursor-not-allowed bg-slate-900' : ''
                                 }`}
                             />

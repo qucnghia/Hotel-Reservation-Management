@@ -603,7 +603,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-2">
                             <span>Executive Financial Suite</span>
                         </div>
-                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight flex items-center gap-3">
+                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-3">
                             <BanknotesIcon className="w-8 h-8 sm:w-9 sm:h-9 text-emerald-400" />
                             <span>Quản Lý Doanh Thu & Tài Chính</span>
                         </h2>
@@ -680,7 +680,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                         </div>
                     </div>
                     <div className="mt-4">
-                        <div className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-baseline gap-1">
+                        <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-baseline gap-1">
                             <span>{metrics.realizedRevenue.toLocaleString('vi-VN')}</span>
                             <span className="text-sm font-bold text-emerald-400">đ</span>
                         </div>
@@ -705,7 +705,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                         </div>
                     </div>
                     <div className="mt-4">
-                        <div className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-baseline gap-1">
+                        <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-baseline gap-1">
                             <span>{metrics.pendingRevenue.toLocaleString('vi-VN')}</span>
                             <span className="text-sm font-bold text-amber-400">đ</span>
                         </div>
@@ -725,7 +725,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                         </div>
                     </div>
                     <div className="mt-4">
-                        <div className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-baseline gap-1">
+                        <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-baseline gap-1">
                             <span>{metrics.adr.toLocaleString('vi-VN')}</span>
                             <span className="text-sm font-bold text-indigo-400">đ</span>
                         </div>
@@ -745,7 +745,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                         </div>
                     </div>
                     <div className="mt-4">
-                        <div className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-baseline gap-1">
+                        <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight flex items-baseline gap-1">
                             <span>{metrics.revPAR.toLocaleString('vi-VN')}</span>
                             <span className="text-sm font-bold text-purple-400">đ</span>
                         </div>
@@ -768,7 +768,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                                 <TrendingUpIcon className="w-5 h-5" />
                             </div>
                             <div>
-                                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                                     <span>Xu Hướng Doanh Thu Theo Dòng Thời Gian</span>
                                 </h3>
                                 <p className="text-xs text-slate-400 mt-0.5">Biểu đồ quỹ đạo tài chính và khối lượng đặt phòng</p>
@@ -972,7 +972,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                                         top: `${(hoveredPoint.y / svgChart.height) * 100}%`
                                     }}
                                 >
-                                    <div className="font-extrabold text-white pb-1 border-b border-slate-800">
+                                    <div className="font-extrabold text-slate-900 dark:text-white pb-1 border-b border-slate-200 dark:border-slate-800">
                                         Mốc: {hoveredPoint.fullDate || hoveredPoint.label}
                                     </div>
                                     <div className="mt-1.5 flex flex-col gap-1">
@@ -999,7 +999,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                                 <PieChartIcon className="w-5 h-5" />
                             </div>
                             <div>
-                                <h3 className="text-lg font-bold text-white">Cơ Cấu Hạng Phòng</h3>
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Cơ Cấu Hạng Phòng</h3>
                                 <p className="text-xs text-slate-400 mt-0.5">Tỷ trọng đóng góp vào tổng doanh thu</p>
                             </div>
                         </div>
@@ -1031,7 +1031,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                                                 className="w-2.5 h-2.5 rounded-full"
                                                 style={{ backgroundColor: stat.meta.color }}
                                             />
-                                            <span className="font-bold text-sm text-white">{stat.name}</span>
+                                            <span className="font-bold text-sm text-slate-900 dark:text-white">{stat.name}</span>
                                         </div>
                                         <span className={`px-2 py-0.5 rounded-full text-xs font-extrabold ${stat.meta.badge}`}>
                                             {stat.percentage}%
@@ -1046,7 +1046,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                                     </div>
 
                                     <div className="mt-1 flex items-center justify-between text-xs text-slate-400">
-                                        <span>Đã bán: <strong className="text-slate-200">{stat.count} lượt</strong> ({stat.nights} đêm)</span>
+                                        <span>Đã bán: <strong className="text-slate-900 dark:text-slate-200">{stat.count} lượt</strong> ({stat.nights} đêm)</span>
                                         <span>ADR: <strong className="text-slate-300">{stat.adr.toLocaleString('vi-VN')} đ</strong></span>
                                     </div>
                                 </div>
@@ -1066,7 +1066,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                                 <StarIcon className="w-5 h-5" />
                             </div>
                             <div>
-                                <h3 className="text-lg font-bold text-white">Top Khách Hàng VIP Đóng Góp Doanh Thu</h3>
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Top Khách Hàng VIP Đóng Góp Doanh Thu</h3>
                                 <p className="text-xs text-slate-400 mt-0.5">Những khách hàng có giá trị vòng đời (LTV) cao nhất khách sạn</p>
                             </div>
                         </div>
@@ -1115,7 +1115,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                                                     </span>
                                                 </td>
                                                 <td className="py-3.5 px-3">
-                                                    <div className="font-bold text-white">{g.name}</div>
+                                                    <div className="font-bold text-slate-900 dark:text-white">{g.name}</div>
                                                     <div className="text-xs text-slate-400">
                                                         {g.email}
                                                         {g.bookingCount > 0 && (
@@ -1152,7 +1152,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                                 <BuildingOfficeIcon className="w-5 h-5" />
                             </div>
                             <div>
-                                <h3 className="text-lg font-bold text-white">Chỉ Số & Khuyến Nghị Quản Trị</h3>
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Chỉ Số & Khuyến Nghị Quản Trị</h3>
                                 <p className="text-xs text-slate-400 mt-0.5">Tối ưu hóa doanh thu khách sạn (Revenue Optimization)</p>
                             </div>
                         </div>
@@ -1177,7 +1177,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                                 </div>
                                 <div className="flex items-center justify-between mt-1">
                                     <span className="text-xs text-slate-300">Tỷ lệ hủy đơn hiện tại:</span>
-                                    <span className="text-sm font-extrabold text-white">{metrics.cancellationRate}%</span>
+                                    <span className="text-sm font-extrabold text-slate-900 dark:text-white">{metrics.cancellationRate}%</span>
                                 </div>
                                 <div className="text-[11px] text-slate-400 mt-1">
                                     {metrics.cancellationRate < 10
@@ -1192,7 +1192,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                                     <BanknotesIcon className="w-3.5 h-3.5" />
                                     <span>Tổng Dòng Tiền Kỳ Vọng (Gross Pipeline)</span>
                                 </div>
-                                <div className="mt-1 text-lg font-black text-white">
+                                <div className="mt-1 text-lg font-black text-slate-900 dark:text-white">
                                     {metrics.totalGrossPipeline.toLocaleString('vi-VN')} <span className="text-xs text-emerald-400">đ</span>
                                 </div>
                                 <p className="text-[11px] text-slate-400 mt-0.5">
@@ -1212,7 +1212,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                             <CreditCardIcon className="w-6 h-6" />
                         </div>
                         <div>
-                            <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                            <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                                 <span>Sổ Nhật Ký Doanh Thu & Giao Dịch</span>
                                 <span className="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-slate-800 text-slate-300 border border-slate-700">
                                     {filteredLedger.length} giao dịch
@@ -1234,7 +1234,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                                 placeholder="Tìm mã đơn, phòng, tên khách..."
                                 value={ledgerSearch}
                                 onChange={(e) => setLedgerSearch(e.target.value)}
-                                className="w-full pl-10 pr-3.5 py-2 rounded-xl bg-slate-950/80 border border-slate-800 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-teal-500/60 transition-colors"
+                                className="w-full pl-10 pr-3.5 py-2 rounded-xl bg-slate-950/80 border border-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-teal-500/60 transition-colors"
                             />
                         </div>
 
@@ -1313,13 +1313,13 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
 
                                             {/* Khách hàng */}
                                             <td className="py-4 px-4">
-                                                <div className="font-bold text-white">{b.customerName || `Khách #${b.customerId}`}</div>
+                                                <div className="font-bold text-slate-900 dark:text-white">{b.customerName || `Khách #${b.customerId}`}</div>
                                                 <div className="text-xs text-slate-400">{b.customerEmail}</div>
                                             </td>
 
                                             {/* Phòng & Hạng phòng */}
                                             <td className="py-4 px-4">
-                                                <div className="font-bold text-white">Phòng {b.roomNumber}</div>
+                                                <div className="font-bold text-slate-900 dark:text-white">Phòng {b.roomNumber}</div>
                                                 <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-bold ${roomMeta.badge} mt-0.5`}>
                                                     {b.roomType}
                                                 </span>

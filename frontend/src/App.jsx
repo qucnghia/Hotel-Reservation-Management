@@ -273,7 +273,7 @@ function App() {
 
                             {/* Tiêu đề Khách Sạn */}
                             <div className="text-center sm:text-left flex flex-col justify-center">
-                                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-wider text-white uppercase font-luxury leading-tight">
+                                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-wider text-slate-900 dark:text-white uppercase font-luxury leading-tight">
                                     Hotel Management
                                 </h1>
                                 <p className="text-xs sm:text-sm md:text-base text-slate-400 mt-2 font-semibold tracking-widest uppercase">
@@ -464,7 +464,7 @@ function App() {
                     {activeTab === 'guests' && (
                         <div className="w-full flex flex-col gap-4">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1">
-                                <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2.5">
+                                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
                                     <UsersIcon className="w-6 h-6 text-blue-400" />
                                     <span>Danh Sách Khách Hàng</span>
                                 </h2>
@@ -549,7 +549,7 @@ function App() {
                     {activeTab === 'rooms' && (
                         <div className="w-full flex flex-col gap-4">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1">
-                                <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2.5">
+                                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
                                     <BedIcon className="w-6 h-6 text-indigo-400" />
                                     <span>Quản Lý Buồng Phòng</span>
                                 </h2>
@@ -664,7 +664,7 @@ function App() {
                     {activeTab === 'bookings' && (
                         <div className="w-full flex flex-col gap-4">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1">
-                                <h2 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2.5">
+                                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
                                     <BookmarkIcon className="w-6 h-6 text-purple-400" />
                                     <span>Quản Lý Đặt Phòng (Bookings)</span>
                                 </h2>

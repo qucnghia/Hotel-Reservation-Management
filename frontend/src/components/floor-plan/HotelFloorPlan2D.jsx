@@ -309,7 +309,7 @@ export default function HotelFloorPlan2D({
                                 <Layers className="w-5 h-5" />
                             </div>
                             <div>
-                                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                                <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
                                     Sơ đồ khách sạn 2D
                                 </h3>
                             </div>
@@ -416,7 +416,7 @@ export default function HotelFloorPlan2D({
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             placeholder="Tìm phòng theo số phòng (vd: 101, 202)..."
-                            className="w-full bg-slate-950/80 border border-slate-800 rounded-xl pl-10 pr-8 py-2 text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all font-medium"
+                            className="w-full bg-white dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-8 py-2 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all font-medium"
                         />
                         {searchTerm && (
                             <button
@@ -443,8 +443,8 @@ export default function HotelFloorPlan2D({
                                     onClick={() => setStatusFilter(statusFilter === st && st !== 'ALL' ? 'ALL' : st)}
                                     className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer border flex items-center gap-1.5 ${
                                         isSelected
-                                            ? 'bg-slate-800 text-white border-indigo-400 ring-1 ring-indigo-400 shadow-md'
-                                            : 'bg-slate-950/60 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-slate-200'
+                                            ? 'bg-indigo-600 text-white border-indigo-500 shadow-md ring-1 ring-indigo-400'
+                                            : 'bg-slate-100 dark:bg-slate-950/60 text-slate-700 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:text-slate-900 dark:hover:text-slate-200'
                                     }`}
                                 >
                                     {config?.dot && <span className={`w-2 h-2 rounded-full ${config.dot}`} />}
@@ -473,7 +473,7 @@ export default function HotelFloorPlan2D({
                             <span className={`w-2 h-2 rounded-full ${matchingRoomsCount > 0 ? 'bg-indigo-400 animate-pulse' : 'bg-amber-400'}`} />
                             <span>
                                 {matchingRoomsCount > 0 ? (
-                                    <>Đang làm nổi bật <strong className="text-white font-black">{matchingRoomsCount}/{rooms.length} phòng</strong> trên sơ đồ.</>
+                                    <>Đang làm nổi bật <strong className="text-slate-900 dark:text-white font-black">{matchingRoomsCount}/{rooms.length} phòng</strong> trên sơ đồ.</>
                                 ) : (
                                     <>Không có phòng nào phù hợp với bộ lọc hiện tại.</>
                                 )}
@@ -501,7 +501,7 @@ export default function HotelFloorPlan2D({
                         <div className="w-16 h-16 rounded-2xl bg-slate-800/80 border border-slate-700 mx-auto flex items-center justify-center text-slate-400 mb-4">
                             <Bed className="w-8 h-8" />
                         </div>
-                        <h4 className="text-lg font-bold text-white">Chưa có phòng nào được tạo trên hệ thống</h4>
+                        <h4 className="text-lg font-bold text-slate-900 dark:text-white">Chưa có phòng nào được tạo trên hệ thống</h4>
                         <p className="text-sm text-slate-400 max-w-md mx-auto mt-1">
                             Bấm nút bên dưới để tạo phòng đầu tiên cho khách sạn của bạn.
                         </p>
@@ -536,11 +536,11 @@ export default function HotelFloorPlan2D({
                                             {floorNum}F
                                         </div>
                                         <div>
-                                            <h4 className="text-xl font-extrabold text-white tracking-tight">
+                                            <h4 className="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                                                 <span>Mặt Bằng Tầng {floorNum}</span>
                                             </h4>
                                             <p className="text-xs text-slate-400 mt-0.5 flex items-center gap-2">
-                                                <span>Tổng số: <strong className="text-slate-200">{floorRooms.length} phòng</strong></span>
+                                                <span>Tổng số: <strong className="text-slate-900 dark:text-slate-200">{floorRooms.length} phòng</strong></span>
                                                 <span>•</span>
                                                 <span className="text-emerald-400 font-bold">{floorRooms.filter(r => r.roomStatus === 'AVAILABLE').length} phòng trống</span>
                                                 {isFilterActive && (
@@ -612,15 +612,15 @@ export default function HotelFloorPlan2D({
 
                                             {/* Ở GIỮA: CỤM 3 THANG MÁY + LỐI THOÁT HIỂM */}
                                             <div className="flex items-center gap-2 sm:gap-3 justify-center flex-wrap">
-                                                <div className="px-4 py-2 rounded-xl bg-slate-950 border border-slate-700/80 flex items-center gap-2 text-sm font-extrabold text-slate-100 shadow-sm hover:border-slate-600 transition-colors">
+                                                <div className="px-4 py-2 rounded-xl bg-slate-950 border border-slate-700/80 flex items-center gap-2 text-sm font-extrabold text-slate-800 dark:text-slate-100 shadow-sm hover:border-slate-600 transition-colors">
                                                     <span className="text-base sm:text-lg leading-none">🛗</span>
                                                     <span>Thang Máy 1</span>
                                                 </div>
-                                                <div className="px-4 py-2 rounded-xl bg-slate-950 border border-slate-700/80 flex items-center gap-2 text-sm font-extrabold text-slate-100 shadow-sm hover:border-slate-600 transition-colors">
+                                                <div className="px-4 py-2 rounded-xl bg-slate-950 border border-slate-700/80 flex items-center gap-2 text-sm font-extrabold text-slate-800 dark:text-slate-100 shadow-sm hover:border-slate-600 transition-colors">
                                                     <span className="text-base sm:text-lg leading-none">🛗</span>
                                                     <span>Thang Máy 2</span>
                                                 </div>
-                                                <div className="px-4 py-2 rounded-xl bg-slate-950 border border-slate-700/80 flex items-center gap-2 text-sm font-extrabold text-slate-100 shadow-sm hover:border-slate-600 transition-colors">
+                                                <div className="px-4 py-2 rounded-xl bg-slate-950 border border-slate-700/80 flex items-center gap-2 text-sm font-extrabold text-slate-800 dark:text-slate-100 shadow-sm hover:border-slate-600 transition-colors">
                                                     <span className="text-base sm:text-lg leading-none">🛗</span>
                                                     <span>Thang Máy 3</span>
                                                 </div>
@@ -747,28 +747,28 @@ export default function HotelFloorPlan2D({
                                     <Bed className="w-4 h-4 text-indigo-400" />
                                     <div>
                                         <div className="text-slate-400 font-medium">Giường ngủ</div>
-                                        <div className="font-bold text-slate-200">{ROOM_TYPE_CONFIG[inspectedRoom.roomType]?.bedType}</div>
+                                        <div className="font-bold text-slate-800 dark:text-slate-200">{ROOM_TYPE_CONFIG[inspectedRoom.roomType]?.bedType}</div>
                                     </div>
                                 </div>
                                 <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center gap-2.5">
                                     <Wind className="w-4 h-4 text-blue-400" />
                                     <div>
                                         <div className="text-slate-400 font-medium">Diện tích phòng</div>
-                                        <div className="font-bold text-slate-200">{ROOM_TYPE_CONFIG[inspectedRoom.roomType]?.area}</div>
+                                        <div className="font-bold text-slate-800 dark:text-slate-200">{ROOM_TYPE_CONFIG[inspectedRoom.roomType]?.area}</div>
                                     </div>
                                 </div>
                                 <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center gap-2.5">
                                     <Bath className="w-4 h-4 text-purple-400" />
                                     <div>
                                         <div className="text-slate-400 font-medium">Phòng tắm</div>
-                                        <div className="font-bold text-slate-200">Bồn tắm nằm & Vòi sen</div>
+                                        <div className="font-bold text-slate-800 dark:text-slate-200">Bồn tắm nằm & Vòi sen</div>
                                     </div>
                                 </div>
                                 <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center gap-2.5">
                                     <Wifi className="w-4 h-4 text-emerald-400" />
                                     <div>
                                         <div className="text-slate-400 font-medium">Kết nối internet</div>
-                                        <div className="font-bold text-slate-200">Wifi 6 Tốc độ cao</div>
+                                        <div className="font-bold text-slate-800 dark:text-slate-200">Wifi 6 Tốc độ cao</div>
                                     </div>
                                 </div>
                             </div>
@@ -781,7 +781,7 @@ export default function HotelFloorPlan2D({
                                     <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-xs space-y-1.5">
                                         <div className="font-bold text-rose-300 flex items-center justify-between">
                                             <span>Khách đang lưu trú:</span>
-                                            <span className="font-black text-white">{activeBooking.customerName || `Khách #${activeBooking.customerId}`}</span>
+                                            <span className="font-black text-slate-900 dark:text-white">{activeBooking.customerName || `Khách #${activeBooking.customerId}`}</span>
                                         </div>
                                         <div className="text-slate-300 flex items-center justify-between">
                                             <span>Thời gian lưu trú:</span>
@@ -879,7 +879,7 @@ function Room2DPod({
             {/* PHẦN ĐẦU CỦA PHÒNG: SỐ PHÒNG & HẠNG PHÒNG */}
             <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2">
-                    <span className="text-lg font-black text-white group-hover:text-indigo-300 transition-colors">
+                    <span className="text-lg font-black text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors">
                         {room.roomNumber}
                     </span>
                     <span className={`px-2 py-0.5 rounded-md text-[10px] font-black border uppercase tracking-wider ${typeConfig.badge}`}>
@@ -904,7 +904,7 @@ function Room2DPod({
                         <Bed className="w-4 h-4 text-indigo-400" />
                     </div>
                     <div className="text-[11px] leading-tight">
-                        <div className="font-bold text-slate-200">{typeConfig.vietnameseName}</div>
+                        <div className="font-bold text-slate-800 dark:text-slate-200">{typeConfig.vietnameseName}</div>
                         <div className="text-[10px] text-slate-400">{typeConfig.capacity}</div>
                     </div>
                 </div>

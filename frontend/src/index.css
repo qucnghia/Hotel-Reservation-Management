@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
     --color-primary: #1E3A8A;
@@ -163,16 +165,12 @@ html.light .text-white {
 }
 
 /* 3. BẢO TOÀN CHỮ TRẮNG CHO CÁC NÚT BẤM CHÍNH (PRIMARY / GRADIENT BUTTONS) */
-html.light [class*="bg-gradient-"] *,
-html.light [class*="bg-gradient-"],
-html.light [class*="from-blue-"],
-html.light [class*="from-blue-"] *,
-html.light [class*="from-indigo-"],
-html.light [class*="from-indigo-"] *,
-html.light [class*="from-emerald-"],
-html.light [class*="from-emerald-"] *,
-html.light [class*="from-rose-"],
-html.light [class*="from-rose-"] *,
+html.light button[class*="from-"],
+html.light button[class*="from-"] *,
+html.light button[class*="bg-gradient-"],
+html.light button[class*="bg-gradient-"] *,
+html.light a[class*="from-"],
+html.light a[class*="from-"] *,
 html.light button.bg-blue-600,
 html.light button.bg-blue-600 *,
 html.light button.bg-indigo-600,

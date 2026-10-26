@@ -264,7 +264,7 @@ export default function CustomDatePicker({
                 placeholder={placeholder}
                 required={required}
                 disabled={disabled}
-                className="flex-1 min-w-0 bg-slate-950/70 border border-slate-700/80 rounded-2xl px-4 py-3 text-base text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all font-medium shadow-inner"
+                className="flex-1 min-w-0 bg-white dark:bg-slate-950/70 border border-slate-200 dark:border-slate-700/80 rounded-2xl px-4 py-3 text-base text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all font-medium shadow-inner"
             />
 
             {/* Nút bấm mở lịch với MorphIcon và hiệu ứng Glow */}
@@ -321,7 +321,7 @@ export default function CustomDatePicker({
                                     <MorphIcon icon={Calendar} size={20} />
                                 </div>
                                 <div>
-                                    <h4 className="text-base sm:text-lg font-extrabold text-white tracking-tight leading-tight">
+                                    <h4 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
                                         {title || (presetsType === 'birthday' ? 'Chọn Ngày Sinh' : 'Bảng Chọn Lịch')}
                                     </h4>
                                     <p className="text-xs text-slate-400 mt-0.5">
@@ -353,7 +353,7 @@ export default function CustomDatePicker({
                                 className={`px-3.5 py-1.5 rounded-xl font-extrabold text-base sm:text-lg tracking-tight transition-all cursor-pointer border flex items-center gap-1.5 shadow-sm active:scale-95 ${
                                     viewMode === 'months'
                                         ? 'bg-indigo-600 text-white border-indigo-400 shadow-indigo-600/30 ring-2 ring-indigo-400/50'
-                                        : 'bg-slate-900/90 hover:bg-indigo-950/50 text-white border-slate-800 hover:border-indigo-500/40'
+                                        : 'bg-slate-100 dark:bg-slate-900/90 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 text-slate-800 dark:text-white border-slate-200 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-500/40'
                                 }`}
                                 title="Bấm để chọn nhanh tháng"
                             >
@@ -367,7 +367,7 @@ export default function CustomDatePicker({
                                 className={`px-3.5 py-1.5 rounded-xl font-extrabold text-base sm:text-lg tracking-tight transition-all cursor-pointer border flex items-center gap-1.5 shadow-sm active:scale-95 ${
                                     viewMode === 'years'
                                         ? 'bg-indigo-600 text-white border-indigo-400 shadow-indigo-600/30 ring-2 ring-indigo-400/50'
-                                        : 'bg-slate-900/90 hover:bg-indigo-950/50 text-indigo-300 hover:text-white border-slate-800 hover:border-indigo-500/40'
+                                        : 'bg-slate-100 dark:bg-slate-900/90 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 text-indigo-600 dark:text-indigo-300 hover:text-indigo-800 dark:hover:text-white border-slate-200 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-500/40'
                                 }`}
                                 title="Bấm để chọn nhanh năm"
                             >
@@ -596,7 +596,7 @@ export default function CustomDatePicker({
                                                     : isCurrentDay
                                                     ? 'bg-indigo-500/20 border border-indigo-400 text-indigo-300 font-extrabold hover:bg-indigo-500/35 cursor-pointer shadow-[0_0_12px_rgba(99,102,241,0.25)]'
                                                     : cell.isCurrentMonth
-                                                    ? 'text-slate-100 hover:bg-slate-800/90 hover:text-white cursor-pointer hover:scale-105 active:scale-95'
+                                                    ? 'text-slate-800 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800/90 hover:text-slate-900 dark:hover:text-white cursor-pointer hover:scale-105 active:scale-95'
                                                     : 'text-slate-600 hover:bg-slate-800/40 hover:text-slate-400 cursor-pointer'
                                             }`}
                                         >
@@ -656,7 +656,7 @@ export default function CustomDatePicker({
                                     setIsOpen(false);
                                     setViewMode('days');
                                 }}
-                                className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-white font-bold transition-all cursor-pointer border border-slate-700/80 active:scale-95"
+                                className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white font-bold transition-all cursor-pointer border border-slate-200 dark:border-slate-700/80 active:scale-95"
                             >
                                 Đóng
                             </button>

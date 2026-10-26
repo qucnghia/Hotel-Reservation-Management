@@ -125,7 +125,7 @@ export default function CustomerBookingHistoryModal({ customer, guests = [], onS
                         </div>
                         <div>
                             <div className="flex items-center gap-3 flex-wrap">
-                                <h2 className="text-xl font-bold text-white tracking-tight">
+                                <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
                                     Lịch Sử Đặt Phòng: {history?.customerName || customer.fullName || customer.FullName}
                                 </h2>
                                 <span className={`inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-bold border shadow-sm ${memConfig.badgeClass}`}>
@@ -134,11 +134,11 @@ export default function CustomerBookingHistoryModal({ customer, guests = [], onS
                                 </span>
                             </div>
                             <div className="flex items-center gap-3 mt-1.5 flex-wrap text-sm text-slate-400">
-                                <span>Mã khách: <strong className="text-slate-200">#{customer.id}</strong></span>
+                                <span>Mã khách: <strong className="text-slate-900 dark:text-slate-200">#{customer.id}</strong></span>
                                 <span>•</span>
-                                <span>Email: <strong className="text-slate-200">{history?.email || customer.email || customer.Email}</strong></span>
+                                <span>Email: <strong className="text-slate-900 dark:text-slate-200">{history?.email || customer.email || customer.Email}</strong></span>
                                 <span>•</span>
-                                <span>Ngày sinh: <strong className="text-slate-200">{history?.dob || customer.dob || customer.DOB}</strong></span>
+                                <span>Ngày sinh: <strong className="text-slate-900 dark:text-slate-200">{history?.dob || customer.dob || customer.DOB}</strong></span>
                                 {guests && guests.length > 1 && onSelectCustomer && (
                                     <>
                                         <span>•</span>
@@ -194,7 +194,7 @@ export default function CustomerBookingHistoryModal({ customer, guests = [], onS
                             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                                 <div className="p-4 rounded-2xl bg-slate-950/50 border border-slate-800 text-center">
                                     <p className="text-xs uppercase tracking-wider text-slate-400 font-bold">Tổng Đơn</p>
-                                    <p className="text-2xl font-black text-white mt-1">{history.totalBookings || 0}</p>
+                                    <p className="text-2xl font-black text-slate-900 dark:text-white mt-1">{history.totalBookings || 0}</p>
                                 </div>
                                 <div className="p-4 rounded-2xl bg-slate-950/50 border border-slate-800 text-center col-span-2 sm:col-span-1 flex flex-col justify-center">
                                     <p className="text-xs uppercase tracking-wider text-slate-400 font-bold">Tổng Chi Tiêu</p>
@@ -219,13 +219,13 @@ export default function CustomerBookingHistoryModal({ customer, guests = [], onS
 
                             {/* Bookings Table */}
                             <div className="space-y-3">
-                                <h3 className="text-sm sm:text-base font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                                <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2">
                                     <BookmarkIcon className="w-5 h-5 text-indigo-400" />
                                     <span>Danh sách các lần đặt phòng ({history.bookings?.length || 0})</span>
                                 </h3>
 
                                 <div className="overflow-x-auto rounded-2xl border border-slate-800/80 bg-slate-950/40">
-                                    <table className="w-full text-left text-base text-slate-200">
+                                    <table className="w-full text-left text-base text-slate-700 dark:text-slate-200">
                                         <thead className="bg-slate-950/80 text-sm uppercase tracking-wider text-slate-300 border-b border-slate-800 font-bold">
                                             <tr>
                                                 <th scope="col" className="px-4 py-3.5">Mã đơn</th>
@@ -246,10 +246,10 @@ export default function CustomerBookingHistoryModal({ customer, guests = [], onS
                                                                 #{b.id}
                                                             </td>
                                                             <td className="px-4 py-3.5">
-                                                                <span className="font-bold text-white">Phòng {b.roomNumber}</span>
+                                                                <span className="font-bold text-slate-900 dark:text-white">Phòng {b.roomNumber}</span>
                                                                 <span className="text-xs font-semibold text-slate-300 ml-2 px-2 py-0.5 rounded bg-slate-800">[{b.roomType}]</span>
                                                             </td>
-                                                            <td className="px-4 py-3.5 text-sm font-medium text-slate-200 whitespace-nowrap">
+                                                            <td className="px-4 py-3.5 text-sm font-medium text-slate-700 dark:text-slate-200 whitespace-nowrap">
                                                                 {b.checkInDate} <span className="text-slate-500">→</span> {b.checkOutDate}
                                                             </td>
                                                             <td className="px-4 py-3.5 font-bold text-sm text-blue-400 whitespace-nowrap">
@@ -290,7 +290,7 @@ export default function CustomerBookingHistoryModal({ customer, guests = [], onS
                     <button
                         type="button"
                         onClick={onClose}
-                        className="px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-bold transition-all cursor-pointer"
+                        className="px-6 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-bold transition-all cursor-pointer border border-slate-200 dark:border-slate-700"
                     >
                         Đóng
                     </button>

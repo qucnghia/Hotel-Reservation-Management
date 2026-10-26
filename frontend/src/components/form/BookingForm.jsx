@@ -230,7 +230,7 @@ export default function BookingForm({ guests = [], rooms = [], bookings = [], in
                                 <BookmarkIcon className="w-6 h-6" />
                             </div>
                             <div>
-                                <h3 className="font-bold text-white text-xl leading-tight">
+                                <h3 className="font-bold text-slate-900 dark:text-white text-xl leading-tight">
                                     Tạo Đơn Đặt Phòng Mới
                                 </h3>
                                 <p className="text-sm text-slate-400 mt-1">
@@ -262,7 +262,7 @@ export default function BookingForm({ guests = [], rooms = [], bookings = [], in
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                             {/* Chọn khách hàng */}
                             <div>
-                                <label className="block text-sm font-bold uppercase tracking-wider text-slate-200 mb-2">
+                                <label className="block text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200 mb-2">
                                     Khách Hàng <span className="text-rose-400">*</span>
                                 </label>
                                 <GlideSelect
@@ -374,7 +374,7 @@ export default function BookingForm({ guests = [], rooms = [], bookings = [], in
                                     </div>
                                     <div>
                                         <p className="text-xs uppercase tracking-wider text-slate-400 font-bold">Thời gian lưu trú ước tính</p>
-                                        <p className="text-base font-bold text-slate-100 mt-0.5 whitespace-nowrap">
+                                        <p className="text-base font-bold text-slate-900 dark:text-slate-100 mt-0.5 whitespace-nowrap">
                                             <span className="text-blue-400 font-black">{priceCalculation.nights}</span> đêm
                                             <span className="text-slate-500 mx-2">×</span>
                                             {priceCalculation.basePrice.toLocaleString('vi-VN')} đ

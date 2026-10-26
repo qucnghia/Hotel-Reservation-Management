@@ -122,14 +122,14 @@ export default function RoomTable({ rooms, selectedRoom, onSelectRoom, onEdit, o
                     />
 
                     <div className="text-sm text-slate-400 whitespace-nowrap font-medium">
-                        Tổng: <span className="font-bold text-white">{filteredRooms.length}</span> / {rooms?.length || 0}
+                        Tổng: <span className="font-bold text-slate-900 dark:text-white">{filteredRooms.length}</span> / {rooms?.length || 0}
                     </div>
                 </div>
             </div>
 
             {/* Table */}
             <div className="overflow-x-auto w-full rounded-b-2xl">
-                <table className="w-full text-left text-base text-slate-200">
+                <table className="w-full text-left text-base text-slate-700 dark:text-slate-200">
                     <thead className="bg-slate-50 dark:bg-slate-950/70 text-sm uppercase tracking-wider text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-800 font-bold">
                         <tr>
                             <th scope="col" className="px-5 py-4 w-32">Số phòng</th>
@@ -176,7 +176,7 @@ export default function RoomTable({ rooms, selectedRoom, onSelectRoom, onEdit, o
                                                 {ROOM_TYPE_CONFIG[roomType]?.label || roomType}
                                             </span>
                                         </td>
-                                        <td className="px-5 py-4 font-bold text-slate-100 whitespace-nowrap">
+                                        <td className="px-5 py-4 font-bold text-slate-800 dark:text-slate-100 whitespace-nowrap">
                                             {formatCurrency(basePrice)}
                                         </td>
                                         <td className="px-5 py-4">
