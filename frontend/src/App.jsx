@@ -304,7 +304,7 @@ function App() {
                             <span className="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">Đang quản lý:</span>
                             <span className="font-extrabold text-slate-900 dark:text-white flex items-center gap-2 text-base">
                                 {activeTab === 'guests' && <><UsersIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" /> Quản lý Khách Hàng ({guests.length})</>}
-                                {activeTab === 'rooms' && <><BedIcon className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /> Quản lý Phòng ({rooms.length})</>}
+                                {activeTab === 'rooms' && <><BedIcon className="w-5 h-5 text-amber-600 dark:text-amber-400" /> Quản lý Phòng ({rooms.length})</>}
                                 {activeTab === 'bookings' && <><BookmarkIcon className="w-5 h-5 text-purple-600 dark:text-purple-400" /> Quản lý Đặt Phòng ({bookings.length})</>}
                                 {activeTab === 'revenue' && <><TrendingUpIcon className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> Quản lý Doanh Thu & Tài Chính</>}
                             </span>
@@ -357,7 +357,7 @@ function App() {
                                         }}
                                         className={`w-full px-3.5 py-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 group whitespace-nowrap ${
                                             activeTab === 'guests'
-                                                ? 'bg-gradient-to-r from-blue-700 via-indigo-600 to-blue-600 text-white border-blue-400/40 shadow-lg shadow-blue-600/25 ring-1 ring-blue-400/30'
+                                                ? 'bg-gradient-to-r from-blue-600 via-sky-600 to-blue-700 text-white border-blue-400/40 shadow-lg shadow-blue-500/25 ring-1 ring-blue-400/30'
                                                 : 'bg-white dark:bg-slate-950/60 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm'
                                         }`}
                                     >
@@ -385,13 +385,13 @@ function App() {
                                         }}
                                         className={`w-full px-3.5 py-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 group whitespace-nowrap ${
                                             activeTab === 'rooms'
-                                                ? 'bg-gradient-to-r from-blue-700 via-indigo-600 to-blue-600 text-white border-blue-400/40 shadow-lg shadow-blue-600/25 ring-1 ring-blue-400/30'
+                                                ? 'bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 text-white border-amber-300/40 shadow-lg shadow-amber-500/25 ring-1 ring-amber-300/30'
                                                 : 'bg-white dark:bg-slate-950/60 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm'
                                         }`}
                                     >
                                         <div className="flex items-center gap-2.5 min-w-0">
                                             <div className={`p-2 rounded-lg flex-shrink-0 ${
-                                                activeTab === 'rooms' ? 'bg-white/20 text-white' : 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
+                                                activeTab === 'rooms' ? 'bg-white/20 text-white' : 'bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400'
                                             }`}>
                                                 <BedIcon className="w-4.5 h-4.5" />
                                             </div>
@@ -410,7 +410,7 @@ function App() {
                                         onClick={() => setActiveTab('bookings')}
                                         className={`w-full px-3.5 py-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 group whitespace-nowrap ${
                                             activeTab === 'bookings'
-                                                ? 'bg-gradient-to-r from-indigo-700 via-purple-600 to-indigo-600 text-white border-indigo-400/40 shadow-lg shadow-indigo-600/25 ring-1 ring-indigo-400/30'
+                                                ? 'bg-gradient-to-r from-purple-600 via-fuchsia-600 to-purple-600 text-white border-purple-400/40 shadow-lg shadow-purple-600/25 ring-1 ring-purple-400/30'
                                                 : 'bg-white dark:bg-slate-950/60 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm'
                                         }`}
                                     >
