@@ -447,3 +447,18 @@ html.dark .room-badge-luxury,
   border-color: #eab308 !important;
   box-shadow: 0 0 12px rgba(234, 179, 8, 0.3) !important;
 }
+
+/* Bảng giá phòng trong Modal chi tiết (Room Inspector Price Box) */
+html.light .room-inspector-price-box {
+  background: linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 60%, #f8fafc 100%) !important;
+  border-color: #a7f3d0 !important;
+  box-shadow: 0 4px 14px -2px rgba(16, 185, 129, 0.1) !important;
+}
+
+html.light .room-inspector-price-box .text-emerald-800 {
+  color: #065f46 !important;
+}
+
+html.light .room-inspector-price-box .text-emerald-700 {
+  color: #047857 !important;
+}

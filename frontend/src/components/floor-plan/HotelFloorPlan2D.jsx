@@ -728,16 +728,19 @@ export default function HotelFloorPlan2D({
                             </div>
 
                             {/* Giá niêm yết */}
-                            <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-950/40 via-indigo-950/30 to-purple-950/40 border border-indigo-900/50 flex items-center justify-between">
+                            <div className="room-inspector-price-box p-4.5 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50/70 to-emerald-50/40 border border-emerald-200/90 dark:from-slate-950/80 dark:via-slate-950/70 dark:to-slate-950/80 dark:border-slate-800 flex items-center justify-between shadow-xs">
                                 <div>
-                                    <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Giá niêm yết mỗi đêm</div>
-                                    <div className="text-2xl font-black text-emerald-400 mt-0.5">
+                                    <div className="text-xs font-extrabold uppercase tracking-wider text-emerald-800 dark:text-slate-400">Giá niêm yết mỗi đêm</div>
+                                    <div className="text-2xl sm:text-3xl font-black text-emerald-700 dark:text-emerald-400 mt-0.5 tracking-tight font-mono">
                                         {formatCurrency(inspectedRoom.basePrice)}
                                     </div>
                                 </div>
-                                <div className="text-right text-xs text-slate-400">
-                                    <div>Đã bao gồm VAT</div>
-                                    <div>& Bữa sáng Buffet</div>
+                                <div className="text-right text-xs text-slate-600 dark:text-slate-400 space-y-1">
+                                    <div className="font-bold text-emerald-700 dark:text-emerald-400 flex items-center justify-end gap-1.5">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                        <span>Đã bao gồm VAT</span>
+                                    </div>
+                                    <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">& Bữa sáng Buffet</div>
                                 </div>
                             </div>
 
