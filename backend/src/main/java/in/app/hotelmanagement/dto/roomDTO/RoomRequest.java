@@ -1,0 +1,39 @@
+package in.app.hotelmanagement.dto.roomDTO;
+
+import in.app.hotelmanagement.enums.RoomType;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+
+public class RoomRequest {
+
+    private Long roomNumber;
+
+    @Enumerated(EnumType.STRING)
+    private RoomType roomType;
+
+    private Long basePrice;
+
+    public Long getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(Long roomNumber) {
+        this.roomNumber = roomNumber;
+    }
+
+    public RoomType getRoomType() {
+        return roomType;
+    }
+
+    public void setRoomType(RoomType roomType) {
+        this.roomType = roomType;
+    }
+
+    public Long getBasePrice() {
+        return basePrice;
+    }
+
+    public void setBasePrice(Long basePrice) {
+        this.basePrice = basePrice;
+    }
+}
