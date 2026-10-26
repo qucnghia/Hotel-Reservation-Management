@@ -8,7 +8,6 @@ const formatPayload = (data) => {
         roomNumber: Number(data.roomNumber),
         roomType: data.roomType,
         basePrice: Number(data.basePrice),
-        roomStatus: data.roomStatus,
     };
 };
 
@@ -30,6 +29,13 @@ export const createRoom = (roomData) => {
 // 3. UPDATE (PUT): Cập nhật phòng theo ID (số phòng)
 export const updateRoom = (id, roomData) => {
     return axios.put(`${API_URL}/${id}`, formatPayload(roomData));
+};
+
+// 3b. PUT: Bật / tắt bảo trì phòng
+export const setRoomMaintenance = (roomNumber, enabled) => {
+    return axios.put(`${API_URL}/${roomNumber}/maintenance`, null, {
+        params: { enabled }
+    });
 };
 
 // 4. DELETE: Xóa phòng theo ID (số phòng)

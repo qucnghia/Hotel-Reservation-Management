@@ -577,41 +577,24 @@ export default function HotelFloorPlan2D({
                                         )}
 
                                         {/* HÀNH LANG CHÍNH (GRAND CENTRAL CORRIDOR) */}
-                                        <div className="relative py-3.5 px-5 sm:px-6 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800/90 to-slate-900 border border-slate-700/80 shadow-inner flex items-center justify-between gap-4">
-                                            {/* BÊN TRÁI: Nhãn hành lang */}
-                                            <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-slate-400 whitespace-nowrap">
-                                                <span className="h-px w-6 sm:w-10 bg-gradient-to-r from-transparent to-indigo-500/50" />
-                                                <span className="text-indigo-300">◄ HÀNH LANG TẦNG {floorNum}</span>
+                                        <div className="relative flex items-center gap-3 px-4 py-2.5 rounded-xl bg-slate-900/50 border border-slate-800/80">
+                                            {/* Vạch kẻ giữa hành lang; các tiện ích nằm đè lên như cửa mở ra hành lang */}
+                                            <div className="absolute inset-x-4 top-1/2 border-t border-dashed border-slate-700/60 pointer-events-none" />
+
+                                            <span className="relative px-2 rounded-md bg-slate-900 text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400 whitespace-nowrap">
+                                                Hành lang tầng {floorNum}
+                                            </span>
+
+                                            <div className="relative flex flex-1 items-center justify-center gap-2 flex-nowrap">
+                                                <CorridorChip icon={Layers} label="3 thang máy" />
+                                                <CorridorChip icon={ShieldAlert} label="Lối thoát hiểm" tone="text-amber-400" />
                                             </div>
 
-                                            {/* Ở GIỮA: CỤM 3 THANG MÁY + LỐI THOÁT HIỂM */}
-                                            <div className="flex items-center gap-2 sm:gap-3 justify-center flex-wrap">
-                                                <div className="px-4 py-2 rounded-xl bg-slate-950 border border-slate-700/80 flex items-center gap-2 text-sm font-extrabold text-slate-800 dark:text-slate-100 shadow-sm hover:border-slate-600 transition-colors">
-                                                    <span className="text-base sm:text-lg leading-none">🛗</span>
-                                                    <span>Thang Máy 1</span>
-                                                </div>
-                                                <div className="px-4 py-2 rounded-xl bg-slate-950 border border-slate-700/80 flex items-center gap-2 text-sm font-extrabold text-slate-800 dark:text-slate-100 shadow-sm hover:border-slate-600 transition-colors">
-                                                    <span className="text-base sm:text-lg leading-none">🛗</span>
-                                                    <span>Thang Máy 2</span>
-                                                </div>
-                                                <div className="px-4 py-2 rounded-xl bg-slate-950 border border-slate-700/80 flex items-center gap-2 text-sm font-extrabold text-slate-800 dark:text-slate-100 shadow-sm hover:border-slate-600 transition-colors">
-                                                    <span className="text-base sm:text-lg leading-none">🛗</span>
-                                                    <span>Thang Máy 3</span>
-                                                </div>
-                                                <div className="px-4 py-2 rounded-xl bg-slate-950 border border-slate-700/80 flex items-center gap-2 text-sm font-extrabold text-amber-400 shadow-sm hover:border-amber-500/50 transition-colors">
-                                                    <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0" />
-                                                    <span>Lối Thoát Hiểm</span>
-                                                </div>
-                                            </div>
-
-                                            {/* BÊN PHẢI: Tiện ích tầng */}
-                                            <div className="flex items-center gap-2 whitespace-nowrap">
-                                                <div className="px-4 py-2 rounded-xl bg-slate-950 border border-slate-700/80 flex items-center gap-2 text-sm font-extrabold text-indigo-300">
-                                                    <Hotel className="w-4 h-4 text-indigo-400 shrink-0" />
-                                                    <span>{floorNum === 1 ? 'Quầy Lễ Tân' : 'Lounge Phục Vụ'}</span>
-                                                </div>
-                                                <span className="h-px w-6 sm:w-10 bg-gradient-to-l from-transparent to-indigo-500/50" />
-                                            </div>
+                                            <CorridorChip
+                                                icon={Hotel}
+                                                label={floorNum === 1 ? 'Quầy lễ tân' : 'Lounge phục vụ'}
+                                                tone="text-indigo-300"
+                                            />
                                         </div>
 
                                         {/* DÃY NAM */}
@@ -802,8 +785,18 @@ export default function HotelFloorPlan2D({
     );
 }
 
+// Ô tiện ích nhỏ trên hành lang (thang máy, lối thoát hiểm, lễ tân)
+function CorridorChip({ icon: Icon, label, tone = 'text-slate-300' }) {
+    return (
+        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-semibold whitespace-nowrap ${tone}`}>
+            <Icon className="w-3.5 h-3.5 shrink-0" />
+            <span>{label}</span>
+        </span>
+    );
+}
+
 // COMPONENT CĂN PHÒNG 2D TRÊN MẶT BẰNG KIẾN TRÚC (ROOM 2D BLUEPRINT POD)
-function Room2DPod({ 
+function Room2DPod({
     room, 
     isSelected, 
     isDimmed, 
@@ -851,7 +844,7 @@ function Room2DPod({
 
             {/* PHẦN ĐẦU CỦA PHÒNG: SỐ PHÒNG & HẠNG PHÒNG */}
             <div className="flex items-start justify-between gap-2">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 min-w-0">
                     <span className="text-xl font-black text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors">
                         {room.roomNumber}
                     </span>
@@ -861,7 +854,7 @@ function Room2DPod({
                 </div>
 
                 {/* Huy hiệu trạng thái */}
-                <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold border shadow-xs ${statusConfig.badge}`}>
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold border shadow-xs whitespace-nowrap shrink-0 ${statusConfig.badge}`}>
                     <span className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot}`} />
                     <span>{statusConfig.label}</span>
                 </span>

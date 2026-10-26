@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { createRoom, updateRoom } from '../../services/roomService.js';
-import { PlusIcon, PencilIcon, ExclamationTriangleIcon, XMarkIcon, TrashIcon } from '../icons/Icons.jsx';
+import { createRoom, updateRoom, setRoomMaintenance } from '../../services/roomService.js';
+import { PlusIcon, PencilIcon, ExclamationTriangleIcon, XMarkIcon, TrashIcon, ShieldAlertIcon } from '../icons/Icons.jsx';
 import GlideSelect from '../glide-select/GlideSelect.jsx';
 
 const ROOM_TYPES = [
@@ -60,8 +60,7 @@ export default function RoomForm({ editingRoom, existingRooms = [], onSaved, onC
         const payload = {
             roomNumber: roomNum,
             roomType: formData.roomType,
-            basePrice: Number(formData.basePrice),
-            roomStatus: editingRoom ? editingRoom.roomStatus : 'AVAILABLE'
+            basePrice: Number(formData.basePrice)
         };
 
         setLoading(true);
@@ -95,6 +94,28 @@ export default function RoomForm({ editingRoom, existingRooms = [], onSaved, onC
             } else {
                 setError(err.message || 'Không thể kết nối đến máy chủ Backend!');
             }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const isUnderMaintenance = editingRoom?.roomStatus === 'UNDER_MAINTENANCE';
+
+    const handleToggleMaintenance = async () => {
+        const enable = !isUnderMaintenance;
+        const question = enable
+            ? `Chuyển phòng #${editingRoom.roomNumber} sang bảo trì? Phòng sẽ không nhận đặt phòng cho đến khi kết thúc bảo trì.`
+            : `Kết thúc bảo trì phòng #${editingRoom.roomNumber} và mở lại cho đặt phòng?`;
+        if (!window.confirm(question)) return;
+
+        setError(null);
+        setLoading(true);
+        try {
+            await setRoomMaintenance(editingRoom.roomNumber, enable);
+            alert(enable ? `Phòng #${editingRoom.roomNumber} đã chuyển sang bảo trì.` : `Phòng #${editingRoom.roomNumber} đã sẵn sàng đón khách.`);
+            onSaved();
+        } catch (err) {
+            setError(err.response?.data?.message || 'Không thể cập nhật trạng thái bảo trì!');
         } finally {
             setLoading(false);
         }
@@ -218,16 +239,29 @@ export default function RoomForm({ editingRoom, existingRooms = [], onSaved, onC
 
                     {/* Footer */}
                     <div className="p-6 border-t border-slate-800 bg-slate-950/60 flex items-center justify-between gap-3 flex-wrap">
-                        {editingRoom && onDelete ? (
-                            <button
-                                type="button"
-                                onClick={() => onDelete(editingRoom.roomNumber)}
-                                disabled={loading}
-                                className="px-4 py-2.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 font-bold text-sm flex items-center gap-2 transition-all cursor-pointer shadow-sm"
-                            >
-                                <TrashIcon className="w-4 h-4 text-rose-400" />
-                                <span>Xóa Phòng Này</span>
-                            </button>
+                        {editingRoom ? (
+                            <div className="flex items-center gap-2 flex-wrap">
+                                {onDelete && (
+                                    <button
+                                        type="button"
+                                        onClick={() => onDelete(editingRoom.roomNumber)}
+                                        disabled={loading}
+                                        className="px-4 py-2.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 font-bold text-sm flex items-center gap-2 transition-all cursor-pointer shadow-sm"
+                                    >
+                                        <TrashIcon className="w-4 h-4 text-rose-400" />
+                                        <span>Xóa Phòng Này</span>
+                                    </button>
+                                )}
+                                <button
+                                    type="button"
+                                    onClick={handleToggleMaintenance}
+                                    disabled={loading}
+                                    className="px-4 py-2.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 font-bold text-sm flex items-center gap-2 transition-all cursor-pointer shadow-sm"
+                                >
+                                    <ShieldAlertIcon className="w-4 h-4 text-amber-400" />
+                                    <span>{isUnderMaintenance ? 'Kết Thúc Bảo Trì' : 'Bảo Trì Phòng'}</span>
+                                </button>
+                            </div>
                         ) : <div />}
 
                         <div className="flex items-center gap-3">

@@ -225,15 +225,15 @@ export default function CustomerBookingHistoryModal({ customer, guests = [], onS
                                 </h3>
 
                                 <div className="overflow-x-auto rounded-2xl border border-slate-800/80 bg-slate-950/40">
-                                    <table className="w-full text-left text-base text-slate-700 dark:text-slate-200">
+                                    <table className="w-full text-left text-base text-slate-700 dark:text-slate-200 whitespace-nowrap">
                                         <thead className="bg-slate-950/80 text-sm uppercase tracking-wider text-slate-300 border-b border-slate-800 font-bold">
                                             <tr>
-                                                <th scope="col" className="px-4 py-3.5">Mã đơn</th>
-                                                <th scope="col" className="px-4 py-3.5">Phòng</th>
-                                                <th scope="col" className="px-4 py-3.5">Thời gian lưu trú</th>
-                                                <th scope="col" className="px-4 py-3.5">Số đêm</th>
-                                                <th scope="col" className="px-4 py-3.5">Tổng tiền</th>
-                                                <th scope="col" className="px-4 py-3.5 text-center">Trạng thái</th>
+                                                <th scope="col" className="px-3 py-3.5">Mã đơn</th>
+                                                <th scope="col" className="px-3 py-3.5">Phòng</th>
+                                                <th scope="col" className="px-3 py-3.5">Thời gian lưu trú</th>
+                                                <th scope="col" className="px-3 py-3.5">Số đêm</th>
+                                                <th scope="col" className="px-3 py-3.5">Tổng tiền</th>
+                                                <th scope="col" className="px-3 py-3.5 text-center">Trạng thái</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-800/60">
@@ -242,26 +242,26 @@ export default function CustomerBookingHistoryModal({ customer, guests = [], onS
                                                     const badge = STATUS_BADGES[b.bookingStatus] || STATUS_BADGES.CONFIRMED;
                                                     return (
                                                         <tr key={b.id} className="hover:bg-slate-800/40 transition-colors">
-                                                            <td className="px-4 py-3.5 font-bold text-base text-indigo-400 whitespace-nowrap">
+                                                            <td className="px-3 py-3.5 font-bold text-base text-indigo-400 whitespace-nowrap">
                                                                 #{b.id}
                                                             </td>
-                                                            <td className="px-4 py-3.5">
+                                                            <td className="px-3 py-3.5">
                                                                 <span className="font-bold text-slate-900 dark:text-white">Phòng {b.roomNumber}</span>
                                                                 <span className={`text-[10px] font-black uppercase ml-2 px-2 py-0.5 rounded-md border ${b.roomType === "LUXURY" ? "room-badge-luxury" : b.roomType === "VIP" ? "room-badge-vip" : "room-badge-standard"}`}>{b.roomType}</span>
                                                             </td>
-                                                            <td className="px-4 py-3.5 text-sm font-medium text-slate-700 dark:text-slate-200 whitespace-nowrap">
+                                                            <td className="px-3 py-3.5 text-sm font-medium text-slate-700 dark:text-slate-200 whitespace-nowrap">
                                                                 {b.checkInDate} <span className="text-slate-500">→</span> {b.checkOutDate}
                                                             </td>
-                                                            <td className="px-4 py-3.5 font-bold text-sm text-blue-400 whitespace-nowrap">
+                                                            <td className="px-3 py-3.5 font-bold text-sm text-blue-400 whitespace-nowrap">
                                                                 {b.durationNights || 1} đêm
                                                             </td>
-                                                            <td className="px-4 py-3.5 font-bold text-base text-emerald-400 whitespace-nowrap">
+                                                            <td className="px-3 py-3.5 font-bold text-base text-emerald-400 whitespace-nowrap">
                                                                 <span className="inline-flex items-baseline gap-1">
                                                                     <span>{Number(b.totalPrice || 0).toLocaleString('vi-VN')}</span>
                                                                     <span className="text-xs font-semibold">đ</span>
                                                                 </span>
                                                             </td>
-                                                            <td className="px-4 py-3.5 text-center">
+                                                            <td className="px-3 py-3.5 text-center">
                                                                 <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${badge.bg}`}>
                                                                     <span className={`w-1.5 h-1.5 rounded-full ${badge.dot}`} />
                                                                     {badge.label}

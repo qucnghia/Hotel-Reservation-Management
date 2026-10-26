@@ -1,26 +1,35 @@
 import { useState, useMemo, useEffect } from 'react';
 import { UsersIcon, SearchIcon, XMarkIcon, StarIcon } from '../icons/Icons.jsx';
 
+// Mức giảm giá và ngưỡng chi tiêu khớp với CustomerMembership / Customer.recalculateMembership ở backend
 const MEMBERSHIP_STYLES = {
     VIP: {
         badge: 'bg-gradient-to-r from-amber-500/20 to-yellow-500/20 text-amber-300 border-amber-500/50',
-        label: 'VIP (-15%)',
-        iconColor: 'text-amber-400'
+        label: 'VIP',
+        iconColor: 'text-amber-400',
+        discount: 15,
+        minSpend: '10 triệu'
     },
     PLUS: {
         badge: 'bg-gradient-to-r from-indigo-500/20 to-purple-500/20 text-indigo-300 border-indigo-500/50',
-        label: 'PLUS (-10%)',
-        iconColor: 'text-indigo-400'
+        label: 'PLUS',
+        iconColor: 'text-indigo-400',
+        discount: 10,
+        minSpend: '5 triệu'
     },
     ECONOMY: {
         badge: 'bg-gradient-to-r from-emerald-500/20 to-teal-500/20 text-emerald-300 border-emerald-500/50',
-        label: 'ECONOMY (-5%)',
-        iconColor: 'text-emerald-400'
+        label: 'ECONOMY',
+        iconColor: 'text-emerald-400',
+        discount: 5,
+        minSpend: '2 triệu'
     },
     CUSTOMER: {
         badge: 'bg-slate-800 text-slate-400 border-slate-700',
         label: 'CUSTOMER',
-        iconColor: 'text-slate-500'
+        iconColor: 'text-slate-500',
+        discount: 0,
+        minSpend: null
     }
 };
 
@@ -53,7 +62,7 @@ export default function CustomerTable({ guests, selectedCustomer, onSelectCustom
     return (
         <div className="bg-slate-900/90 border border-slate-800 rounded-2xl shadow-xl overflow-hidden backdrop-blur-md flex flex-col w-full">
             {/* Search Toolbar */}
-            <div className="p-4 border-b border-slate-800 bg-slate-950/40 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+            <div className="p-4 border-b border-slate-800 bg-slate-950/40 flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center justify-between gap-3">
                 <div className="relative flex-1 max-w-sm">
                     <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
                     <input
@@ -73,6 +82,22 @@ export default function CustomerTable({ guests, selectedCustomer, onSelectCustom
                             <XMarkIcon className="w-4 h-4" />
                         </button>
                     )}
+                </div>
+
+                {/* Bảng ưu đãi theo hạng hội viên */}
+                <div className="w-full order-last flex items-center gap-2 flex-wrap pt-3 border-t border-slate-800/70">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1">Ưu đãi hội viên:</span>
+                    {Object.entries(MEMBERSHIP_STYLES).map(([key, m]) => (
+                        <span
+                            key={key}
+                            title={m.minSpend ? `Chi tiêu tích lũy từ ${m.minSpend} đ` : 'Hạng mặc định khi mới đăng ký'}
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border whitespace-nowrap ${m.badge}`}
+                        >
+                            <StarIcon className={`w-3 h-3 ${m.iconColor}`} />
+                            <span>{m.label}</span>
+                            <span className="opacity-80 font-semibold">{m.discount > 0 ? `giảm ${m.discount}%` : 'không giảm'}</span>
+                        </span>
+                    ))}
                 </div>
 
                 <div className="flex items-center gap-3 justify-end">
@@ -135,7 +160,7 @@ export default function CustomerTable({ guests, selectedCustomer, onSelectCustom
                                             {guestName}
                                         </td>
                                         <td className="px-5 py-4">
-                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-bold border ${memStyle.badge}`}>
+                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-bold border whitespace-nowrap ${memStyle.badge}`}>
                                                 <StarIcon className={`w-3.5 h-3.5 ${memStyle.iconColor}`} />
                                                 <span>{memStyle.label}</span>
                                             </span>

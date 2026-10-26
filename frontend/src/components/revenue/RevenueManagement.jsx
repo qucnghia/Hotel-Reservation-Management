@@ -243,7 +243,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
         const totalRooms = rooms.length || 1;
         const occupiedRooms = rooms.filter(r => r.roomStatus === 'OCCUPIED').length;
         const availableRooms = rooms.filter(r => r.roomStatus === 'AVAILABLE').length;
-        const maintenanceRooms = rooms.filter(r => r.roomStatus === 'MAINTENANCE').length;
+        const maintenanceRooms = rooms.filter(r => r.roomStatus === 'UNDER_MAINTENANCE').length;
 
         // Công suất lấp đầy hiện tại (%)
         const occupancyRate = rooms.length > 0 ? (occupiedRooms / rooms.length) * 100 : 0;
