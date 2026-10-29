@@ -15,6 +15,34 @@ const BAR_STYLES = {
     CHECKED_OUT: 'bg-gray-100 text-gray-600 ring-gray-300 dark:bg-white/5 dark:text-gray-400 dark:ring-white/10'
 };
 
+
+const CALENDAR_LEGEND = [
+    {
+        key: 'CONFIRMED',
+        label: 'Đã xác nhận',
+        dot: 'bg-blue-600 dark:bg-blue-400',
+        badge: 'bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-500/15 dark:border-blue-400/30 dark:text-blue-300'
+    },
+    {
+        key: 'CHECKED_IN',
+        label: 'Đang lưu trú',
+        dot: 'bg-emerald-600 dark:bg-emerald-400',
+        badge: 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-500/15 dark:border-emerald-400/30 dark:text-emerald-300'
+    },
+    {
+        key: 'CHECKED_OUT',
+        label: 'Đã trả phòng',
+        dot: 'bg-slate-500 dark:bg-slate-400',
+        badge: 'bg-slate-100 border-slate-200 text-slate-700 dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-300'
+    },
+    {
+        key: 'MAINTENANCE',
+        label: 'Bảo trì',
+        dot: 'bg-amber-500 dark:bg-amber-400',
+        badge: 'bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-500/15 dark:border-amber-400/30 dark:text-amber-300'
+    }
+];
+
 const startOfToday = () => {
     const d = new Date();
     return new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -83,17 +111,16 @@ export default function RoomCalendar({ rooms = [], bookings = [], onBookRoom }) 
                         {formatToDDMMYYYY(days[0])} – {formatToDDMMYYYY(days[DAYS - 1])}
                     </span>
                 </div>
-                <div className="flex flex-wrap items-center gap-3 text-xs text-muted">
-                    {Object.keys(BAR_STYLES).map(status => (
-                        <span key={status} className="inline-flex items-center gap-1.5">
-                            <span className={`h-2.5 w-2.5 rounded-sm ring-1 ring-inset ${BAR_STYLES[status]}`} />
-                            {BOOKING_STATUS[status].label}
+                <div className="flex flex-wrap items-center gap-2">
+                    {CALENDAR_LEGEND.map(item => (
+                        <span
+                            key={item.key}
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border shadow-xs transition-colors ${item.badge}`}
+                        >
+                            <span className={`h-2 w-2 rounded-full shrink-0 ${item.dot}`} />
+                            <span>{item.label}</span>
                         </span>
                     ))}
-                    <span className="inline-flex items-center gap-1.5">
-                        <span className="h-2.5 w-2.5 rounded-sm bg-subtle ring-1 ring-inset ring-line-strong" />
-                        Bảo trì
-                    </span>
                 </div>
             </div>
 
@@ -155,7 +182,7 @@ export default function RoomCalendar({ rooms = [], bookings = [], onBookRoom }) 
                                                 style={{ gridRow: rowSpan, gridColumn: i + 2 }}
                                                 className={`border-l border-line transition-colors ${
                                                     isMaintenance
-                                                        ? 'bg-[repeating-linear-gradient(135deg,var(--subtle)_0_6px,transparent_6px_12px)]'
+                                                        ? 'bg-[repeating-linear-gradient(135deg,rgba(245,158,11,0.08)_0_6px,transparent_6px_12px)] dark:bg-[repeating-linear-gradient(135deg,rgba(245,158,11,0.15)_0_6px,transparent_6px_12px)]'
                                                         : isPast
                                                             ? 'bg-subtle/40'
                                                             : clickable
@@ -167,8 +194,9 @@ export default function RoomCalendar({ rooms = [], bookings = [], onBookRoom }) 
                                     })}
 
                                     {isMaintenance && (
-                                        <div className="pointer-events-none self-center px-2 text-xs text-muted" style={{ gridRow: 1, gridColumn: `2 / span ${DAYS}` }}>
-                                            Đang bảo trì
+                                        <div className="pointer-events-none self-center px-2 text-xs font-semibold text-amber-700 dark:text-amber-400 flex items-center gap-1.5" style={{ gridRow: 1, gridColumn: `2 / span ${DAYS}` }}>
+                                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                            <span>Đang bảo trì</span>
                                         </div>
                                     )}
 

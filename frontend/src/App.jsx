@@ -6,7 +6,6 @@ import {
     CustomerForm,
     CustomerTable,
     RoomForm,
-    RoomTable,
     BookingForm,
     BookingTable,
     CustomerBookingHistoryModal,
@@ -22,7 +21,6 @@ import {
     PlusIcon,
     HistoryIcon,
     MapIcon,
-    TableIcon,
     CalendarIcon,
     TrendingUpIcon,
     ConciergeBellIcon,
@@ -43,14 +41,13 @@ const NAV_ITEMS = [
 
 const ROOM_VIEWS = [
     { value: '2d', label: 'Sơ đồ', icon: MapIcon },
-    { value: 'table', label: 'Bảng', icon: TableIcon },
     { value: 'calendar', label: 'Lịch', icon: CalendarIcon }
 ];
 
 function App() {
     const toast = useToast();
     const [activeTab, setActiveTab] = useState('rooms'); // 'guests' | 'rooms' | 'bookings' | 'revenue'
-    const [roomViewMode, setRoomViewMode] = useState('2d'); // '2d' | 'table' | 'calendar'
+    const [roomViewMode, setRoomViewMode] = useState('2d'); // '2d' | 'calendar'
     const [bookingInitialRoom, setBookingInitialRoom] = useState('');
     const [bookingInitialCheckIn, setBookingInitialCheckIn] = useState('');
     const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -427,7 +424,7 @@ function App() {
                                 title="Phòng"
                                 icon={BedIcon}
                                 tone="amber"
-                                description="Tình trạng buồng phòng theo tầng, dạng bảng hoặc theo lịch."
+                                description="Tình trạng buồng phòng theo tầng hoặc theo lịch."
                                 actions={
                                     <>
                                         <Segmented options={ROOM_VIEWS} value={roomViewMode} onChange={setRoomViewMode} />
@@ -436,7 +433,17 @@ function App() {
                                 }
                             />
 
-                            {roomViewMode === '2d' ? (
+                            {roomViewMode === 'calendar' ? (
+                                <RoomCalendar
+                                    rooms={rooms}
+                                    bookings={bookings}
+                                    onBookRoom={(room, checkInDate) => {
+                                        setBookingInitialRoom(room.roomNumber);
+                                        setBookingInitialCheckIn(checkInDate);
+                                        setShowBookingForm(true);
+                                    }}
+                                />
+                            ) : (
                                 <HotelFloorPlan2D
                                     rooms={rooms}
                                     bookings={bookings}
@@ -448,24 +455,6 @@ function App() {
                                         setShowBookingForm(true);
                                     }}
                                     onAddNewRoom={openNewRoom}
-                                />
-                            ) : roomViewMode === 'calendar' ? (
-                                <RoomCalendar
-                                    rooms={rooms}
-                                    bookings={bookings}
-                                    onBookRoom={(room, checkInDate) => {
-                                        setBookingInitialRoom(room.roomNumber);
-                                        setBookingInitialCheckIn(checkInDate);
-                                        setShowBookingForm(true);
-                                    }}
-                                />
-                            ) : (
-                                <RoomTable
-                                    rooms={rooms}
-                                    selectedRoom={selectedRoom}
-                                    onSelectRoom={(r) => setSelectedRoom(r)}
-                                    onEdit={openEditRoom}
-                                    onClearSelection={() => setSelectedRoom(null)}
                                 />
                             )}
 
