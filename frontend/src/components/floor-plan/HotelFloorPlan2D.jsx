@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { BedIcon, PencilIcon, CalendarIcon, PlusIcon } from '../icons/Icons.jsx';
 import { Badge, Button, Card, EmptyState, Modal, SearchInput, Segmented } from '../ui';
 import { ROOM_STATUS, ROOM_TYPE, floorOf, formatMoney } from '../../utils/labels.js';
@@ -37,7 +37,37 @@ export default function HotelFloorPlan2D({ rooms = [], bookings = [], selectedRo
     const visibleFloors = selectedFloor === 'ALL' ? floors : [selectedFloor];
     const floorOptions = [{ value: 'ALL', label: 'Tất cả tầng' }, ...floors.map(f => ({ value: f, label: `Tầng ${f}` }))];
 
+    useEffect(() => {
+        if (!selectedRoom && !inspectedRoom) return;
+
+        const handleOutsideClick = (e) => {
+            if (e.target.closest('[data-room-tile]') || e.target.closest('[role="dialog"]') || e.target.closest('.modal-content')) {
+                return;
+            }
+            onSelectRoom?.(null);
+            setInspectedRoom(null);
+        };
+
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                onSelectRoom?.(null);
+                setInspectedRoom(null);
+            }
+        };
+
+        document.addEventListener('pointerdown', handleOutsideClick);
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            document.removeEventListener('pointerdown', handleOutsideClick);
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [selectedRoom, inspectedRoom, onSelectRoom]);
+
     const openRoom = (room) => {
+        if (selectedRoom?.roomNumber === room.roomNumber && !inspectedRoom) {
+            onSelectRoom?.(null);
+            return;
+        }
         onSelectRoom?.(room);
         setInspectedRoom(room);
     };
@@ -127,9 +157,20 @@ export default function HotelFloorPlan2D({ rooms = [], bookings = [], selectedRo
                 <RoomInspector
                     room={inspectedRoom}
                     activeBooking={getActiveBooking(bookings, inspectedRoom.roomNumber)}
-                    onClose={() => setInspectedRoom(null)}
-                    onEdit={() => { setInspectedRoom(null); onEdit?.(inspectedRoom); }}
-                    onBook={onBookRoom && (() => { setInspectedRoom(null); onBookRoom(inspectedRoom); })}
+                    onClose={() => {
+                        setInspectedRoom(null);
+                        onSelectRoom?.(null);
+                    }}
+                    onEdit={() => {
+                        setInspectedRoom(null);
+                        onSelectRoom?.(null);
+                        onEdit?.(inspectedRoom);
+                    }}
+                    onBook={onBookRoom && (() => {
+                        setInspectedRoom(null);
+                        onSelectRoom?.(null);
+                        onBookRoom(inspectedRoom);
+                    })}
                 />
             )}
         </div>
@@ -143,6 +184,7 @@ function RoomTile({ room, activeBooking, isSelected, isDimmed, onOpen, index = 0
     return (
         <button
             type="button"
+            data-room-tile
             onClick={onOpen}
             aria-label={`Phòng ${room.roomNumber}, ${status.label}`}
             style={{ '--i': index }}
