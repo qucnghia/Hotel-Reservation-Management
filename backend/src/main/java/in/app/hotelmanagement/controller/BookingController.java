@@ -2,6 +2,8 @@ package in.app.hotelmanagement.controller;
 
 import in.app.hotelmanagement.dto.bookingDTO.BookingRequest;
 import in.app.hotelmanagement.dto.bookingDTO.BookingResponse;
+import in.app.hotelmanagement.dto.bookingDTO.ServiceChargeRequest;
+import jakarta.validation.Valid;
 import in.app.hotelmanagement.dto.CustomerBookingHistoryResponse;
 import in.app.hotelmanagement.enums.BookingStatus;
 import in.app.hotelmanagement.service.BookingService;
@@ -46,6 +48,16 @@ public class BookingController {
             @RequestParam BookingStatus status) {
         BookingResponse updated = bookingService.updateBookingStatus(id, status);
         return ResponseEntity.ok(updated);
+    }
+
+    @PostMapping("/{id}/services")
+    public ResponseEntity<BookingResponse> addService(@PathVariable Long id, @Valid @RequestBody ServiceChargeRequest request) {
+        return ResponseEntity.ok(bookingService.addService(id, request.type(), request.quantity()));
+    }
+
+    @DeleteMapping("/{id}/services/{serviceId}")
+    public ResponseEntity<BookingResponse> removeService(@PathVariable Long id, @PathVariable Long serviceId) {
+        return ResponseEntity.ok(bookingService.removeService(id, serviceId));
     }
 
     @DeleteMapping("/{id}")

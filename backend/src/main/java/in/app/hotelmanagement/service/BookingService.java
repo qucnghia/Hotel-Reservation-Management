@@ -5,6 +5,8 @@ import in.app.hotelmanagement.dto.bookingDTO.BookingResponse;
 import in.app.hotelmanagement.dto.CustomerBookingHistoryResponse;
 import in.app.hotelmanagement.entity.Booking;
 import in.app.hotelmanagement.entity.Customer;
+import in.app.hotelmanagement.entity.charge.ServiceCharge;
+import in.app.hotelmanagement.enums.ExtraServiceType;
 import in.app.hotelmanagement.entity.room.Room;
 import in.app.hotelmanagement.enums.BookingStatus;
 import in.app.hotelmanagement.enums.CustomerMembership;
@@ -108,6 +110,32 @@ public class BookingService {
         syncRoomStatus(room, saved.getId(), saved.getBookingStatus());
 
         return BookingResponse.fromEntity(saved);
+    }
+
+    public BookingResponse addService(Long bookingId, ExtraServiceType type, int quantity) {
+        Booking booking = findEditableBooking(bookingId);
+        booking.addService(ServiceCharge.of(type, quantity));
+        return BookingResponse.fromEntity(bookingRepository.saveAndFlush(booking));
+    }
+
+    public BookingResponse removeService(Long bookingId, Long serviceId) {
+        Booking booking = findEditableBooking(bookingId);
+        boolean removed = booking.getServices().removeIf(s -> s.getId().equals(serviceId));
+        if (!removed) {
+            throw new ResourceNotFoundException("Không tìm thấy dịch vụ #" + serviceId + " trong đơn #" + bookingId);
+        }
+        return BookingResponse.fromEntity(bookingRepository.saveAndFlush(booking));
+    }
+
+    // Chỉ đơn đang hiệu lực mới được thêm/bớt dịch vụ
+    private Booking findEditableBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đơn đặt phòng #" + bookingId));
+        BookingStatus status = booking.getBookingStatus();
+        if (status != BookingStatus.CONFIRMED && status != BookingStatus.CHECKED_IN) {
+            throw new InvalidBookingException("Chỉ thêm hoặc bớt dịch vụ cho đơn đã xác nhận hoặc đang lưu trú");
+        }
+        return booking;
     }
 
     @Transactional(readOnly = true)

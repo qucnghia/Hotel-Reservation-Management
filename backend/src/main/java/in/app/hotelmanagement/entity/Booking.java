@@ -1,6 +1,7 @@
 package in.app.hotelmanagement.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import in.app.hotelmanagement.entity.charge.ServiceCharge;
 import in.app.hotelmanagement.entity.room.Room;
 import in.app.hotelmanagement.enums.BookingStatus;
 import in.app.hotelmanagement.enums.CustomerMembership;
@@ -9,6 +10,8 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Bookings")
@@ -35,9 +38,12 @@ public class Booking {
     @Enumerated(EnumType.STRING)
     private BookingStatus bookingStatus = BookingStatus.PENDING;
 
+    // Tiền phòng sau giảm giá hội viên (không gồm dịch vụ)
     private Long totalPrice;
 
-
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+    private List<ServiceCharge> services = new ArrayList<>();
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -71,6 +77,24 @@ public class Booking {
 
             totalPrice = mem.applyDiscount(room.getBasePrice() * days);
         }
+    }
+
+    public void addService(ServiceCharge charge) {
+        charge.setBooking(this);
+        services.add(charge);
+    }
+
+    public List<ServiceCharge> getServices() {
+        return services;
+    }
+
+    // Giảm giá hội viên chỉ áp vào tiền phòng, dịch vụ tính nguyên giá
+    public long getServiceTotal() {
+        return services.stream().mapToLong(ServiceCharge::calculateCost).sum();
+    }
+
+    public long getGrandTotal() {
+        return (totalPrice != null ? totalPrice : 0L) + getServiceTotal();
     }
 
     public long getDurationNights() {

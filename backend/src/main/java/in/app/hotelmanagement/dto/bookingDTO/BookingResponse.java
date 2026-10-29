@@ -7,6 +7,7 @@ import in.app.hotelmanagement.enums.RoomType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class BookingResponse {
 
@@ -30,6 +31,10 @@ public class BookingResponse {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
+
+    private long serviceTotal;
+    private long grandTotal;
+    private List<ServiceChargeResponse> services = List.of();
 
     public BookingResponse() {
     }
@@ -56,8 +61,23 @@ public class BookingResponse {
         res.setTotalPrice(booking.getTotalPrice());
         res.setBookingStatus(booking.getBookingStatus());
         res.setCreatedAt(booking.getCreatedAt());
+        res.serviceTotal = booking.getServiceTotal();
+        res.grandTotal = booking.getGrandTotal();
+        res.services = booking.getServices().stream().map(ServiceChargeResponse::fromEntity).toList();
 
         return res;
+    }
+
+    public long getServiceTotal() {
+        return serviceTotal;
+    }
+
+    public long getGrandTotal() {
+        return grandTotal;
+    }
+
+    public List<ServiceChargeResponse> getServices() {
+        return services;
     }
 
     public Long getId() {
