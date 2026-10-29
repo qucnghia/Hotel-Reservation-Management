@@ -4,6 +4,7 @@ import in.app.hotelmanagement.dto.bookingDTO.BookingRequest;
 import in.app.hotelmanagement.dto.bookingDTO.BookingResponse;
 import in.app.hotelmanagement.dto.customerDTO.CustomerRequest;
 import in.app.hotelmanagement.dto.roomDTO.RoomRequest;
+import in.app.hotelmanagement.dto.serviceDTO.ExtraServiceRequest;
 import in.app.hotelmanagement.enums.*;
 import in.app.hotelmanagement.exception.InvalidBookingException;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,9 @@ class PaymentFlowTest {
 
     @Autowired
     BookingService bookingService;
+
+    @Autowired
+    ExtraServiceService extraServiceService;
 
     private Long setUpCustomerAndRoom() {
         RoomRequest room = new RoomRequest();
@@ -61,7 +65,8 @@ class PaymentFlowTest {
                 () -> bookingService.addPayment(bookingId, 2_000_000L, PaymentMethod.CASH), "không được trả quá số còn nợ");
 
         bookingService.updateBookingStatus(bookingId, BookingStatus.CHECKED_IN);
-        bookingService.addService(bookingId, ExtraServiceType.MINIBAR, 2); // +100.000
+        Long minibarId = extraServiceService.create(new ExtraServiceRequest("Minibar test", 50_000L, PricingMode.PER_ITEM)).id();
+        bookingService.addService(bookingId, minibarId, 2); // +100.000
         assertThrows(InvalidBookingException.class,
                 () -> bookingService.updateBookingStatus(bookingId, BookingStatus.CHECKED_OUT), "còn nợ thì không trả phòng được");
 

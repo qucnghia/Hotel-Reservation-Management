@@ -2,480 +2,247 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@layer base {
-  :root {
-    --color-primary: #1E3A8A;
-    --color-secondary: #3B82F6;
-    --color-accent: #A16207;
-    --color-border: #334155;
-  }
+/*
+ * Bộ màu ngữ nghĩa: component chỉ dùng các tên này (bg-surface, text-muted, border-line...)
+ * nên giao diện sáng/tối chỉ cần đổi giá trị biến ở :root và .dark, không cần ghi đè từng class.
+ */
+@theme inline {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Inter dạng biến thiên: nhích độ đậm lên một chút so với mặc định để chữ chắc hơn */
+  --font-weight-medium: 560;
+  --font-weight-semibold: 650;
+  --font-weight-bold: 750;
 
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-subtle: var(--subtle);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-fg: var(--accent-fg);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-fg: var(--sidebar-fg);
+  --color-sidebar-muted: var(--sidebar-muted);
+  --color-sidebar-hover: var(--sidebar-hover);
+  --color-sidebar-active: var(--sidebar-active);
+  --color-sidebar-line: var(--sidebar-line);
+  --color-thead: var(--thead);
+  --color-row-hover: var(--row-hover);
+  --color-hover: var(--hover);
+  --color-thead-fg: var(--thead-fg);
+}
+
+/*
+ * Giao diện sáng: sidebar xanh tím đậm và nền trang ngả xanh để bớt mảng trắng,
+ * thẻ trắng nổi trên nền; chữ phụ đạt tối thiểu 4.5:1 (muted ~7.5:1, faint ~4.8:1).
+ */
+:root {
+  color-scheme: light;
+  --canvas: #e9eef3;
+  --surface: #ffffff;
+  --subtle: #f0f4f7;
+  --line: #d6dee6;
+  --line-strong: #bcc7d2;
+  --fg: #0f172a;
+  --muted: #475569;
+  --faint: #64748b;
+  --accent: #1d4ed8;
+  --accent-hover: #1e40af;
+  --accent-soft: #dbeafe;
+  --accent-fg: #ffffff;
+  --sidebar: #0f2a43;
+  --sidebar-fg: #f1f5f9;
+  --sidebar-muted: #a9bccd;
+  --sidebar-hover: rgb(255 255 255 / 0.08);
+  --sidebar-active: rgb(255 255 255 / 0.14);
+  --sidebar-line: rgb(255 255 255 / 0.12);
+  --thead: #eef3f6;
+  --thead-fg: #334155;
+  /* Rê chuột vào dòng: xanh rất nhạt, khác hẳn nền đầu bảng và nền nhãn xám */
+  --row-hover: #e0ebfc;
+  /* Nút, ô chọn, mục trong danh sách khi rê chuột */
+  --hover: #e2e9f1;
+}
+
+.dark {
+  color-scheme: dark;
+  /* Tông navy thay cho xám đen: nền xanh đêm, thẻ xanh than, chữ phụ ngả xanh */
+  --canvas: #0a1120;
+  --surface: #111b2e;
+  --subtle: #17243b;
+  --line: #22324d;
+  --line-strong: #2f4365;
+  --fg: #e8eef8;
+  --muted: #a3b3cc;
+  --faint: #7586a3;
+  --accent: #3b82f6;
+  --accent-hover: #60a5fa;
+  --accent-soft: #172554;
+  --accent-fg: #ffffff;
+  --sidebar: #0c1527;
+  --sidebar-fg: #e8eef8;
+  --sidebar-muted: #93a4c0;
+  --sidebar-hover: rgb(59 130 246 / 0.10);
+  --sidebar-active: rgb(59 130 246 / 0.18);
+  --sidebar-line: #1c2a44;
+  --thead: #15213a;
+  --thead-fg: #a9bbd6;
+  --row-hover: #1a2a46;
+  --hover: #1f2e4a;
+}
+
+@layer base {
   html {
-    font-size: 17px;
+    /* 17px thay vì 16px: mọi cỡ chữ (và khoảng cách theo rem) to hơn khoảng 6% */
+    font-size: 106.25%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    font-family: 'Plus Jakarta Sans', 'Be Vietnam Pro', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: #0b0f19;
-    color: #f1f5f9;
-    font-size: 1rem;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    font-variant-numeric: normal;
+    @apply bg-canvas text-fg font-sans text-sm;
+    font-weight: 450;
+    font-feature-settings: "cv11", "ss01";
   }
 
-  /* Khử hoàn toàn số 0 gạch chéo trên toàn bộ ứng dụng */
-  *, input, button, select, textarea {
-    font-feature-settings: "zero" 0;
-    font-variant-numeric: normal;
+  /* Số trong bảng tiền thẳng hàng */
+  .tabular {
+    font-variant-numeric: tabular-nums;
   }
 
-  /* Thay thế font-mono để không rơi vào font Consolas có số 0 gạch chéo */
-  .font-mono, code, kbd, samp, pre {
-    font-family: 'Plus Jakarta Sans', 'Be Vietnam Pro', 'Inter', system-ui, sans-serif !important;
-    font-feature-settings: "zero" 0;
-    font-variant-numeric: normal;
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-fg);
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Plus Jakarta Sans', 'Be Vietnam Pro', system-ui, sans-serif;
-    letter-spacing: -0.015em;
-  }
-
-  .font-luxury {
-    font-family: 'Playfair Display SC', Georgia, serif;
-    letter-spacing: 0.04em;
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) transparent;
   }
 }
 
-/* ==========================================================================
-   CHẾ ĐỘ SÁNG (LUXURY LIGHT THEME) - TỐI ƯU TOÀN DIỆN & TƯƠNG PHẢN RÕ NÉT
-   ========================================================================== */
-html.light {
-  color-scheme: light;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
 }
 
-html.light body {
-  background-color: #f1f5f9 !important;
-  color: #0f172a !important;
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.97) translateY(4px); }
+  to { opacity: 1; transform: none; }
 }
 
-/* Nền toàn trang */
-html.light .bg-\[\#080d1a\],
-html.light .bg-\[\#0b0f19\],
-html.light div.min-h-screen {
-  background-color: #f1f5f9 !important;
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(16px) scale(0.98); }
+  to { opacity: 1; transform: none; }
 }
 
-/* Các thẻ Card chính: Header, Sidebar, Bảng dữ liệu, Modal, Khung quản lý */
-html.light header.bg-slate-900\/80,
-html.light aside > div.bg-slate-900\/80,
-html.light .bg-slate-900,
-html.light .bg-slate-900\/80,
-html.light .bg-slate-900\/90,
-html.light .bg-slate-900\/95,
-html.light .bg-slate-900\/50,
-html.light .bg-slate-900\/40 {
-  background-color: #ffffff !important;
-  border-color: #e2e8f0 !important;
-  box-shadow: 0 4px 15px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.03) !important;
+@keyframes toastOut {
+  to { opacity: 0; transform: translateX(16px); }
 }
 
-/* Khung lót phụ, Inset card, Filter bar, Ô tìm kiếm */
-html.light .bg-slate-950,
-html.light .bg-slate-950\/98,
-html.light .bg-slate-950\/95,
-html.light .bg-slate-950\/90,
-html.light .bg-slate-950\/80,
-html.light .bg-slate-950\/70,
-html.light .bg-slate-950\/60,
-html.light .bg-slate-950\/50,
-html.light .bg-slate-950\/40 {
-  background-color: #f8fafc !important;
-  border-color: #e2e8f0 !important;
+@keyframes shrinkX {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
 }
 
-/* Thẻ thông báo mờ / Highlight info box */
-html.light .bg-blue-950\/40,
-html.light .bg-blue-950\/30,
-html.light .bg-blue-950\/20 {
-  background-color: #eff6ff !important;
-  border-color: #bfdbfe !important;
+@keyframes growX {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
 }
 
-/* Badge ID, Pill counter, Chip xám trong Light Mode */
-html.light .bg-slate-800,
-html.light .bg-slate-800\/80,
-html.light .bg-slate-800\/70,
-html.light .bg-slate-800\/60,
-html.light .bg-slate-800\/50,
-html.light .bg-slate-800\/40 {
-  background-color: #f1f5f9 !important;
-  border-color: #cbd5e1 !important;
-  color: #334155 !important;
+@keyframes drawLine {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
 }
 
-/* Đường viền tổng thể */
-html.light .border-slate-800,
-html.light .border-slate-800\/80,
-html.light .border-slate-800\/70,
-html.light .border-slate-800\/60,
-html.light .border-slate-700,
-html.light .border-slate-700\/80,
-html.light .border-slate-700\/60,
-html.light .border-slate-700\/50 {
-  border-color: #e2e8f0 !important;
+.animate-fadeIn {
+  animation: fadeIn 200ms ease-out;
 }
 
-/* ==========================================================================
-   XỬ LÝ MÀU CHỮ TRONG CHẾ ĐỘ SÁNG - TƯƠNG PHẢN CAO, KHÔNG BỊ MẤT CHỮ
-   ========================================================================== */
-
-/* 1. Tiêu đề và chữ văn bản cơ bản */
-html.light h1,
-html.light h2,
-html.light h3,
-html.light h4,
-html.light h5,
-html.light h6 {
-  color: #0f172a !important;
+.animate-scaleIn {
+  animation: scaleIn 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-html.light .text-slate-100 {
-  color: #0f172a !important;
+/* Xuất hiện lần lượt: đặt style={{ '--i': index }} để mỗi phần tử trễ hơn phần trước một chút */
+.animate-rise {
+  /* backwards: chỉ giữ trạng thái đầu trong lúc chờ, chạy xong không khoá transform (hiệu ứng hover vẫn hoạt động) */
+  animation: fadeIn 320ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  animation-delay: calc(var(--i, 0) * 45ms);
 }
 
-html.light .text-slate-200,
-html.light .text-slate-300 {
-  color: #1e293b !important;
+.animate-toastIn {
+  animation: toastIn 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-html.light .text-slate-400 {
-  color: #475569 !important;
+.animate-toastOut {
+  animation: toastOut 180ms ease-in forwards;
 }
 
-html.light .text-slate-500 {
-  color: #64748b !important;
+.animate-toastTimer {
+  animation: shrinkX linear forwards;
 }
 
-/* 2. Chuyển chữ text-white sang đen đậm mặc định trong Light Mode */
-html.light .text-white {
-  color: #0f172a !important;
+/* Thanh tỉ lệ chạy từ trái sang khi xuất hiện */
+.animate-grow {
+  transform-origin: left;
+  animation: growX 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* 3. BẢO TOÀN CHỮ TRẮNG CHO CÁC NÚT BẤM CHÍNH (PRIMARY / GRADIENT BUTTONS) */
-html.light button[class*="from-"],
-html.light button[class*="from-"] *,
-html.light button[class*="bg-gradient-"],
-html.light button[class*="bg-gradient-"] *,
-html.light a[class*="from-"],
-html.light a[class*="from-"] *,
-html.light button.bg-blue-600,
-html.light button.bg-blue-600 *,
-html.light button.bg-indigo-600,
-html.light button.bg-indigo-600 *,
-html.light button.bg-emerald-600,
-html.light button.bg-emerald-600 *,
-html.light button.bg-rose-600,
-html.light button.bg-rose-600 *,
-html.light button.bg-red-600,
-html.light button.bg-red-600 *,
-html.light button.bg-amber-600,
-html.light button.bg-amber-600 * {
-  color: #ffffff !important;
+/* Đường biểu đồ tự vẽ (path cần pathLength="1") */
+.animate-draw {
+  stroke-dasharray: 1;
+  animation: drawLine 900ms cubic-bezier(0.65, 0, 0.35, 1) both;
 }
 
-/* 4. Sửa các màu chữ nhạt (text-*-300 / 400) thành màu đậm nét, rõ ràng */
-html.light .text-blue-300,
-html.light .text-blue-400 {
-  color: #1d4ed8 !important; /* blue-700 */
-}
+@media (prefers-reduced-motion: reduce) {
+  .animate-fadeIn,
+  .animate-scaleIn,
+  .animate-spin,
+  .animate-rise,
+  .animate-toastIn,
+  .animate-toastOut,
+  .animate-grow,
+  .animate-draw {
+    animation: none;
+  }
 
-html.light .text-indigo-300,
-html.light .text-indigo-400 {
-  color: #4338ca !important; /* indigo-700 */
-}
-
-html.light .text-purple-300,
-html.light .text-purple-400 {
-  color: #6b21a8 !important; /* purple-700 */
-}
-
-html.light .text-emerald-300,
-html.light .text-emerald-400 {
-  color: #047857 !important; /* emerald-700 */
-}
-
-html.light .text-amber-300,
-html.light .text-amber-400 {
-  color: #b45309 !important; /* amber-700 */
-}
-
-html.light .text-rose-300,
-html.light .text-rose-400 {
-  color: #be123c !important; /* rose-700 */
-}
-
-html.light .text-sky-300,
-html.light .text-sky-400 {
-  color: #0369a1 !important; /* sky-700 */
-}
-
-/* ==========================================================================
-   CÁC THÀNH PHẦN CHI TIẾT
-   ========================================================================== */
-
-/* Nút phụ / Nút Lịch Sử / Nút MorphMenuButton */
-html.light .bg-blue-500\/15 {
-  background-color: #eff6ff !important;
-  border-color: #bfdbfe !important;
-  color: #1d4ed8 !important;
-}
-html.light .bg-blue-500\/15:hover {
-  background-color: #dbeafe !important;
-}
-
-/* Header Thẻ Đang quản lý */
-html.light header div.bg-slate-950\/70,
-html.light header div.bg-slate-100 {
-  background-color: #f8fafc !important;
-  border-color: #e2e8f0 !important;
-}
-
-/* Bảng dữ liệu */
-html.light thead,
-html.light thead.bg-slate-950\/70,
-html.light thead.bg-slate-950\/80,
-html.light thead.bg-slate-950\/90,
-html.light thead.bg-slate-50 {
-  background-color: #f8fafc !important;
-  border-bottom: 2px solid #e2e8f0 !important;
-}
-
-html.light thead th {
-  color: #475569 !important;
-  font-weight: 700 !important;
-}
-
-html.light tbody tr {
-  border-bottom: 1px solid #e2e8f0 !important;
-}
-
-html.light tbody tr:hover {
-  background-color: #f8fafc !important;
-}
-
-/* Ô nhập liệu Form & Tìm kiếm */
-html.light input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
-html.light textarea,
-html.light select {
-  background-color: #ffffff !important;
-  color: #0f172a !important;
-  border-color: #cbd5e1 !important;
-}
-
-html.light input:focus,
-html.light textarea:focus,
-html.light select:focus {
-  border-color: #2563eb !important;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
-}
-
-html.light input::placeholder,
-html.light textarea::placeholder {
-  color: #94a3b8 !important;
-}
-
-/* GlideSelect Menu & Trigger trong Chế Độ Sáng */
-html.light [data-size] {
-  --gs-surface: #ffffff !important;
-  --gs-highlight: #f1f5f9 !important;
-  --gs-text: #0f172a !important;
-}
-html.light .group\/trigger {
-  border-color: #cbd5e1 !important;
-  background-color: #ffffff !important;
-  color: #0f172a !important;
-}
-html.light .group\/trigger:hover {
-  background-color: #f8fafc !important;
-  border-color: #94a3b8 !important;
-}
-html.light [data-state="open"] {
-  background-color: #ffffff !important;
-  border-color: #cbd5e1 !important;
-  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05) !important;
-}
-html.light [role="option"] {
-  color: #0f172a !important;
-}
-html.light [role="option"]:hover {
-  background-color: #f1f5f9 !important;
-}
-
-/* CustomDatePicker Dialog & Cells trong Chế Độ Sáng */
-html.light [title="Mở bảng chọn lịch"] {
-  background-color: #f1f5f9 !important;
-  border-color: #cbd5e1 !important;
-  color: #4338ca !important;
-}
-html.light [title="Mở bảng chọn lịch"]:hover {
-  background-color: #e0e7ff !important;
-  border-color: #818cf8 !important;
-}
-
-/* Sơ đồ phòng 2D - Giao diện thẻ phòng Sáng Sang Trọng */
-html.light .room-2d-card {
-  background-color: #ffffff !important;
-  box-shadow: 0 4px 15px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.03) !important;
-}
-html.light .room-2d-card:hover {
-  box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.12), 0 4px 6px -2px rgba(15, 23, 42, 0.04) !important;
-}
-html.light .room-2d-card .border-emerald-300 {
-  border-color: #86efac !important;
-}
-html.light .room-2d-card .border-amber-300 {
-  border-color: #fde68a !important;
-}
-html.light .room-2d-card .border-rose-300 {
-  border-color: #fecdd3 !important;
-}
-html.light .room-2d-card .text-emerald-700 {
-  color: #047857 !important;
-}
-html.light .bg-slate-950\/40 {
-  background-color: #f1f5f9 !important;
-  border-color: #e2e8f0 !important;
-}
-
-/* Modal Backdrop */
-html.light .bg-slate-950\/80 {
-  background-color: rgba(15, 23, 42, 0.45) !important;
-}
-
-/* Hộp Logo */
-html.light .bg-white\/5 {
-  background-color: #ffffff !important;
-  border-color: #e2e8f0 !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05) !important;
-}
-
-/* Custom Scrollbar */
-html.light ::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
-html.light ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
-html.light ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  .animate-toastTimer {
+    display: none;
+  }
 }
 
 @media print {
-  header, nav, button, .no-print {
+  aside, nav, button, .no-print {
     display: none !important;
   }
+
   body {
-    background-color: #ffffff !important;
+    background: #ffffff !important;
     color: #000000 !important;
-  }
-  .bg-slate-900\/80, .bg-slate-950\/60, .bg-slate-900\/90, .bg-slate-950\/70, .bg-slate-950\/80 {
-    background-color: #ffffff !important;
-    color: #000000 !important;
-    border-color: #cbd5e1 !important;
-    box-shadow: none !important;
-  }
-  .text-white {
-    color: #0f172a !important;
-  }
-  .text-slate-400, .text-slate-300, .text-slate-200 {
-    color: #475569 !important;
   }
 
   /* Khi đang mở hoá đơn: chỉ in khối hoá đơn, chữ đen trên giấy trắng */
   body:has(.invoice-print) * {
     visibility: hidden;
   }
+
   .invoice-print, .invoice-print * {
     visibility: visible;
     color: #000000 !important;
     background: transparent !important;
-    border-color: #cbd5e1 !important;
+    border-color: #d1d5db !important;
   }
+
   .invoice-print {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
   }
-}
-
-/* ==========================================================================
-   HUY HIỆU HẠNG PHÒNG (ROOM TYPE BADGES) - SẮC NÉT, ĐẲNG CẤP, TƯƠNG PHẢN CAO
-   ========================================================================== */
-
-/* STANDARD */
-.room-badge-standard {
-  background-color: #f1f5f9 !important;
-  color: #0f172a !important;
-  border-color: #cbd5e1 !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.05em !important;
-}
-html.dark .room-badge-standard,
-.dark .room-badge-standard {
-  background-color: #1e293b !important;
-  color: #f8fafc !important;
-  border-color: #475569 !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
-}
-
-/* VIP - Tím Sapphire Hoàng Gia */
-.room-badge-vip {
-  background-color: #e0e7ff !important;
-  color: #312e81 !important;
-  border-color: #a5b4fc !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.05em !important;
-}
-html.dark .room-badge-vip,
-.dark .room-badge-vip {
-  background-color: #1e1b4b !important;
-  color: #a5b4fc !important;
-  border-color: #6366f1 !important;
-  box-shadow: 0 0 12px rgba(99, 102, 241, 0.3) !important;
-}
-
-/* LUXURY - Vàng Kim Hổ Phách Sang Trọng */
-.room-badge-luxury {
-  background-color: #fef3c7 !important;
-  color: #78350f !important;
-  border-color: #fcd34d !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.05em !important;
-}
-html.dark .room-badge-luxury,
-.dark .room-badge-luxury {
-  background-color: #451a03 !important;
-  color: #fde047 !important;
-  border-color: #eab308 !important;
-  box-shadow: 0 0 12px rgba(234, 179, 8, 0.3) !important;
-}
-
-/* Bảng giá phòng trong Modal chi tiết (Room Inspector Price Box) */
-html.light .room-inspector-price-box {
-  background: linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 60%, #f8fafc 100%) !important;
-  border-color: #a7f3d0 !important;
-  box-shadow: 0 4px 14px -2px rgba(16, 185, 129, 0.1) !important;
-}
-
-html.light .room-inspector-price-box .text-emerald-800 {
-  color: #065f46 !important;
-}
-
-html.light .room-inspector-price-box .text-emerald-700 {
-  color: #047857 !important;
 }

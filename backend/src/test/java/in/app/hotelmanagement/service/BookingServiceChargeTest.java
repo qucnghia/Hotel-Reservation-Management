@@ -5,7 +5,8 @@ import in.app.hotelmanagement.dto.bookingDTO.BookingResponse;
 import in.app.hotelmanagement.dto.customerDTO.CustomerRequest;
 import in.app.hotelmanagement.dto.roomDTO.RoomRequest;
 import in.app.hotelmanagement.enums.BookingStatus;
-import in.app.hotelmanagement.enums.ExtraServiceType;
+import in.app.hotelmanagement.dto.serviceDTO.ExtraServiceRequest;
+import in.app.hotelmanagement.enums.PricingMode;
 import in.app.hotelmanagement.enums.RoomType;
 import in.app.hotelmanagement.exception.InvalidBookingException;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,9 @@ class BookingServiceChargeTest {
     @Autowired
     BookingService bookingService;
 
+    @Autowired
+    ExtraServiceService extraServiceService;
+
     @Test
     void addAndRemoveServicesOnActiveBookingOnly() {
         RoomRequest room = new RoomRequest();
@@ -46,7 +50,8 @@ class BookingServiceChargeTest {
         LocalDate in = LocalDate.now().plusDays(1);
         Long bookingId = bookingService.createBooking(new BookingRequest(customerId, 921L, in, in.plusDays(2))).getId();
 
-        BookingResponse withBreakfast = bookingService.addService(bookingId, ExtraServiceType.BREAKFAST, 2);
+        Long breakfastId = extraServiceService.create(new ExtraServiceRequest("Ăn sáng test", 150_000L, PricingMode.PER_NIGHT)).id();
+        BookingResponse withBreakfast = bookingService.addService(bookingId, breakfastId, 2);
         assertEquals(1, withBreakfast.getServices().size());
         assertEquals(2 * 2 * 150_000L, withBreakfast.getServiceTotal());
         assertEquals(1_000_000L + 600_000L, withBreakfast.getGrandTotal());
@@ -58,6 +63,6 @@ class BookingServiceChargeTest {
 
         bookingService.updateBookingStatus(bookingId, BookingStatus.CANCELLED);
         assertThrows(InvalidBookingException.class,
-                () -> bookingService.addService(bookingId, ExtraServiceType.MINIBAR, 1));
+                () -> bookingService.addService(bookingId, breakfastId, 1));
     }
 }

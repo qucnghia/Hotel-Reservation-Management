@@ -4,7 +4,7 @@ import in.app.hotelmanagement.entity.charge.PerItemCharge;
 import in.app.hotelmanagement.entity.charge.PerNightCharge;
 import in.app.hotelmanagement.entity.charge.ServiceCharge;
 import in.app.hotelmanagement.entity.room.Room;
-import in.app.hotelmanagement.enums.ExtraServiceType;
+import in.app.hotelmanagement.enums.PricingMode;
 import in.app.hotelmanagement.enums.RoomType;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +15,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class ServiceChargeTest {
 
     private static final LocalDate DAY = LocalDate.of(2026, 11, 1);
+    private static final ExtraService MINIBAR = new ExtraService("Minibar", 50_000L, PricingMode.PER_ITEM);
+    private static final ExtraService BREAKFAST = new ExtraService("Ăn sáng", 150_000L, PricingMode.PER_NIGHT);
+    private static final ExtraService TRANSFER = new ExtraService("Đưa đón", 300_000L, PricingMode.PER_ITEM);
 
     // Khách VIP (giảm 15%) ở 3 đêm phòng 1.000.000 đ/đêm
     private Booking vipBooking() {
@@ -27,15 +30,15 @@ class ServiceChargeTest {
 
     @Test
     void factoryPicksSubclassByPricingMode() {
-        assertInstanceOf(PerItemCharge.class, ServiceCharge.of(ExtraServiceType.MINIBAR, 1));
-        assertInstanceOf(PerNightCharge.class, ServiceCharge.of(ExtraServiceType.BREAKFAST, 1));
+        assertInstanceOf(PerItemCharge.class, ServiceCharge.of(MINIBAR, 1));
+        assertInstanceOf(PerNightCharge.class, ServiceCharge.of(BREAKFAST, 1));
     }
 
     @Test
     void perItemAndPerNightChargesCalculateTheirOwnCost() {
         Booking booking = vipBooking();
-        ServiceCharge minibar = ServiceCharge.of(ExtraServiceType.MINIBAR, 4);
-        ServiceCharge breakfast = ServiceCharge.of(ExtraServiceType.BREAKFAST, 2);
+        ServiceCharge minibar = ServiceCharge.of(MINIBAR, 4);
+        ServiceCharge breakfast = ServiceCharge.of(BREAKFAST, 2);
         booking.addService(minibar);
         booking.addService(breakfast);
 
@@ -46,7 +49,7 @@ class ServiceChargeTest {
     @Test
     void membershipDiscountAppliesToRoomOnlyNotServices() {
         Booking booking = vipBooking();
-        booking.addService(ServiceCharge.of(ExtraServiceType.AIRPORT_TRANSFER, 1));
+        booking.addService(ServiceCharge.of(TRANSFER, 1));
 
         assertEquals(2_550_000L, booking.getTotalPrice()); // 3.000.000 - 15%
         assertEquals(300_000L, booking.getServiceTotal());

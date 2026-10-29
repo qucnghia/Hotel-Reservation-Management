@@ -300,3 +300,37 @@ export function MoonIcon({ className = "w-5 h-5", ...props }) {
         </svg>
     );
 }
+
+export function MenuIcon({ className = "w-5 h-5", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+    );
+}
+
+export function ChevronLeftIcon({ className = "w-4 h-4", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+        </svg>
+    );
+}
+
+export function ChevronRightIcon({ className = "w-4 h-4", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+        </svg>
+    );
+}
+
+// Chuông lễ tân: biểu tượng dịch vụ khách sạn
+export function ConciergeBellIcon({ className = "w-5 h-5", ...props }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.6} stroke="currentColor" className={className} aria-hidden="true" {...props}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 16.5a7.5 7.5 0 0 1 15 0M2.25 16.5h19.5M3.75 19.5h16.5M12 9V7.5" />
+            <circle cx="12" cy="6" r="1.5" />
+        </svg>
+    );
+}

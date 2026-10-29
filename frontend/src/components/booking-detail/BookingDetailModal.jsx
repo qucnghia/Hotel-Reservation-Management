@@ -1,75 +1,70 @@
 import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { addBookingService, removeBookingService, addBookingPayment } from '../../services/bookingService.js';
-import { XMarkIcon, PlusIcon, TrashIcon, PrinterIcon, ExclamationTriangleIcon, ReceiptPercentIcon } from '../icons/Icons.jsx';
+import { getExtraServices } from '../../services/extraService.js';
+import { PlusIcon, TrashIcon, PrinterIcon, ReceiptPercentIcon } from '../icons/Icons.jsx';
 import GlideSelect from '../glide-select/GlideSelect.jsx';
+import { useToast } from '../../utils/toast.js';
+import { Alert, Badge, Button, Input, Modal } from '../ui';
+import { BOOKING_STATUS, PAYMENT_METHOD, PAYMENT_TYPE, PRICING_MODE, ROOM_TYPE, formatMoney } from '../../utils/labels.js';
 
-// Khớp với enum ExtraServiceType ở backend (giá thật do backend chốt khi thêm)
-const SERVICE_OPTIONS = [
-    { value: 'MINIBAR', label: 'Minibar', tag: '50.000 đ / món' },
-    { value: 'LAUNDRY', label: 'Giặt là', tag: '80.000 đ / lượt' },
-    { value: 'BREAKFAST', label: 'Ăn sáng buffet', tag: '150.000 đ / người / đêm' },
-    { value: 'AIRPORT_TRANSFER', label: 'Đưa đón sân bay', tag: '300.000 đ / lượt' }
-];
+const METHOD_OPTIONS = Object.entries(PAYMENT_METHOD).map(([value, label]) => ({ value, label }));
 
-const METHOD_OPTIONS = [
-    { value: 'CASH', label: 'Tiền mặt' },
-    { value: 'CARD', label: 'Thẻ' },
-    { value: 'TRANSFER', label: 'Chuyển khoản' }
-];
-const METHOD_LABELS = Object.fromEntries(METHOD_OPTIONS.map(m => [m.value, m.label]));
-
-const PAYMENT_TYPE_LABELS = { DEPOSIT: 'Tiền cọc', PAYMENT: 'Thanh toán', REFUND: 'Hoàn tiền' };
-
-const STATUS_LABELS = {
-    CONFIRMED: 'Đã xác nhận',
-    CHECKED_IN: 'Đang lưu trú',
-    CHECKED_OUT: 'Đã trả phòng',
-    CANCELLED: 'Đã hủy'
-};
-
-const money = (n) => `${Number(n || 0).toLocaleString('vi-VN')} đ`;
-
-const SELECT_STYLE = {
-    size: 'md',
-    fullWidth: true,
-    surfaceColor: '#020617',
-    highlightColor: '#1e293b',
-    accentColor: '#818cf8',
-    textColor: '#f8fafc',
-    radius: 12
-};
+function Row({ label, value, strong, tone }) {
+    const toneClass = { red: 'text-rose-600 dark:text-rose-400', green: 'text-emerald-600 dark:text-emerald-400' }[tone] || 'text-fg';
+    return (
+        <div className={`flex justify-between gap-4 py-1.5 ${strong ? 'text-[15px] font-semibold' : ''}`}>
+            <span className={strong ? 'text-fg' : 'text-muted'}>{label}</span>
+            <span className={`tabular ${toneClass}`}>{value}</span>
+        </div>
+    );
+}
 
 export default function BookingDetailModal({ booking, onClose, onChanged }) {
-    const [serviceType, setServiceType] = useState('BREAKFAST');
+    const [catalog, setCatalog] = useState([]);
+    const [serviceId, setServiceId] = useState('');
     const [quantity, setQuantity] = useState(1);
     const [amount, setAmount] = useState('');
     const [method, setMethod] = useState('CASH');
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState(null);
-
-    useEffect(() => {
-        const onKey = (e) => { if (e.key === 'Escape') onClose(); };
-        window.addEventListener('keydown', onKey);
-        return () => window.removeEventListener('keydown', onKey);
-    }, [onClose]);
+    const toast = useToast();
 
     const editable = booking.bookingStatus === 'CONFIRMED' || booking.bookingStatus === 'CHECKED_IN';
+
+    // Danh mục dịch vụ lấy từ trang Dịch vụ (chỉ cần khi đơn còn thêm được dịch vụ)
+    useEffect(() => {
+        if (!editable) return undefined;
+        let cancelled = false;
+        getExtraServices()
+            .then(res => { if (!cancelled) setCatalog(res.data || []); })
+            .catch(() => { if (!cancelled) setError('Không tải được danh mục dịch vụ.'); });
+        return () => { cancelled = true; };
+    }, [editable]);
+
+    const serviceOptions = catalog.map(s => ({
+        value: String(s.id),
+        label: s.name,
+        tag: `${formatMoney(s.unitPrice)} / ${(PRICING_MODE[s.pricingMode] || PRICING_MODE.PER_ITEM).unit}`
+    }));
+    const selectedServiceId = serviceId || serviceOptions[0]?.value || '';
     const nights = booking.durationNights || 1;
     const roomRaw = Number(booking.basePrice || 0) * nights;
     const discount = Math.max(0, roomRaw - Number(booking.totalPrice || 0));
     const balance = Number(booking.balanceDue || 0);
+    const status = BOOKING_STATUS[booking.bookingStatus] || { label: booking.bookingStatus, tone: 'gray' };
+    const type = ROOM_TYPE[booking.roomType];
 
     // Gọi API rồi để bảng tải lại; đơn mới sẽ chảy vào lại qua prop booking
-    const run = async (action) => {
+    const run = async (action, successMessage) => {
         setBusy(true);
         setError(null);
         try {
             await action();
+            if (successMessage) toast.success(successMessage);
             await onChanged();
             return true;
         } catch (err) {
-            setError(err.response?.data?.message || 'Không thể thực hiện thao tác, vui lòng thử lại!');
+            setError(err.response?.data?.message || 'Không thể thực hiện thao tác, vui lòng thử lại.');
             return false;
         } finally {
             setBusy(false);
@@ -78,239 +73,146 @@ export default function BookingDetailModal({ booking, onClose, onChanged }) {
 
     const handleAddService = (e) => {
         e.preventDefault();
-        run(() => addBookingService(booking.id, serviceType, quantity)).then(ok => ok && setQuantity(1));
+        if (!selectedServiceId) {
+            setError('Chưa có dịch vụ nào trong danh mục. Hãy thêm ở trang Dịch vụ.');
+            return;
+        }
+        run(() => addBookingService(booking.id, selectedServiceId, quantity), 'Đã thêm dịch vụ vào đơn.').then(ok => ok && setQuantity(1));
     };
 
     const handlePay = (e) => {
         e.preventDefault();
         const value = Number(amount || balance);
         if (!value || value <= 0) {
-            setError('Vui lòng nhập số tiền hợp lệ!');
+            setError('Vui lòng nhập số tiền hợp lệ.');
             return;
         }
-        run(() => addBookingPayment(booking.id, value, method)).then(ok => ok && setAmount(''));
+        run(() => addBookingPayment(booking.id, value, method), `Đã thu ${formatMoney(value)}.`).then(ok => ok && setAmount(''));
     };
 
-    // Portal ra body: khung bảng có backdrop-blur nên 'fixed' bên trong sẽ bị giam trong khung
-    return createPortal(
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/80 backdrop-blur-md animate-fadeIn"
-            onClick={onClose}
+    return (
+        <Modal
+            title={<span className="inline-flex items-center gap-2">Đơn #{booking.id} · {booking.customerName} <Badge tone={status.tone} dot>{status.label}</Badge></span>}
+            description={`Phòng ${booking.roomNumber} (${type?.label || booking.roomType}) · ${booking.checkInDate} → ${booking.checkOutDate} · ${nights} đêm`}
+            icon={ReceiptPercentIcon}
+            onClose={onClose}
+            size="lg"
+            footer={
+                <>
+                    <Button icon={PrinterIcon} onClick={() => window.print()} className="mr-auto">In hoá đơn</Button>
+                    <Button onClick={onClose}>Đóng</Button>
+                </>
+            }
         >
-            <div
-                className="bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl w-full max-w-3xl max-h-[92vh] flex flex-col overflow-hidden"
-                onClick={(e) => e.stopPropagation()}
-            >
-                {/* Header */}
-                <div className="p-5 sm:p-6 border-b border-slate-800 bg-slate-950/60 flex items-start justify-between gap-4">
-                    <div className="flex items-center gap-3.5">
-                        <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-                            <ReceiptPercentIcon className="w-6 h-6" />
-                        </div>
-                        <div>
-                            <h3 className="font-bold text-slate-900 dark:text-white text-xl leading-tight">
-                                Đơn #{booking.id} • {booking.customerName}
-                            </h3>
-                            <p className="text-sm text-slate-400 mt-1">
-                                Phòng {booking.roomNumber} ({booking.roomType}) • {booking.checkInDate} → {booking.checkOutDate} • {STATUS_LABELS[booking.bookingStatus] || booking.bookingStatus}
-                            </p>
-                        </div>
-                    </div>
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition-all cursor-pointer"
-                        aria-label="Đóng"
-                    >
-                        <XMarkIcon className="w-5 h-5" />
-                    </button>
-                </div>
+            <div className="flex flex-col gap-5">
+                {error && <Alert>{error}</Alert>}
 
-                <div className="p-5 sm:p-6 overflow-y-auto space-y-6 flex-1">
-                    {error && (
-                        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-start gap-3 text-rose-300 text-sm">
-                            <ExclamationTriangleIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-rose-400" />
-                            <span className="font-medium">{error}</span>
-                        </div>
-                    )}
-
-                    {/* === HOÁ ĐƠN (phần này được in) === */}
-                    <div className="invoice-print space-y-5">
-                        <div className="hidden print:block">
-                            <h2 className="text-2xl font-bold">HOÁ ĐƠN LƯU TRÚ</h2>
-                            <p>Đơn #{booking.id} • Khách: {booking.customerName} ({booking.customerEmail})</p>
-                            <p>Phòng {booking.roomNumber} ({booking.roomType}) • {booking.checkInDate} → {booking.checkOutDate} ({nights} đêm)</p>
-                        </div>
-
-                        {/* Tóm tắt tiền */}
-                        <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4 sm:p-5 text-sm">
-                            <div className="flex justify-between py-1.5">
-                                <span className="text-slate-400">Tiền phòng ({nights} đêm × {money(booking.basePrice)})</span>
-                                <span className="font-semibold text-slate-200">{money(roomRaw)}</span>
-                            </div>
-                            {discount > 0 && (
-                                <div className="flex justify-between py-1.5">
-                                    <span className="text-slate-400">Ưu đãi hội viên</span>
-                                    <span className="font-semibold text-amber-400">-{money(discount)}</span>
-                                </div>
-                            )}
-                            <div className="flex justify-between py-1.5">
-                                <span className="text-slate-400">Dịch vụ phát sinh</span>
-                                <span className="font-semibold text-slate-200">{money(booking.serviceTotal)}</span>
-                            </div>
-                            <div className="flex justify-between py-2 mt-1 border-t border-slate-800 text-base">
-                                <span className="font-bold text-slate-900 dark:text-white">Tổng cộng</span>
-                                <span className="font-black text-emerald-400">{money(booking.grandTotal)}</span>
-                            </div>
-                            <div className="flex justify-between py-1.5">
-                                <span className="text-slate-400">Đã thu</span>
-                                <span className="font-semibold text-slate-200">{money(booking.paidAmount)}</span>
-                            </div>
-                            <div className="flex justify-between py-1.5 text-base">
-                                <span className="font-bold text-slate-900 dark:text-white">Còn nợ</span>
-                                <span className={`font-black ${balance > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>{money(balance)}</span>
-                            </div>
-                        </div>
-
-                        {/* Dịch vụ */}
-                        <div>
-                            <h4 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-2">Dịch vụ phát sinh</h4>
-                            {booking.services?.length ? (
-                                <div className="rounded-2xl border border-slate-800 overflow-hidden">
-                                    <table className="w-full text-sm whitespace-nowrap">
-                                        <tbody className="divide-y divide-slate-800/70">
-                                            {booking.services.map(s => (
-                                                <tr key={s.id}>
-                                                    <td className="px-3 py-2.5 font-semibold text-slate-200">{s.displayName}</td>
-                                                    <td className="px-3 py-2.5 text-slate-400">× {s.quantity}</td>
-                                                    <td className="px-3 py-2.5 text-slate-400">{money(s.unitPrice)}</td>
-                                                    <td className="px-3 py-2.5 text-right font-bold text-slate-200">{money(s.cost)}</td>
-                                                    {editable && (
-                                                        <td className="px-2 py-2.5 w-10 print:hidden">
-                                                            <button
-                                                                type="button"
-                                                                disabled={busy}
-                                                                onClick={() => run(() => removeBookingService(booking.id, s.id))}
-                                                                className="p-1.5 rounded-lg text-rose-400 hover:bg-rose-500/15 cursor-pointer"
-                                                                aria-label={`Bớt dịch vụ ${s.displayName}`}
-                                                            >
-                                                                <TrashIcon className="w-4 h-4" />
-                                                            </button>
-                                                        </td>
-                                                    )}
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            ) : (
-                                <p className="text-sm text-slate-500">Chưa có dịch vụ nào.</p>
-                            )}
-                        </div>
-
-                        {/* Lịch sử thanh toán */}
-                        <div>
-                            <h4 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-2">Thanh toán</h4>
-                            {booking.payments?.length ? (
-                                <div className="rounded-2xl border border-slate-800 overflow-hidden">
-                                    <table className="w-full text-sm whitespace-nowrap">
-                                        <tbody className="divide-y divide-slate-800/70">
-                                            {booking.payments.map(p => (
-                                                <tr key={p.id}>
-                                                    <td className="px-3 py-2.5 text-slate-400">{p.paidAt}</td>
-                                                    <td className="px-3 py-2.5 font-semibold text-slate-200">{PAYMENT_TYPE_LABELS[p.type] || p.type}</td>
-                                                    <td className="px-3 py-2.5 text-slate-400">{METHOD_LABELS[p.method] || p.method}</td>
-                                                    <td className={`px-3 py-2.5 text-right font-bold ${p.type === 'REFUND' ? 'text-rose-400' : 'text-emerald-400'}`}>
-                                                        {p.type === 'REFUND' ? '-' : ''}{money(p.amount)}
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            ) : (
-                                <p className="text-sm text-slate-500">Chưa thu khoản nào.</p>
-                            )}
-                        </div>
+                {/* === HOÁ ĐƠN (phần này được in) === */}
+                <div className="invoice-print flex flex-col gap-5">
+                    <div className="hidden print:block">
+                        <h2 className="text-xl font-bold">HOÁ ĐƠN LƯU TRÚ</h2>
+                        <p>Đơn #{booking.id} · Khách: {booking.customerName} ({booking.customerEmail})</p>
+                        <p>Phòng {booking.roomNumber} ({type?.label || booking.roomType}) · {booking.checkInDate} → {booking.checkOutDate} ({nights} đêm)</p>
                     </div>
 
-                    {/* === THAO TÁC (không in) === */}
-                    {editable && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 print:hidden">
-                            <form onSubmit={handleAddService} className="rounded-2xl border border-slate-800 bg-slate-950/40 p-4 space-y-3">
-                                <h4 className="text-sm font-bold text-slate-900 dark:text-white">Thêm dịch vụ</h4>
-                                <GlideSelect options={SERVICE_OPTIONS} value={serviceType} onChange={setServiceType} ariaLabel="Chọn dịch vụ" {...SELECT_STYLE} />
-                                <div className="flex gap-2">
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        max="100"
-                                        value={quantity}
-                                        onChange={(e) => setQuantity(e.target.value)}
-                                        aria-label="Số lượng"
-                                        className="w-24 bg-slate-950/70 border border-slate-700/80 rounded-xl px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500"
-                                    />
-                                    <button
-                                        type="submit"
-                                        disabled={busy}
-                                        className="flex-1 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
-                                    >
-                                        <PlusIcon className="w-4 h-4" />
-                                        <span>Thêm</span>
-                                    </button>
-                                </div>
-                            </form>
+                    <div className="rounded-lg border border-line px-4 py-2 text-sm">
+                        <Row label={`Tiền phòng (${nights} đêm × ${formatMoney(booking.basePrice)})`} value={formatMoney(roomRaw)} />
+                        {discount > 0 && <Row label="Ưu đãi hội viên" value={`−${formatMoney(discount)}`} tone="green" />}
+                        <Row label="Dịch vụ phát sinh" value={formatMoney(booking.serviceTotal)} />
+                        <div className="my-1 border-t border-line" />
+                        <Row label="Tổng cộng" value={formatMoney(booking.grandTotal)} strong />
+                        <Row label="Đã thu" value={formatMoney(booking.paidAmount)} />
+                        <Row label="Còn nợ" value={formatMoney(balance)} strong tone={balance > 0 ? 'red' : 'green'} />
+                    </div>
 
-                            <form onSubmit={handlePay} className="rounded-2xl border border-slate-800 bg-slate-950/40 p-4 space-y-3">
-                                <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-                                    {booking.bookingStatus === 'CONFIRMED' ? 'Thu tiền cọc' : 'Thu tiền'}
-                                </h4>
-                                <GlideSelect options={METHOD_OPTIONS} value={method} onChange={setMethod} ariaLabel="Phương thức thanh toán" {...SELECT_STYLE} />
-                                <div className="flex gap-2">
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        value={amount}
-                                        onChange={(e) => setAmount(e.target.value)}
-                                        placeholder={balance > 0 ? String(balance) : 'Đã đủ'}
-                                        disabled={balance <= 0}
-                                        aria-label="Số tiền"
-                                        className="w-full bg-slate-950/70 border border-slate-700/80 rounded-xl px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
-                                    />
-                                    <button
-                                        type="submit"
-                                        disabled={busy || balance <= 0}
-                                        className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold whitespace-nowrap cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        Thu tiền
-                                    </button>
-                                </div>
-                                <p className="text-xs text-slate-500">Để trống số tiền để thu đủ số còn nợ.</p>
-                            </form>
-                        </div>
-                    )}
+                    <section>
+                        <h3 className="mb-2 text-sm font-medium text-fg">Dịch vụ phát sinh</h3>
+                        {booking.services?.length ? (
+                            <div className="divide-y divide-line rounded-lg border border-line text-sm">
+                                {booking.services.map(s => (
+                                    <div key={s.id} className="flex items-center gap-3 px-3 py-2">
+                                        <span className="flex-1 text-fg">{s.serviceName}</span>
+                                        <span className="text-muted tabular">{s.quantity} × {formatMoney(s.unitPrice)}</span>
+                                        <span className="w-28 text-right font-medium text-fg tabular">{formatMoney(s.cost)}</span>
+                                        {editable && (
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                icon={TrashIcon}
+                                                disabled={busy}
+                                                onClick={() => run(() => removeBookingService(booking.id, s.id))}
+                                                aria-label={`Bớt dịch vụ ${s.serviceName}`}
+                                                className="print:hidden"
+                                            />
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-sm text-muted">Chưa có dịch vụ nào.</p>
+                        )}
+                    </section>
+
+                    <section>
+                        <h3 className="mb-2 text-sm font-medium text-fg">Thanh toán</h3>
+                        {booking.payments?.length ? (
+                            <div className="divide-y divide-line rounded-lg border border-line text-sm">
+                                {booking.payments.map(p => (
+                                    <div key={p.id} className="flex items-center gap-3 px-3 py-2">
+                                        <span className="w-32 text-muted tabular">{p.paidAt}</span>
+                                        <span className="flex-1 text-fg">{PAYMENT_TYPE[p.type] || p.type}</span>
+                                        <span className="text-muted">{PAYMENT_METHOD[p.method] || p.method}</span>
+                                        <span className={`w-28 text-right font-medium tabular ${p.type === 'REFUND' ? 'text-rose-600 dark:text-rose-400' : 'text-fg'}`}>
+                                            {p.type === 'REFUND' ? '−' : ''}{formatMoney(p.amount)}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-sm text-muted">Chưa thu khoản nào.</p>
+                        )}
+                    </section>
                 </div>
 
-                {/* Footer */}
-                <div className="p-5 sm:p-6 border-t border-slate-800 bg-slate-950/60 flex items-center justify-end gap-3 print:hidden">
-                    <button
-                        type="button"
-                        onClick={() => window.print()}
-                        className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-bold flex items-center gap-2 cursor-pointer"
-                    >
-                        <PrinterIcon className="w-4 h-4" />
-                        <span>In hoá đơn</span>
-                    </button>
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold cursor-pointer"
-                    >
-                        Đóng
-                    </button>
-                </div>
+                {/* === THAO TÁC (không in) === */}
+                {editable && (
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 print:hidden">
+                        <form onSubmit={handleAddService} className="flex flex-col gap-2.5 rounded-lg border border-line bg-subtle/50 p-3">
+                            <p className="text-sm font-medium text-fg">Thêm dịch vụ</p>
+                            <GlideSelect options={serviceOptions} value={selectedServiceId} onChange={setServiceId} placeholder="Chưa có dịch vụ" ariaLabel="Chọn dịch vụ" fullWidth />
+                            <div className="flex gap-2">
+                                <Input
+                                    type="number"
+                                    min="1"
+                                    max="100"
+                                    value={quantity}
+                                    onChange={(e) => setQuantity(e.target.value)}
+                                    aria-label="Số lượng"
+                                    className="w-20"
+                                />
+                                <Button type="submit" variant="primary" icon={PlusIcon} disabled={busy} className="flex-1 justify-center">Thêm</Button>
+                            </div>
+                        </form>
+
+                        <form onSubmit={handlePay} className="flex flex-col gap-2.5 rounded-lg border border-line bg-subtle/50 p-3">
+                            <p className="text-sm font-medium text-fg">{booking.bookingStatus === 'CONFIRMED' ? 'Thu tiền cọc' : 'Thu tiền'}</p>
+                            <GlideSelect options={METHOD_OPTIONS} value={method} onChange={setMethod} ariaLabel="Phương thức thanh toán" fullWidth />
+                            <div className="flex gap-2">
+                                <Input
+                                    type="number"
+                                    min="1"
+                                    value={amount}
+                                    onChange={(e) => setAmount(e.target.value)}
+                                    placeholder={balance > 0 ? `${balance} (thu đủ)` : 'Đã thanh toán đủ'}
+                                    disabled={balance <= 0}
+                                    aria-label="Số tiền"
+                                />
+                                <Button type="submit" variant="success" disabled={busy || balance <= 0}>Thu tiền</Button>
+                            </div>
+                        </form>
+                    </div>
+                )}
             </div>
-        </div>,
-        document.body
+        </Modal>
     );
 }

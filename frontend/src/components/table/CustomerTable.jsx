@@ -1,45 +1,16 @@
 import { useState, useMemo, useEffect } from 'react';
-import { UsersIcon, SearchIcon, XMarkIcon, StarIcon } from '../icons/Icons.jsx';
-
-// Mức giảm giá và ngưỡng chi tiêu khớp với CustomerMembership / Customer.recalculateMembership ở backend
-const MEMBERSHIP_STYLES = {
-    VIP: {
-        badge: 'bg-gradient-to-r from-amber-500/20 to-yellow-500/20 text-amber-300 border-amber-500/50',
-        label: 'VIP',
-        iconColor: 'text-amber-400',
-        discount: 15,
-        minSpend: '10 triệu'
-    },
-    PLUS: {
-        badge: 'bg-gradient-to-r from-indigo-500/20 to-purple-500/20 text-indigo-300 border-indigo-500/50',
-        label: 'PLUS',
-        iconColor: 'text-indigo-400',
-        discount: 10,
-        minSpend: '5 triệu'
-    },
-    ECONOMY: {
-        badge: 'bg-gradient-to-r from-emerald-500/20 to-teal-500/20 text-emerald-300 border-emerald-500/50',
-        label: 'ECONOMY',
-        iconColor: 'text-emerald-400',
-        discount: 5,
-        minSpend: '2 triệu'
-    },
-    CUSTOMER: {
-        badge: 'bg-slate-800 text-slate-400 border-slate-700',
-        label: 'CUSTOMER',
-        iconColor: 'text-slate-500',
-        discount: 0,
-        minSpend: null
-    }
-};
+import { UsersIcon } from '../icons/Icons.jsx';
+import { Avatar, Badge, Card, EmptyState, Pagination, SearchInput, Table } from '../ui';
+import { usePagination } from '../../utils/usePagination.js';
+import { MEMBERSHIP, formatMoney } from '../../utils/labels.js';
 
 export default function CustomerTable({ guests, selectedCustomer, onSelectCustomer, onEdit, onClearSelection }) {
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Lắng nghe click ra ngoài bảng để đưa màu dòng trở lại bình thường
+    // Bấm ra ngoài bảng thì bỏ chọn dòng
     useEffect(() => {
         const handleDocumentClick = (e) => {
-            if (!e.target.closest('tr') && !e.target.closest('.customer-modal')) {
+            if (!e.target.closest('tr') && !e.target.closest('[role="dialog"]')) {
                 if (onClearSelection) onClearSelection();
             }
         };
@@ -51,155 +22,77 @@ export default function CustomerTable({ guests, selectedCustomer, onSelectCustom
         if (!searchTerm.trim()) return guests || [];
         const term = searchTerm.toLowerCase();
         return (guests || []).filter(g => {
-            const name = (g.fullName || g.FullName || '').toLowerCase();
-            const email = (g.email || g.Email || '').toLowerCase();
+            const name = (g.fullName || '').toLowerCase();
+            const email = (g.email || '').toLowerCase();
             const membership = (g.membership || '').toLowerCase();
-            const id = String(g.id || '');
-            return name.includes(term) || email.includes(term) || id.includes(term) || membership.includes(term);
+            return name.includes(term) || email.includes(term) || String(g.id).includes(term) || membership.includes(term);
         });
     }, [guests, searchTerm]);
+    const pager = usePagination(filteredGuests);
 
     return (
-        <div className="bg-slate-900/90 border border-slate-800 rounded-2xl shadow-xl overflow-hidden backdrop-blur-md flex flex-col w-full">
-            {/* Search Toolbar */}
-            <div className="p-4 border-b border-slate-800 bg-slate-950/40 flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center justify-between gap-3">
-                <div className="relative flex-1 max-w-sm">
-                    <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-                    <input
-                        type="text"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="Tìm theo tên, email, hạng VIP hoặc ID..."
-                        className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-xl pl-10 pr-8 py-2.5 text-sm text-slate-900 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all font-medium shadow-sm"
-                    />
-                    {searchTerm && (
-                        <button
-                            type="button"
-                            onClick={() => setSearchTerm('')}
-                            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white cursor-pointer"
-                            aria-label="Xóa từ khóa tìm kiếm"
-                        >
-                            <XMarkIcon className="w-4 h-4" />
-                        </button>
-                    )}
-                </div>
-
-                {/* Bảng ưu đãi theo hạng hội viên */}
-                <div className="w-full order-last flex items-center gap-2 flex-wrap pt-3 border-t border-slate-800/70">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1">Ưu đãi hội viên:</span>
-                    {Object.entries(MEMBERSHIP_STYLES).map(([key, m]) => (
-                        <span
-                            key={key}
-                            title={m.minSpend ? `Chi tiêu tích lũy từ ${m.minSpend} đ` : 'Hạng mặc định khi mới đăng ký'}
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border whitespace-nowrap ${m.badge}`}
-                        >
-                            <StarIcon className={`w-3 h-3 ${m.iconColor}`} />
-                            <span>{m.label}</span>
-                            <span className="opacity-80 font-semibold">{m.discount > 0 ? `giảm ${m.discount}%` : 'không giảm'}</span>
-                        </span>
-                    ))}
-                </div>
-
-                <div className="flex items-center gap-3 justify-end">
-                    <div className="text-sm text-slate-400 font-medium">
-                        Tổng cộng: <strong className="text-slate-900 dark:text-white font-bold">{filteredGuests.length}</strong> / <span className="text-slate-700 dark:text-slate-300 font-semibold">{guests?.length || 0}</span> khách hàng
-                    </div>
-                </div>
+        <Card>
+            <div className="flex flex-col gap-3 border-b border-line p-3 sm:flex-row sm:items-center sm:justify-between">
+                <SearchInput
+                    value={searchTerm}
+                    onChange={setSearchTerm}
+                    placeholder="Tìm theo tên, email, hạng hoặc mã..."
+                    className="w-full sm:max-w-xs"
+                />
+                <p className="text-sm text-muted">
+                    <span className="font-medium text-fg">{filteredGuests.length}</span> / {guests?.length || 0} khách hàng
+                </p>
             </div>
 
-            {/* Table */}
-            <div className="overflow-x-auto w-full">
-                <table className="w-full text-left text-base text-slate-700 dark:text-slate-200">
-                    <thead className="bg-slate-50 dark:bg-slate-950/70 text-sm uppercase tracking-wider text-slate-700 dark:text-slate-300 border-b border-slate-200 dark:border-slate-800 font-bold">
-                        <tr>
-                            <th scope="col" className="px-5 py-4 w-20 text-center">ID</th>
-                            <th scope="col" className="px-5 py-4">Họ và Tên</th>
-                            <th scope="col" className="px-5 py-4">Hạng Hội Viên</th>
-                            <th scope="col" className="px-5 py-4">Chi Tiêu Tích Lũy</th>
-                            <th scope="col" className="px-5 py-4">Ngày sinh</th>
-                            <th scope="col" className="px-5 py-4">Email</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-200 dark:divide-slate-800/70">
-                        {filteredGuests && filteredGuests.length > 0 ? (
-                            filteredGuests.map((guest) => {
-                                const guestId = guest.id;
-                                const guestName = guest.fullName || guest.FullName || '---';
-                                const guestDob = guest.dob || guest.DOB || '---';
-                                const guestEmail = guest.email || guest.Email || '---';
-                                const memKey = guest.membership || 'CUSTOMER';
-                                const memStyle = MEMBERSHIP_STYLES[memKey] || MEMBERSHIP_STYLES.CUSTOMER;
-                                const paid = Number(guest.paidPrice || 0);
-                                const isSelected = selectedCustomer?.id === guestId;
+            {/* Bảng ưu đãi theo hạng hội viên */}
+            <div className="flex flex-wrap items-center gap-2 border-b border-line px-3 py-2.5 text-xs text-muted">
+                <span>Ưu đãi hội viên:</span>
+                {Object.entries(MEMBERSHIP).map(([key, m]) => (
+                    <span key={key} title={m.minSpend ? `Chi tiêu tích luỹ từ ${m.minSpend} đ` : 'Hạng mặc định khi mới đăng ký'}>
+                        <Badge tone={m.tone}>{m.label} · {m.discount > 0 ? `giảm ${m.discount}%` : 'không giảm'}</Badge>
+                    </span>
+                ))}
+            </div>
 
-                                return (
-                                    <tr
-                                        key={guestId}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            if (onSelectCustomer) onSelectCustomer(guest);
-                                            if (onEdit) onEdit(guest);
-                                        }}
-                                        title="Nhấn trực tiếp để chỉnh sửa thông tin hoặc xem lịch sử đặt phòng"
-                                        className={`border-l-4 transition-all duration-150 cursor-pointer ${
-                                            isSelected
-                                                ? 'bg-blue-500/15 dark:bg-blue-600/25 border-l-blue-500 shadow-sm'
-                                                : 'border-l-transparent hover:border-l-blue-500 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
-                                        }`}
-                                    >
-                                        <td className="px-5 py-4 text-center">
-                                            <span className={`text-sm font-bold px-2.5 py-1 rounded-lg border inline-block shadow-sm ${
-                                                isSelected
-                                                    ? 'bg-blue-500 text-white border-blue-400'
-                                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700'
-                                            }`}>
-                                                #{guestId}
-                                            </span>
-                                        </td>
-                                        <td className="px-5 py-4 font-bold text-base text-slate-900 dark:text-white">
-                                            {guestName}
-                                        </td>
-                                        <td className="px-5 py-4">
-                                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-bold border whitespace-nowrap ${memStyle.badge}`}>
-                                                <StarIcon className={`w-3.5 h-3.5 ${memStyle.iconColor}`} />
-                                                <span>{memStyle.label}</span>
-                                            </span>
-                                        </td>
-                                        <td className="px-5 py-4 font-bold text-emerald-400 text-base whitespace-nowrap">
-                                            <span className="inline-flex items-baseline gap-1">
-                                                <span>{paid.toLocaleString('vi-VN')}</span>
-                                                <span className="text-xs font-semibold text-emerald-500">đ</span>
-                                            </span>
-                                        </td>
-                                        <td className="px-5 py-4 text-slate-700 dark:text-slate-300 text-sm font-medium whitespace-nowrap">
-                                            {guestDob}
-                                        </td>
-                                        <td className="px-5 py-4 text-slate-700 dark:text-slate-300 text-sm font-medium">
-                                            {guestEmail}
-                                        </td>
-                                    </tr>
-                                );
-                            })
-                        ) : (
-                            <tr>
-                                <td colSpan="6" className="px-6 py-14 text-center text-slate-400">
-                                    <div className="flex flex-col items-center justify-center gap-2">
-                                        <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 mb-1">
-                                            <UsersIcon className="w-6 h-6" />
-                                        </div>
-                                        <p className="text-sm font-medium text-slate-300">
-                                            {searchTerm ? 'Không tìm thấy khách hàng phù hợp.' : 'Chưa có khách hàng nào trong hệ thống.'}
-                                        </p>
-                                        <p className="text-xs text-slate-500">
-                                            {searchTerm ? 'Hãy thử tìm kiếm với từ khóa khác.' : 'Bấm nút "Tạo Hồ Sơ Khách Hàng" ở trên để thêm khách hàng mới.'}
-                                        </p>
-                                    </div>
+            {filteredGuests.length === 0 ? (
+                <EmptyState
+                    icon={UsersIcon}
+                    title={searchTerm ? 'Không tìm thấy khách hàng phù hợp' : 'Chưa có khách hàng'}
+                    description={searchTerm ? 'Thử tìm với từ khoá khác.' : 'Bấm "Thêm khách hàng" để tạo hồ sơ đầu tiên.'}
+                />
+            ) : (
+                <Table head={['Mã', 'Họ và tên', 'Hạng', { label: 'Chi tiêu tích luỹ', className: 'text-right' }, 'Ngày sinh', 'Email']}>
+                    {pager.pageItems.map((guest) => {
+                        const mem = MEMBERSHIP[guest.membership] || MEMBERSHIP.CUSTOMER;
+                        const isSelected = selectedCustomer?.id === guest.id;
+                        return (
+                            <tr
+                                key={guest.id}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (onSelectCustomer) onSelectCustomer(guest);
+                                    if (onEdit) onEdit(guest);
+                                }}
+                                title="Bấm để sửa thông tin hoặc xem lịch sử đặt phòng"
+                                className={`cursor-pointer transition-colors ${isSelected ? 'bg-accent-soft shadow-[inset_3px_0_0_var(--accent)]' : 'hover:bg-row-hover'}`}
+                            >
+                                <td className="whitespace-nowrap px-4 py-3 text-muted tabular">#{guest.id}</td>
+                                <td className="whitespace-nowrap px-4 py-3">
+                                    <span className="flex items-center gap-2.5">
+                                        <Avatar name={guest.fullName} tone={mem.tone === 'gray' ? 'accent' : mem.tone} />
+                                        <span className="font-medium text-fg">{guest.fullName || '—'}</span>
+                                    </span>
                                 </td>
+                                <td className="px-4 py-3"><Badge tone={mem.tone}>{mem.label}</Badge></td>
+                                <td className="whitespace-nowrap px-4 py-3 text-right font-medium text-fg tabular">{formatMoney(guest.paidPrice)}</td>
+                                <td className="whitespace-nowrap px-4 py-3 text-muted tabular">{guest.dob || '—'}</td>
+                                <td className="whitespace-nowrap px-4 py-3 text-muted">{guest.email || '—'}</td>
                             </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                        );
+                    })}
+                </Table>
+            )}
+            <Pagination {...pager} />
+        </Card>
     );
 }

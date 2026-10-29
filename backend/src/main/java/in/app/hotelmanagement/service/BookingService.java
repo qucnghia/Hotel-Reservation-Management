@@ -9,7 +9,6 @@ import in.app.hotelmanagement.entity.Payment;
 import in.app.hotelmanagement.enums.PaymentMethod;
 import in.app.hotelmanagement.enums.PaymentType;
 import in.app.hotelmanagement.entity.charge.ServiceCharge;
-import in.app.hotelmanagement.enums.ExtraServiceType;
 import in.app.hotelmanagement.entity.room.Room;
 import in.app.hotelmanagement.enums.BookingStatus;
 import in.app.hotelmanagement.enums.CustomerMembership;
@@ -37,12 +36,16 @@ public class BookingService {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+    private final ExtraServiceService extraServiceService;
+
     public BookingService(BookingRepository bookingRepository,
                           CustomerRepository customerRepository,
-                          RoomRepository roomRepository) {
+                          RoomRepository roomRepository,
+                          ExtraServiceService extraServiceService) {
         this.bookingRepository = bookingRepository;
         this.customerRepository = customerRepository;
         this.roomRepository = roomRepository;
+        this.extraServiceService = extraServiceService;
     }
 
     public BookingResponse createBooking(BookingRequest request) {
@@ -110,9 +113,9 @@ public class BookingService {
         return BookingResponse.fromEntity(saved);
     }
 
-    public BookingResponse addService(Long bookingId, ExtraServiceType type, int quantity) {
+    public BookingResponse addService(Long bookingId, Long serviceId, int quantity) {
         Booking booking = findEditableBooking(bookingId);
-        booking.addService(ServiceCharge.of(type, quantity));
+        booking.addService(ServiceCharge.of(extraServiceService.find(serviceId), quantity));
         return BookingResponse.fromEntity(bookingRepository.saveAndFlush(booking));
     }
 

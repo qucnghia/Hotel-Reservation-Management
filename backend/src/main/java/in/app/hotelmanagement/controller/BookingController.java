@@ -53,7 +53,7 @@ public class BookingController {
 
     @PostMapping("/{id}/services")
     public ResponseEntity<BookingResponse> addService(@PathVariable Long id, @Valid @RequestBody ServiceChargeRequest request) {
-        return ResponseEntity.ok(bookingService.addService(id, request.type(), request.quantity()));
+        return ResponseEntity.ok(bookingService.addService(id, request.serviceId(), request.quantity()));
     }
 
     @PostMapping("/{id}/payments")

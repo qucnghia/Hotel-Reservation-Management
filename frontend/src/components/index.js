@@ -15,10 +15,10 @@ export { default as CustomerBookingHistoryModal } from './booking-history/Custom
 export { default as HotelFloorPlan2D } from './floor-plan/HotelFloorPlan2D.jsx';
 export { default as RevenueManagement } from './revenue/RevenueManagement.jsx';
 export { default as RoomCalendar } from './room-calendar/RoomCalendar.jsx';
+export { default as ServiceCatalog } from './services/ServiceCatalog.jsx';
 
 // === UI CONTROLS, THEME & ICONS ===
 export { default as CustomDatePicker } from './date-picker/CustomDatePicker.jsx';
 export { default as GlideSelect } from './glide-select/GlideSelect.jsx';
 export { default as ThemeToggle } from './theme/ThemeToggle.jsx';
-export { MorphMenuButton, MorphIconButton, MorphIcon } from './morph-icons/MorphingButton.jsx';
 export * from './icons/Icons.jsx';

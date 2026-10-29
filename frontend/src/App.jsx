@@ -13,27 +13,54 @@ import {
     HotelFloorPlan2D,
     RevenueManagement,
     RoomCalendar,
+    ServiceCatalog,
     ThemeToggle,
-    MorphMenuButton,
     UsersIcon,
     BedIcon,
     BookmarkIcon,
     RefreshIcon,
-    ExclamationTriangleIcon,
     PlusIcon,
     HistoryIcon,
     MapIcon,
     TableIcon,
     CalendarIcon,
-    TrendingUpIcon
+    TrendingUpIcon,
+    ConciergeBellIcon,
+    MenuIcon,
+    ChevronLeftIcon,
+    ChevronRightIcon
 } from './components';
+import { Alert, Button, PageHeader, Segmented } from './components/ui';
+import { useToast } from './utils/toast.js';
+
+const NAV_ITEMS = [
+    { id: 'rooms', label: 'Phòng', icon: BedIcon },
+    { id: 'bookings', label: 'Đặt phòng', icon: BookmarkIcon },
+    { id: 'guests', label: 'Khách hàng', icon: UsersIcon },
+    { id: 'services', label: 'Dịch vụ', icon: ConciergeBellIcon },
+    { id: 'revenue', label: 'Doanh thu', icon: TrendingUpIcon }
+];
+
+const ROOM_VIEWS = [
+    { value: '2d', label: 'Sơ đồ', icon: MapIcon },
+    { value: 'table', label: 'Bảng', icon: TableIcon },
+    { value: 'calendar', label: 'Lịch', icon: CalendarIcon }
+];
 
 function App() {
+    const toast = useToast();
     const [activeTab, setActiveTab] = useState('rooms'); // 'guests' | 'rooms' | 'bookings' | 'revenue'
     const [roomViewMode, setRoomViewMode] = useState('2d'); // '2d' | 'table' | 'calendar'
     const [bookingInitialRoom, setBookingInitialRoom] = useState('');
     const [bookingInitialCheckIn, setBookingInitialCheckIn] = useState('');
-    const [menuOpen, setMenuOpen] = useState(true);
+    const [mobileNavOpen, setMobileNavOpen] = useState(false);
+    const [navCollapsed, setNavCollapsed] = useState(() => {
+        try {
+            return localStorage.getItem('hotel_nav_collapsed') === 'true';
+        } catch {
+            return false;
+        }
+    });
     const [showCustomerForm, setShowCustomerForm] = useState(false);
     const [showRoomForm, setShowRoomForm] = useState(false);
     const [showBookingForm, setShowBookingForm] = useState(false);
@@ -67,7 +94,7 @@ function App() {
 
         try {
             await deleteGuest(id);
-            alert(`Đã xóa thành công khách hàng #${id}!`);
+            toast.success(`Đã xoá khách hàng ${name || `#${id}`}.`);
             if (editingCustomer?.id === id) {
                 setEditingCustomer(null);
                 setShowCustomerForm(false);
@@ -76,7 +103,7 @@ function App() {
         } catch (err) {
             console.error('Lỗi khi xóa khách hàng:', err);
             const msg = err.response?.data?.message || err.response?.data || err.message || 'Không thể xóa khách hàng!';
-            alert(`Lỗi khi xóa: ${typeof msg === 'string' ? msg : JSON.stringify(msg)}`);
+            toast.error(typeof msg === 'string' ? msg : 'Không thể xoá khách hàng.');
         }
     };
 
@@ -87,7 +114,7 @@ function App() {
 
         try {
             await deleteRoom(roomNumber);
-            alert(`Đã xóa thành công phòng #${roomNumber}!`);
+            toast.success(`Đã xoá phòng ${roomNumber}.`);
             if (editingRoom?.roomNumber === roomNumber) {
                 setEditingRoom(null);
                 setShowRoomForm(false);
@@ -96,7 +123,7 @@ function App() {
         } catch (err) {
             console.error('Lỗi khi xóa phòng:', err);
             const msg = err.response?.data?.message || err.response?.data || err.message || 'Không thể xóa phòng!';
-            alert(`Lỗi khi xóa: ${typeof msg === 'string' ? msg : JSON.stringify(msg)}`);
+            toast.error(typeof msg === 'string' ? msg : 'Không thể xoá phòng.');
         }
     };
 
@@ -108,7 +135,7 @@ function App() {
             setGuests(res.data || []);
         } catch (err) {
             console.error("Lỗi tải danh sách khách hàng:", err);
-            setServerError("Không thể kết nối đến Backend (`http://localhost:8080/hotel/guests`). Hãy đảm bảo ứng dụng Spring Boot đã được khởi chạy!");
+            setServerError("Không kết nối được tới máy chủ (http://localhost:8080). Hãy kiểm tra backend Spring Boot đã chạy chưa.");
         } finally {
             if (!isSilent) setLoading(false);
         }
@@ -122,7 +149,7 @@ function App() {
             setRooms(res.data || []);
         } catch (err) {
             console.error("Lỗi tải danh sách phòng:", err);
-            setServerError("Không thể kết nối đến Backend (`http://localhost:8080/hotel/rooms`). Hãy đảm bảo ứng dụng Spring Boot đã được khởi chạy!");
+            setServerError("Không kết nối được tới máy chủ (http://localhost:8080). Hãy kiểm tra backend Spring Boot đã chạy chưa.");
         } finally {
             if (!isSilent) setLoading(false);
         }
@@ -136,7 +163,7 @@ function App() {
             setBookings(res.data || []);
         } catch (err) {
             console.error("Lỗi tải danh sách đặt phòng:", err);
-            setServerError("Không thể kết nối đến Backend (`http://localhost:8080/hotel/bookings`). Hãy đảm bảo ứng dụng Spring Boot đã được khởi chạy!");
+            setServerError("Không kết nối được tới máy chủ (http://localhost:8080). Hãy kiểm tra backend Spring Boot đã chạy chưa.");
         } finally {
             if (!isSilent) setLoading(false);
         }
@@ -159,13 +186,13 @@ function App() {
                     if (bookingRes.status === 'fulfilled') setBookings(bookingRes.value.data || []);
 
                     if (guestRes.status === 'rejected' && roomRes.status === 'rejected') {
-                        setServerError("Không thể kết nối đến Backend (`http://localhost:8080`). Hãy đảm bảo ứng dụng Spring Boot đã được khởi chạy!");
+                        setServerError("Không kết nối được tới máy chủ (http://localhost:8080). Hãy kiểm tra backend Spring Boot đã chạy chưa.");
                     }
                 }
             } catch (err) {
                 if (isMounted) {
                     console.error("Lỗi tải dữ liệu ban đầu:", err);
-                    setServerError("Không thể kết nối đến Backend (`http://localhost:8080`).");
+                    setServerError("Không kết nối được tới máy chủ (http://localhost:8080).");
                 }
             }
         };
@@ -179,6 +206,9 @@ function App() {
     // Làm mới ngầm toàn bộ dữ liệu khi người dùng chuyển tab
     const switchTab = (tab) => {
         setActiveTab(tab);
+        setMobileNavOpen(false);
+        setEditingCustomer(null);
+        setEditingRoom(null);
         fetchGuests(true);
         fetchRooms(true);
         fetchBookings(true);
@@ -195,245 +225,161 @@ function App() {
         return () => window.removeEventListener('focus', handleFocus);
     }, []);
 
-    const handleRefreshCurrentTab = () => {
-        if (activeTab === 'guests') fetchGuests();
-        else if (activeTab === 'rooms') fetchRooms();
-        else if (activeTab === 'bookings') fetchBookings();
-        else if (activeTab === 'revenue') {
-            fetchBookings();
-            fetchRooms();
-            fetchGuests();
-        }
+    const reloadAll = () => {
+        fetchGuests();
+        fetchRooms();
+        fetchBookings();
     };
 
-    return (
-        <div className="min-h-screen bg-[#080d1a] text-slate-100 flex flex-col items-center py-6 px-4 sm:px-6 lg:px-8 selection:bg-blue-600 selection:text-white">
-            <div className="w-full max-w-[1600px] flex flex-col gap-6">
+    const openNewRoom = () => {
+        setEditingRoom(null);
+        setSelectedRoom(null);
+        setShowRoomForm(true);
+    };
 
-                {/* Header Card with Liquid Glass style */}
-                <header className="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-6 shadow-2xl backdrop-blur-xl relative overflow-hidden">
-                    {/* Background subtle glow */}
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
+    const openEditRoom = (room) => {
+        setEditingRoom(room);
+        setSelectedRoom(room);
+        setShowRoomForm(true);
+    };
 
-                    {/* HÀNG 1: LOGO VÀ TIÊU ĐỀ & CHUYỂN ĐỔI GIAO DIỆN */}
-                    <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-5 sm:gap-6 w-full py-2">
-                        <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-6">
-                            {/* Logo Khách Sạn */}
-                            <div className="w-24 sm:w-32 md:w-40 h-20 sm:h-24 md:h-28 rounded-2xl bg-white p-2 flex items-center justify-center flex-shrink-0 shadow-xl shadow-blue-900/15 border border-slate-700/60 transition-transform duration-300 hover:scale-105">
-                                <img
-                                    src="/hotel-building-logo.png"
-                                    alt="Hotel Management Logo"
-                                    className="w-full h-full object-contain"
-                                />
-                            </div>
+    const toggleNav = () => {
+        setNavCollapsed(prev => {
+            try {
+                localStorage.setItem('hotel_nav_collapsed', String(!prev));
+            } catch {
+                // Không lưu được thì chỉ không nhớ lựa chọn cho lần sau
+            }
+            return !prev;
+        });
+    };
 
-                            {/* Tiêu đề Khách Sạn */}
-                            <div className="text-center sm:text-left flex flex-col justify-center">
-                                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-wider text-slate-900 dark:text-white uppercase font-luxury leading-tight">
-                                    Hotel Management
-                                </h1>
-                                <p className="text-xs sm:text-sm md:text-base text-slate-400 mt-2 font-semibold tracking-widest uppercase">
-                                    Hệ thống quản trị và điều hành khách sạn
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Nút Chuyển Đổi Giao Diện Sáng / Tối */}
-                        <div className="flex items-center self-center sm:self-auto">
-                            <ThemeToggle />
-                        </div>
-                    </div>
-
-                    {/* Thanh điều khiển Danh mục & Nút MorphMenuButton */}
-                    <div className="mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-start flex-wrap gap-3">
-                        {/* === [PACKAGE MORPH-ICONS: Nút Menu Morphing (Quản lý khách sạn) ở góc trái] === */}
-                        <MorphMenuButton
-                            open={menuOpen}
-                            setOpen={setMenuOpen}
-                            label="Quản lý khách sạn"
-                            title="Bấm để mở / thu gọn menu bên trái"
-                            className="px-4 py-2.5 rounded-xl font-bold text-sm shadow-md"
-                        />
-
-                        {/* Thẻ hiển thị phân hệ đang quản lý */}
-                        <div className="flex items-center gap-2.5 px-4.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-base shadow-sm">
-                            <span className="text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">Đang quản lý:</span>
-                            <span className="font-extrabold text-slate-900 dark:text-white flex items-center gap-2 text-base">
-                                {activeTab === 'guests' && <><UsersIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" /> Quản lý Khách Hàng ({guests.length})</>}
-                                {activeTab === 'rooms' && <><BedIcon className="w-5 h-5 text-amber-600 dark:text-amber-400" /> Quản lý Phòng ({rooms.length})</>}
-                                {activeTab === 'bookings' && <><BookmarkIcon className="w-5 h-5 text-purple-600 dark:text-purple-400" /> Quản lý Đặt Phòng ({bookings.length})</>}
-                                {activeTab === 'revenue' && <><TrendingUpIcon className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> Quản lý Doanh Thu & Tài Chính</>}
-                            </span>
-                        </div>
-                    </div>
-                </header>
-
-                {/* Server Error Notification */}
-                {serverError && (
-                    <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-amber-300 text-sm shadow-lg backdrop-blur-md">
-                        <div className="flex items-center gap-3">
-                            <ExclamationTriangleIcon className="w-5 h-5 flex-shrink-0 text-amber-400" />
-                            <span>{serverError}</span>
-                        </div>
-                        <button
-                            type="button"
-                            className="px-4 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-xs font-semibold border border-amber-500/30 transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5"
-                            onClick={handleRefreshCurrentTab}
-                        >
-                            <RefreshIcon className="w-3.5 h-3.5" />
-                            <span>Thử kết nối lại</span>
-                        </button>
+    // collapsed: chỉ hiện icon (dùng cho sidebar màn hình lớn); ngăn kéo điện thoại luôn mở rộng
+    const renderSidebar = (collapsed) => (
+        <div className="flex h-full flex-col">
+            <div className={`flex items-center gap-2.5 py-4 ${collapsed ? 'justify-center px-2' : 'px-4'}`}>
+                <img src="/hotel-building-logo.png" alt="" className="h-8 w-8 shrink-0 rounded-lg border border-line bg-white object-contain p-0.5" />
+                {!collapsed && (
+                    <div className="leading-tight">
+                        <p className="text-sm font-semibold text-sidebar-fg">Hotel Manager</p>
+                        <p className="text-xs text-sidebar-muted">Quản lý khách sạn</p>
                     </div>
                 )}
+            </div>
 
-                {/* 2-Column Layout: Sidebar Menu bên trái & Nội dung quản lý bên phải */}
-                <div className="w-full flex flex-col lg:flex-row items-start gap-6">
-                    {/* CỘT TRÁI: THANH MENU ĐIỀU HÀNH (SIDEBAR NAVIGATION) */}
-                    {menuOpen && (
-                        <aside className="w-full lg:w-[320px] xl:w-[340px] flex-shrink-0 flex flex-col gap-4 animate-fadeIn lg:sticky lg:top-6 z-20">
-                            <div className="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 sm:p-5 shadow-2xl backdrop-blur-xl flex flex-col gap-3 relative overflow-hidden">
-                                <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
-                                    <span className="text-xs uppercase tracking-wider text-slate-400 font-extrabold flex items-center gap-2">
-                                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                                        Menu Quản Lý
-                                    </span>
-                                </div>
+            <nav className={`flex flex-1 flex-col gap-0.5 py-2 ${collapsed ? 'px-2' : 'px-3'}`} aria-label="Điều hướng chính">
+                {NAV_ITEMS.map(({ id, label, icon: Icon }) => {
+                    const active = activeTab === id;
+                    return (
+                        <button
+                            key={id}
+                            type="button"
+                            onClick={() => switchTab(id)}
+                            aria-current={active ? 'page' : undefined}
+                            aria-label={collapsed ? label : undefined}
+                            title={collapsed ? label : undefined}
+                            className={`group relative flex items-center gap-2.5 rounded-lg py-2 text-sm font-medium transition-colors cursor-pointer ${
+                                collapsed ? 'justify-center px-0' : 'px-2.5'
+                            } ${active ? 'bg-sidebar-active text-sidebar-fg' : 'text-sidebar-muted hover:bg-sidebar-hover hover:text-sidebar-fg'}`}
+                        >
+                            {/* Vạch đánh dấu mục đang mở */}
+                            <span
+                                aria-hidden="true"
+                                className={`absolute left-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-r-full bg-amber-300 transition-all duration-200 dark:bg-accent ${active ? 'opacity-100' : 'scale-y-0 opacity-0'}`}
+                            />
+                            <Icon className={`h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110 motion-reduce:group-hover:scale-100 ${active ? 'text-amber-300 dark:text-accent' : ''}`} />
+                            {!collapsed && label}
+                        </button>
+                    );
+                })}
+            </nav>
 
-                                {/* Danh sách 4 nút menu xếp dọc - MỖI NÚT TRÊN 1 DÒNG DUY NHẤT */}
-                                <nav className="flex flex-col gap-2">
-                                    {/* Mục 1: Khách Hàng */}
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            switchTab('guests');
-                                            setEditingCustomer(null);
-                                        }}
-                                        className={`w-full px-3.5 py-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 group whitespace-nowrap ${
-                                            activeTab === 'guests'
-                                                ? 'bg-gradient-to-r from-blue-600 via-sky-600 to-blue-700 text-white border-blue-400/40 shadow-lg shadow-blue-500/25 ring-1 ring-blue-400/30'
-                                                : 'bg-white dark:bg-slate-950/60 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm'
-                                        }`}
-                                    >
-                                        <div className="flex items-center gap-2.5 min-w-0">
-                                            <div className={`p-2 rounded-lg flex-shrink-0 ${
-                                                activeTab === 'guests' ? 'bg-white/20 text-white' : 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400'
-                                            }`}>
-                                                <UsersIcon className="w-4.5 h-4.5" />
-                                            </div>
-                                            <span className="font-bold text-sm whitespace-nowrap">Quản lý Khách Hàng</span>
-                                        </div>
-                                    </button>
+            <div className={`flex flex-col gap-0.5 border-t border-sidebar-line py-3 ${collapsed ? 'px-2' : 'px-3'}`}>
+                <ThemeToggle compact={collapsed} />
+            </div>
+        </div>
+    );
 
-                                    {/* Mục 2: Phòng */}
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            switchTab('rooms');
-                                            setEditingRoom(null);
-                                        }}
-                                        className={`w-full px-3.5 py-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 group whitespace-nowrap ${
-                                            activeTab === 'rooms'
-                                                ? 'bg-gradient-to-r from-amber-600 via-orange-500 to-amber-600 text-white border-amber-300/40 shadow-lg shadow-amber-500/25 ring-1 ring-amber-300/30'
-                                                : 'bg-white dark:bg-slate-950/60 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm'
-                                        }`}
-                                    >
-                                        <div className="flex items-center gap-2.5 min-w-0">
-                                            <div className={`p-2 rounded-lg flex-shrink-0 ${
-                                                activeTab === 'rooms' ? 'bg-white/20 text-white' : 'bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                                            }`}>
-                                                <BedIcon className="w-4.5 h-4.5" />
-                                            </div>
-                                            <span className="font-bold text-sm whitespace-nowrap">Quản lý Phòng</span>
-                                        </div>
-                                    </button>
+    return (
+        <div className="min-h-screen bg-canvas">
+            {/* Sidebar cố định trên màn hình lớn, thu gọn được thành cột icon */}
+            <aside className={`fixed inset-y-0 left-0 z-30 hidden border-r border-sidebar-line bg-sidebar transition-[width] duration-200 lg:block ${navCollapsed ? 'w-16' : 'w-60'}`}>
+                {renderSidebar(navCollapsed)}
+                <button
+                    type="button"
+                    onClick={toggleNav}
+                    aria-label={navCollapsed ? 'Mở rộng menu' : 'Thu gọn menu'}
+                    title={navCollapsed ? 'Mở rộng menu' : 'Thu gọn menu'}
+                    aria-expanded={!navCollapsed}
+                    className="absolute -right-3 top-5 flex h-6 w-6 items-center justify-center rounded-full border border-line-strong bg-surface text-muted shadow-sm hover:text-fg cursor-pointer"
+                >
+                    {navCollapsed ? <ChevronRightIcon className="h-3.5 w-3.5" /> : <ChevronLeftIcon className="h-3.5 w-3.5" />}
+                </button>
+            </aside>
 
-                                    {/* Mục 3: Đặt Phòng */}
-                                    <button
-                                        type="button"
-                                        onClick={() => switchTab('bookings')}
-                                        className={`w-full px-3.5 py-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 group whitespace-nowrap ${
-                                            activeTab === 'bookings'
-                                                ? 'bg-gradient-to-r from-purple-600 via-fuchsia-600 to-purple-600 text-white border-purple-400/40 shadow-lg shadow-purple-600/25 ring-1 ring-purple-400/30'
-                                                : 'bg-white dark:bg-slate-950/60 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm'
-                                        }`}
-                                    >
-                                        <div className="flex items-center gap-2.5 min-w-0">
-                                            <div className={`p-2 rounded-lg flex-shrink-0 ${
-                                                activeTab === 'bookings' ? 'bg-white/20 text-white' : 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400'
-                                            }`}>
-                                                <BookmarkIcon className="w-4.5 h-4.5" />
-                                            </div>
-                                            <span className="font-bold text-sm whitespace-nowrap">Quản lý Đặt Phòng</span>
-                                        </div>
-                                    </button>
+            {/* Sidebar dạng ngăn kéo trên điện thoại */}
+            {mobileNavOpen && (
+                <div className="fixed inset-0 z-40 lg:hidden">
+                    <div className="absolute inset-0 bg-black/40" onClick={() => setMobileNavOpen(false)} />
+                    <aside className="absolute inset-y-0 left-0 w-64 border-r border-sidebar-line bg-sidebar shadow-xl animate-fadeIn">
+                        {renderSidebar(false)}
+                    </aside>
+                </div>
+            )}
 
-                                    {/* Mục 4: Doanh Thu */}
-                                    <button
-                                        type="button"
-                                        onClick={() => switchTab('revenue')}
-                                        className={`w-full px-3.5 py-3 rounded-xl border text-left transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 group whitespace-nowrap ${
-                                            activeTab === 'revenue'
-                                                ? 'bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 text-white border-emerald-400/40 shadow-lg shadow-emerald-600/25 ring-1 ring-emerald-400/30'
-                                                : 'bg-white dark:bg-slate-950/60 hover:bg-slate-50 dark:hover:bg-slate-800/80 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm'
-                                        }`}
-                                    >
-                                        <div className="flex items-center gap-2.5 min-w-0">
-                                            <div className={`p-2 rounded-lg flex-shrink-0 ${
-                                                activeTab === 'revenue' ? 'bg-white/20 text-white' : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                                            }`}>
-                                                <TrendingUpIcon className="w-4.5 h-4.5" />
-                                            </div>
-                                            <span className="font-bold text-sm whitespace-nowrap">Báo Cáo Doanh Thu</span>
-                                        </div>
-                                    </button>
-                                </nav>
-                            </div>
-                        </aside>
+            <div className={`transition-[padding] duration-200 ${navCollapsed ? 'lg:pl-16' : 'lg:pl-60'}`}>
+                {/* Thanh trên cùng cho điện thoại */}
+                <div className="sticky top-0 z-20 flex items-center gap-3 border-b border-line bg-surface/90 px-4 py-2.5 backdrop-blur lg:hidden">
+                    <Button variant="ghost" size="icon" icon={MenuIcon} onClick={() => setMobileNavOpen(true)} aria-label="Mở menu" />
+                    <span className="text-sm font-semibold text-fg">{NAV_ITEMS.find(n => n.id === activeTab)?.label}</span>
+                </div>
+
+                <main className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 py-6 sm:px-6 lg:px-8">
+                    {serverError && (
+                        <Alert
+                            tone="amber"
+                            action={<Button size="sm" icon={RefreshIcon} iconClassName={loading ? 'animate-spin' : ''} onClick={reloadAll} disabled={loading}>Thử lại</Button>}
+                        >
+                            {serverError}
+                        </Alert>
                     )}
 
-                    {/* CỘT PHẢI: NỘI DUNG CHÍNH (MAIN CONTENT) */}
-                    <main className="flex-1 w-full min-w-0">
-                    {/* TAB 1: KHÁCH HÀNG */}
+                    {/* key theo tab để nội dung hiện dần mỗi lần chuyển trang */}
+                    <div key={activeTab} className="flex flex-col gap-5 animate-fadeIn">
+                    {/* TAB: KHÁCH HÀNG */}
                     {activeTab === 'guests' && (
-                        <div className="w-full flex flex-col gap-4">
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1">
-                                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
-                                    <UsersIcon className="w-6 h-6 text-blue-400" />
-                                    <span>Danh Sách Khách Hàng</span>
-                                </h2>
-                                <div className="flex items-center gap-2.5 flex-wrap">
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setEditingCustomer(null);
-                                            setSelectedCustomer(null);
-                                            setShowCustomerForm(true);
-                                        }}
-                                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm sm:text-base font-bold shadow-lg shadow-blue-600/25 transition-all cursor-pointer"
-                                    >
-                                        <PlusIcon className="w-5 h-5" />
-                                        <span>Tạo Hồ Sơ Khách Hàng</span>
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            if (selectedCustomer) {
-                                                setViewingHistoryCustomer(selectedCustomer);
-                                            } else if (guests.length > 0) {
-                                                setViewingHistoryCustomer(guests[0]);
-                                            } else {
-                                                alert('Chưa có khách hàng nào trong hệ thống!');
-                                            }
-                                        }}
-                                        title="Xem lịch sử đặt phòng"
-                                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-50 dark:bg-blue-500/15 hover:bg-blue-100 dark:hover:bg-blue-500/25 active:bg-blue-200 dark:active:bg-blue-500/35 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-500/30 text-sm sm:text-base font-bold shadow-sm dark:shadow-lg transition-all cursor-pointer"
-                                    >
-                                        <HistoryIcon className="w-4 h-4" />
-                                        <span>Lịch Sử</span>
-                                    </button>
-                                </div>
-                            </div>
+                        <>
+                            <PageHeader
+                                title="Khách hàng"
+                                icon={UsersIcon}
+                                tone="teal"
+                                description="Hồ sơ khách, chi tiêu tích luỹ và hạng hội viên."
+                                actions={
+                                    <>
+                                        <Button
+                                            icon={HistoryIcon}
+                                            onClick={() => {
+                                                if (selectedCustomer) setViewingHistoryCustomer(selectedCustomer);
+                                                else if (guests.length > 0) setViewingHistoryCustomer(guests[0]);
+                                                else toast.error('Chưa có khách hàng nào trong hệ thống.');
+                                            }}
+                                        >
+                                            Lịch sử đặt phòng
+                                        </Button>
+                                        <Button
+                                            variant="primary"
+                                            icon={PlusIcon}
+                                            onClick={() => {
+                                                setEditingCustomer(null);
+                                                setSelectedCustomer(null);
+                                                setShowCustomerForm(true);
+                                            }}
+                                        >
+                                            Thêm khách hàng
+                                        </Button>
+                                    </>
+                                }
+                            />
 
                             <CustomerTable
                                 guests={guests}
@@ -453,6 +399,7 @@ function App() {
                                     editingCustomer={editingCustomer}
                                     existingGuests={guests}
                                     onSaved={() => {
+                                        toast.success(editingCustomer ? 'Đã lưu thông tin khách hàng.' : 'Đã thêm khách hàng mới.');
                                         setEditingCustomer(null);
                                         setSelectedCustomer(null);
                                         setShowCustomerForm(false);
@@ -470,72 +417,24 @@ function App() {
                                     }}
                                 />
                             )}
-                        </div>
+                        </>
                     )}
 
-                    {/* TAB 2: PHÒNG KHÁCH SẠN */}
+                    {/* TAB: PHÒNG */}
                     {activeTab === 'rooms' && (
-                        <div className="w-full flex flex-col gap-4">
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1">
-                                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
-                                    <BedIcon className="w-6 h-6 text-indigo-400" />
-                                    <span>Quản Lý Buồng Phòng</span>
-                                </h2>
-                                <div className="flex items-center gap-3 flex-wrap">
-                                    {/* Toggle Sơ đồ 2D / Dạng Bảng */}
-                                    <div className="flex items-center bg-slate-100 dark:bg-slate-950/80 p-1 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-inner">
-                                        <button
-                                            type="button"
-                                            onClick={() => setRoomViewMode('2d')}
-                                            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                                                roomViewMode === '2d'
-                                                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                                                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                                            }`}
-                                        >
-                                            <MapIcon className="w-4 h-4" />
-                                            <span>Sơ Đồ 2D</span>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => setRoomViewMode('table')}
-                                            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                                                roomViewMode === 'table'
-                                                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                                                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                                            }`}
-                                        >
-                                            <TableIcon className="w-4 h-4" />
-                                            <span>Dạng Bảng</span>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => setRoomViewMode('calendar')}
-                                            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                                                roomViewMode === 'calendar'
-                                                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                                                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                                            }`}
-                                        >
-                                            <CalendarIcon className="w-4 h-4" />
-                                            <span>Lịch</span>
-                                        </button>
-                                    </div>
-
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setEditingRoom(null);
-                                            setSelectedRoom(null);
-                                            setShowRoomForm(true);
-                                        }}
-                                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm sm:text-base font-bold shadow-lg shadow-blue-600/25 transition-all cursor-pointer"
-                                    >
-                                        <PlusIcon className="w-5 h-5" />
-                                        <span>Tạo Phòng Ở Mới</span>
-                                    </button>
-                                </div>
-                            </div>
+                        <>
+                            <PageHeader
+                                title="Phòng"
+                                icon={BedIcon}
+                                tone="amber"
+                                description="Tình trạng buồng phòng theo tầng, dạng bảng hoặc theo lịch."
+                                actions={
+                                    <>
+                                        <Segmented options={ROOM_VIEWS} value={roomViewMode} onChange={setRoomViewMode} />
+                                        <Button variant="primary" icon={PlusIcon} onClick={openNewRoom}>Thêm phòng</Button>
+                                    </>
+                                }
+                            />
 
                             {roomViewMode === '2d' ? (
                                 <HotelFloorPlan2D
@@ -543,21 +442,12 @@ function App() {
                                     bookings={bookings}
                                     selectedRoom={selectedRoom}
                                     onSelectRoom={(r) => setSelectedRoom(r)}
-                                    onClearSelection={() => setSelectedRoom(null)}
-                                    onEdit={(room) => {
-                                        setEditingRoom(room);
-                                        setSelectedRoom(room);
-                                        setShowRoomForm(true);
-                                    }}
+                                    onEdit={openEditRoom}
                                     onBookRoom={(room) => {
                                         setBookingInitialRoom(room.roomNumber);
                                         setShowBookingForm(true);
                                     }}
-                                    onAddNewRoom={() => {
-                                        setEditingRoom(null);
-                                        setSelectedRoom(null);
-                                        setShowRoomForm(true);
-                                    }}
+                                    onAddNewRoom={openNewRoom}
                                 />
                             ) : roomViewMode === 'calendar' ? (
                                 <RoomCalendar
@@ -574,11 +464,7 @@ function App() {
                                     rooms={rooms}
                                     selectedRoom={selectedRoom}
                                     onSelectRoom={(r) => setSelectedRoom(r)}
-                                    onEdit={(room) => {
-                                        setEditingRoom(room);
-                                        setSelectedRoom(room);
-                                        setShowRoomForm(true);
-                                    }}
+                                    onEdit={openEditRoom}
                                     onClearSelection={() => setSelectedRoom(null)}
                                 />
                             )}
@@ -589,6 +475,7 @@ function App() {
                                     editingRoom={editingRoom}
                                     existingRooms={rooms}
                                     onSaved={() => {
+                                        toast.success(editingRoom ? `Đã cập nhật phòng ${editingRoom.roomNumber}.` : 'Đã thêm phòng mới.');
                                         setEditingRoom(null);
                                         setSelectedRoom(null);
                                         setShowRoomForm(false);
@@ -602,28 +489,19 @@ function App() {
                                     onDelete={handleDeleteRoom}
                                 />
                             )}
-                        </div>
+                        </>
                     )}
 
-                    {/* TAB 3: ĐẶT PHÒNG (BOOKINGS) */}
+                    {/* TAB: ĐẶT PHÒNG */}
                     {activeTab === 'bookings' && (
-                        <div className="w-full flex flex-col gap-4">
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1">
-                                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
-                                    <BookmarkIcon className="w-6 h-6 text-purple-400" />
-                                    <span>Quản Lý Đặt Phòng (Bookings)</span>
-                                </h2>
-                                <div className="flex items-center gap-2.5 flex-wrap">
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowBookingForm(true)}
-                                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-sm sm:text-base font-bold shadow-lg shadow-indigo-600/25 transition-all cursor-pointer"
-                                    >
-                                        <PlusIcon className="w-5 h-5" />
-                                        <span>Tạo Đơn Đặt Phòng</span>
-                                    </button>
-                                </div>
-                            </div>
+                        <>
+                            <PageHeader
+                                title="Đặt phòng"
+                                icon={BookmarkIcon}
+                                tone="accent"
+                                description="Theo dõi đơn, nhận/trả phòng, dịch vụ và thanh toán."
+                                actions={<Button variant="primary" icon={PlusIcon} onClick={() => setShowBookingForm(true)}>Tạo đơn</Button>}
+                            />
 
                             <BookingTable
                                 bookings={bookings}
@@ -634,10 +512,13 @@ function App() {
                                     fetchGuests();
                                 }}
                             />
-                        </div>
+                        </>
                     )}
 
-                    {/* TAB 4: QUẢN LÝ DOANH THU & TÀI CHÍNH */}
+                    {/* TAB: DỊCH VỤ */}
+                    {activeTab === 'services' && <ServiceCatalog />}
+
+                    {/* TAB: DOANH THU */}
                     {activeTab === 'revenue' && (
                         <RevenueManagement
                             bookings={bookings}
@@ -652,43 +533,44 @@ function App() {
                             }}
                         />
                     )}
+                    </div>
                 </main>
             </div>
 
-                {/* Modal Tạo Đơn Đặt Phòng (dùng chung cho cả Tab Đặt Phòng & Sơ Đồ 2D Khách Sạn) */}
-                {showBookingForm && (
-                    <BookingForm
-                        guests={guests}
-                        rooms={rooms}
-                        bookings={bookings}
-                        initialRoomNumber={bookingInitialRoom}
-                        initialCheckIn={bookingInitialCheckIn}
-                        onSaved={() => {
-                            fetchBookings();
-                            fetchRooms(); // Đồng bộ trạng thái phòng
-                            fetchGuests(); // Đồng bộ chi tiêu và hạng hội viên khách hàng
-                            setShowBookingForm(false);
-                            setBookingInitialRoom('');
-                            setBookingInitialCheckIn('');
-                        }}
-                        onClose={() => {
-                            setShowBookingForm(false);
-                            setBookingInitialRoom('');
-                            setBookingInitialCheckIn('');
-                        }}
-                    />
-                )}
+            {/* Modal tạo đơn (dùng chung cho tab Đặt phòng, sơ đồ và lịch) */}
+            {showBookingForm && (
+                <BookingForm
+                    guests={guests}
+                    rooms={rooms}
+                    bookings={bookings}
+                    initialRoomNumber={bookingInitialRoom}
+                    initialCheckIn={bookingInitialCheckIn}
+                    onSaved={() => {
+                        toast.success('Đã tạo đơn đặt phòng.');
+                        fetchBookings();
+                        fetchRooms(); // Đồng bộ trạng thái phòng
+                        fetchGuests(); // Đồng bộ chi tiêu và hạng hội viên khách hàng
+                        setShowBookingForm(false);
+                        setBookingInitialRoom('');
+                        setBookingInitialCheckIn('');
+                    }}
+                    onClose={() => {
+                        setShowBookingForm(false);
+                        setBookingInitialRoom('');
+                        setBookingInitialCheckIn('');
+                    }}
+                />
+            )}
 
-                {/* Modal Xem Lịch Sử Đặt Phòng Của Khách Hàng */}
-                {viewingHistoryCustomer && (
-                    <CustomerBookingHistoryModal
-                        customer={viewingHistoryCustomer}
-                        guests={guests}
-                        onSelectCustomer={(c) => setViewingHistoryCustomer(c)}
-                        onClose={() => setViewingHistoryCustomer(null)}
-                    />
-                )}
-            </div>
+            {/* Modal lịch sử đặt phòng của khách */}
+            {viewingHistoryCustomer && (
+                <CustomerBookingHistoryModal
+                    customer={viewingHistoryCustomer}
+                    guests={guests}
+                    onSelectCustomer={(c) => setViewingHistoryCustomer(c)}
+                    onClose={() => setViewingHistoryCustomer(null)}
+                />
+            )}
         </div>
     );
 }

@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { ArrowDown01Icon, Tick02Icon } from '@hugeicons/core-free-icons';
 
 const SIZES = {
-  sm: { chip: 32, row: 30, font: 12 },
-  md: { chip: 42, row: 36, font: 14 },
-  lg: { chip: 48, row: 40, font: 15 }
+  sm: { chip: 32, row: 30, font: 13 },
+  md: { chip: 36, row: 32, font: 14 },
+  lg: { chip: 40, row: 34, font: 14 }
 };
 const PAD = 4;
 const GAP = 2;
@@ -32,12 +33,13 @@ export default function GlideSelect({
   onChange,
   placeholder = 'Select…',
   showTags = true,
-  accentColor = '#38bdf8',
-  surfaceColor = '#0f172a',
-  highlightColor = '#1e293b',
-  textColor = '#f8fafc',
+  // Mặc định lấy theo bộ màu chung nên tự đổi theo giao diện sáng/tối
+  accentColor = 'var(--accent)',
+  surfaceColor = 'var(--surface)',
+  highlightColor = 'var(--hover)',
+  textColor = 'var(--fg)',
   size = 'md',
-  radius = 12,
+  radius = 8,
   menuWidth,
   placement = 'bottom',
   align = 'left',
@@ -99,13 +101,16 @@ export default function GlideSelect({
       el.style.maxHeight = `${Math.min(280, Math.floor(availableH))}px`;
     }
 
-    // Tự động căn lề phải nếu bị tràn mép màn hình bên phải
+    // Danh sách nằm trong portal (position: fixed) nên đặt theo toạ độ màn hình của ô chọn,
+    // không bị khung cuộn của cửa sổ cắt mất hay kéo dài ra
+    el.style.minWidth = `${Math.max(r.width, menuWidth || 0)}px`;
     const targetW = el.offsetWidth || (menuWidth || 220);
-    if (align === 'right' || r.left + targetW > window.innerWidth - 16) {
-      setActualAlign('right');
-    } else {
-      setActualAlign('left');
-    }
+    const alignRight = align === 'right' || r.left + targetW > window.innerWidth - 16;
+    setActualAlign(alignRight ? 'right' : 'left');
+    el.style.left = `${Math.max(8, alignRight ? r.right - targetW : r.left)}px`;
+    el.style.top = computedSide === 'top'
+      ? `${Math.max(8, r.top - MENU_GAP - el.offsetHeight)}px`
+      : `${r.bottom + MENU_GAP}px`;
 
     el.style.transitionDuration = instant.current ? '0ms' : '';
     el.dataset.state = 'closed';
@@ -201,11 +206,22 @@ export default function GlideSelect({
 
   useEffect(() => {
     if (phase === 'closed') return undefined;
+    const outside = target => !rootRef.current?.contains(target) && !menuRef.current?.contains(target);
     const onDown = e => {
-      if (rootRef.current && !rootRef.current.contains(e.target)) close('pop');
+      if (outside(e.target)) close('pop');
+    };
+    // Cuộn trang làm ô chọn dịch đi -> đóng danh sách (cuộn bên trong danh sách thì không)
+    const onScroll = e => {
+      if (outside(e.target)) close('instant');
     };
     document.addEventListener('pointerdown', onDown, true);
-    return () => document.removeEventListener('pointerdown', onDown, true);
+    window.addEventListener('scroll', onScroll, true);
+    window.addEventListener('resize', onScroll);
+    return () => {
+      document.removeEventListener('pointerdown', onDown, true);
+      window.removeEventListener('scroll', onScroll, true);
+      window.removeEventListener('resize', onScroll);
+    };
   }, [phase, close]);
 
   // Bị vô hiệu hoá khi đang mở thì đóng ngay (điều chỉnh state trong lúc render, không cần effect)
@@ -258,15 +274,10 @@ export default function GlideSelect({
   };
 
   const origin = `${side === 'bottom' ? 'top' : 'bottom'} ${actualAlign}`;
-  const computedMenuW = menuWidth ? `${menuWidth}px` : fullWidth ? '100%' : 'max-content';
+  const computedMenuW = menuWidth ? `${menuWidth}px` : 'max-content';
 
-  return (
-    <div
-      ref={rootRef}
-      className={`group relative ${phase === 'open' ? 'z-50' : 'z-10'} ${fullWidth ? 'w-full block' : 'inline-block'} data-[disabled]:opacity-50${className ? ` ${className}` : ''}`}
-      data-size={size}
-      data-disabled={disabled ? '' : undefined}
-      style={{
+  // Biến CSS dùng chung cho ô chọn và danh sách (danh sách nằm ở body nên không kế thừa từ ô chọn)
+  const cssVars = {
         '--gs-accent': accentColor,
         '--gs-surface': surfaceColor,
         '--gs-highlight': highlightColor,
@@ -281,7 +292,15 @@ export default function GlideSelect({
         '--gs-pop-out': `${popOut}ms`,
         '--gs-glide': `${glideDuration}ms`,
         '--gs-origin': origin
-      }}
+  };
+
+  return (
+    <div
+      ref={rootRef}
+      className={`group relative ${fullWidth ? 'w-full block' : 'inline-block'} data-[disabled]:opacity-50${className ? ` ${className}` : ''}`}
+      data-size={size}
+      data-disabled={disabled ? '' : undefined}
+      style={cssVars}
       onAnimationEnd={e => {
         if (e.animationName === 'gs-swap' && rootRef.current) delete rootRef.current.dataset.swap;
       }}
@@ -297,7 +316,7 @@ export default function GlideSelect({
         aria-activedescendant={active !== null ? `${id}-${active}` : undefined}
         aria-label={ariaLabel}
         disabled={disabled}
-        className={`group/trigger relative m-0 ${fullWidth ? 'w-full justify-between' : 'inline-flex'} cursor-pointer touch-manipulation items-center gap-2 border border-slate-700/80 px-3.5 leading-none font-medium outline-none select-none [-webkit-tap-highlight-color:transparent] [font-family:inherit] [height:var(--gs-chip)] [border-radius:var(--gs-inner-radius)] [background:var(--gs-surface)] [color:var(--gs-text)] [font-size:var(--gs-font)] [transition:background-color_100ms_ease,transform_160ms_cubic-bezier(0.23,1,0.32,1)] disabled:cursor-default enabled:active:scale-[0.98] motion-reduce:enabled:active:scale-100 motion-reduce:[transition:background-color_100ms_ease] aria-expanded:[background:color-mix(in_srgb,var(--gs-highlight)_70%,var(--gs-surface))] aria-expanded:border-blue-500/50 [@media(hover:hover)_and_(pointer:fine)]:enabled:hover:[background:color-mix(in_srgb,var(--gs-highlight)_60%,var(--gs-surface))] [@media(hover:hover)_and_(pointer:fine)]:enabled:hover:border-slate-600 shadow-sm`}
+        className={`group/trigger relative m-0 ${fullWidth ? 'flex w-full justify-between' : 'inline-flex'} cursor-pointer touch-manipulation items-center gap-2 border border-line-strong px-3 leading-none font-medium outline-none select-none [-webkit-tap-highlight-color:transparent] [font-family:inherit] [height:var(--gs-chip)] [border-radius:var(--gs-inner-radius)] [background:var(--gs-surface)] [color:var(--gs-text)] [font-size:var(--gs-font)] [transition:background-color_100ms_ease,transform_160ms_cubic-bezier(0.23,1,0.32,1)] disabled:cursor-default enabled:active:scale-[0.98] motion-reduce:enabled:active:scale-100 motion-reduce:[transition:background-color_100ms_ease] aria-expanded:[background:color-mix(in_srgb,var(--gs-highlight)_70%,var(--gs-surface))] aria-expanded:border-accent aria-expanded:ring-2 aria-expanded:ring-accent/20 enabled:hover:[background:var(--gs-highlight)] enabled:hover:border-faint shadow-sm focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent/20`}
         onPointerDown={e => {
           if (e.button !== 0 || disabled) return;
           e.currentTarget.focus({ preventScroll: true });
@@ -320,10 +339,11 @@ export default function GlideSelect({
           <HugeiconsIcon icon={ArrowDown01Icon} size={14} strokeWidth={2.5} />
         </span>
       </button>
-      {phase !== 'closed' ? (
+      {phase !== 'closed' ? createPortal(
         <div
           ref={menuRef}
-          className="absolute z-50 min-w-full scale-95 p-1 opacity-0 border border-slate-700/80 [min-width:var(--gs-menu-w)] w-max max-w-[min(92vw,420px)] [border-radius:var(--gs-radius)] [background:var(--gs-surface)] shadow-2xl [transform-origin:var(--gs-origin)] [transition:opacity_var(--gs-pop)_cubic-bezier(0.23,1,0.32,1),transform_var(--gs-pop)_cubic-bezier(0.23,1,0.32,1)] data-[state=open]:scale-100 data-[state=open]:opacity-100 data-[state=closed]:pointer-events-none data-[state=closed]:[transition-duration:var(--gs-pop-out)] data-[side=bottom]:top-[calc(100%+6px)] data-[side=top]:bottom-[calc(100%+6px)] data-[align=left]:left-0 data-[align=right]:right-0 motion-reduce:[transform:none]! motion-reduce:[transition:opacity_var(--gs-pop)_ease] motion-reduce:data-[state=closed]:[transition-duration:var(--gs-pop-out)] max-h-64 overflow-y-auto overflow-x-hidden"
+          className="fixed z-[70] scale-95 p-1 opacity-0 border border-line [min-width:var(--gs-menu-w)] w-max max-w-[min(92vw,420px)] [border-radius:var(--gs-radius)] [background:var(--gs-surface)] shadow-lg [transform-origin:var(--gs-origin)] [transition:opacity_var(--gs-pop)_cubic-bezier(0.23,1,0.32,1),transform_var(--gs-pop)_cubic-bezier(0.23,1,0.32,1)] data-[state=open]:scale-100 data-[state=open]:opacity-100 data-[state=closed]:pointer-events-none data-[state=closed]:[transition-duration:var(--gs-pop-out)] motion-reduce:[transform:none]! motion-reduce:[transition:opacity_var(--gs-pop)_ease] motion-reduce:data-[state=closed]:[transition-duration:var(--gs-pop-out)] max-h-64 overflow-y-auto overflow-x-hidden"
+          style={cssVars}
           data-state="open"
           data-side={side}
           data-align={actualAlign}
@@ -358,9 +378,9 @@ export default function GlideSelect({
                 data-index={i}
                 className="relative z-[1] flex cursor-pointer items-center justify-between gap-2.5 pr-2.5 pl-3 select-none [-webkit-tap-highlight-color:transparent] [height:var(--gs-row)] [border-radius:var(--gs-inner-radius)] [color:var(--gs-text)] [font-size:var(--gs-font)] [transition:background-color_150ms_ease] aria-selected:[background:color-mix(in_srgb,var(--gs-highlight)_60%,transparent)] group-data-[live]/list:aria-selected:bg-transparent"
               >
-                <span className="min-w-0 flex-1 truncate font-medium whitespace-nowrap">{it.label}</span>
+                <span className="min-w-0 flex-1 truncate whitespace-nowrap">{it.label}</span>
                 {showTags && it.tag ? (
-                  <span className="shrink-0 px-2 py-0.5 rounded-md bg-slate-800/80 border border-slate-700/50 [color:color-mix(in_srgb,var(--gs-text)_75%,transparent)] text-[11px] font-medium whitespace-nowrap">
+                  <span className="shrink-0 text-xs text-muted whitespace-nowrap">
                     {it.tag}
                   </span>
                 ) : null}
@@ -374,7 +394,8 @@ export default function GlideSelect({
               </div>
             ))}
           </div>
-        </div>
+        </div>,
+        document.body
       ) : null}
     </div>
   );

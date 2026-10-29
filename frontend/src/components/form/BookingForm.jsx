@@ -1,9 +1,23 @@
 import { useState, useMemo, useEffect } from 'react';
 import { createBooking } from '../../services/bookingService.js';
 import { getAvailableRooms } from '../../services/roomService.js';
-import { PlusIcon, ExclamationTriangleIcon, BookmarkIcon, CurrencyDollarIcon, XMarkIcon } from '../icons/Icons.jsx';
+import { BookmarkIcon } from '../icons/Icons.jsx';
 import GlideSelect from '../glide-select/GlideSelect.jsx';
 import CustomDatePicker from '../date-picker/CustomDatePicker.jsx';
+import { Alert, Button, Field, Modal } from '../ui';
+import { MEMBERSHIP, ROOM_TYPE, formatMoney } from '../../utils/labels.js';
+
+// dd/MM/yyyy -> YYYY-MM-DD để so sánh chuỗi theo thứ tự ngày
+const toISODate = (str) => {
+    if (!str || !/^\d{2}\/\d{2}\/\d{4}$/.test(str)) return '';
+    const [d, m, y] = str.split('/');
+    return `${y}-${m}-${d}`;
+};
+
+const todayIso = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
 
 export default function BookingForm({ guests = [], rooms = [], bookings = [], initialRoomNumber = '', initialCheckIn = '', onSaved, onClose }) {
     const [formData, setFormData] = useState({
@@ -14,163 +28,60 @@ export default function BookingForm({ guests = [], rooms = [], bookings = [], in
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const today = todayIso();
 
-    // Bắt sự kiện phím Escape để đóng modal
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-            if (e.key === 'Escape' && onClose) {
-                onClose();
-            }
-        };
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [onClose]);
-
-    // Chuyển đổi dd/MM/yyyy sang YYYY-MM-DD cho input type="date"
-    const toISODate = (str) => {
-        if (!str || !/^\d{2}\/\d{2}\/\d{4}$/.test(str)) return '';
-        const [d, m, y] = str.split('/');
-        return `${y}-${m}-${d}`;
+    const update = (field) => (val) => {
+        setFormData(prev => ({ ...prev, [field]: val }));
+        if (error) setError(null);
     };
 
-    // Lấy ngày hôm nay định dạng YYYY-MM-DD
-    const todayIso = useMemo(() => {
-        const d = new Date();
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        return `${y}-${m}-${day}`;
-    }, []);
-
-    // Tính toán ước tính số đêm, chiết khấu hạng hội viên và tổng tiền
+    // Ước tính số đêm, ưu đãi hội viên và tổng tiền phòng
     const priceCalculation = useMemo(() => {
-        const selectedRoom = rooms.find(r => String(r.roomNumber) === String(formData.roomNumber));
-        const selectedCustomer = guests.find(g => String(g.id) === String(formData.customerId));
-        if (!selectedRoom || !formData.checkInDate || !formData.checkOutDate) return null;
+        const room = rooms.find(r => String(r.roomNumber) === String(formData.roomNumber));
+        const customer = guests.find(g => String(g.id) === String(formData.customerId));
+        const inIso = toISODate(formData.checkInDate);
+        const outIso = toISODate(formData.checkOutDate);
+        if (!room || !inIso || !outIso) return null;
 
-        const checkInIso = toISODate(formData.checkInDate);
-        const checkOutIso = toISODate(formData.checkOutDate);
-
-        if (!checkInIso || !checkOutIso) return null;
-
-        const d1 = new Date(checkInIso);
-        const d2 = new Date(checkOutIso);
-
-        const diffTime = d2.getTime() - d1.getTime();
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const diffDays = Math.round((new Date(outIso) - new Date(inIso)) / (1000 * 60 * 60 * 24));
         const nights = diffDays <= 0 ? 1 : diffDays;
-        const rawTotal = nights * (selectedRoom.basePrice || 0);
-
-        // Chiết khấu theo hạng hội viên backend: VIP (15%), PLUS (10%), ECONOMY (5%)
-        const mem = selectedCustomer?.membership || 'CUSTOMER';
-        let discountPercent = 0;
-        if (mem === 'VIP') discountPercent = 15;
-        else if (mem === 'PLUS') discountPercent = 10;
-        else if (mem === 'ECONOMY') discountPercent = 5;
-
-        const discountAmount = Math.round((rawTotal * discountPercent) / 100);
-        const finalTotal = rawTotal - discountAmount;
+        const rawTotal = nights * (room.basePrice || 0);
+        const mem = MEMBERSHIP[customer?.membership] || MEMBERSHIP.CUSTOMER;
+        const discountAmount = Math.round((rawTotal * mem.discount) / 100);
 
         return {
             nights,
-            basePrice: selectedRoom.basePrice || 0,
+            basePrice: room.basePrice || 0,
             rawTotal,
             membership: mem,
-            discountPercent,
             discountAmount,
-            total: finalTotal,
+            total: rawTotal - discountAmount,
             isNegative: diffDays < 0
         };
     }, [formData, rooms, guests]);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError(null);
-
-        if (!formData.customerId) {
-            setError('Vui lòng chọn khách hàng!');
-            return;
-        }
-
-        if (!formData.roomNumber) {
-            setError('Vui lòng chọn số phòng!');
-            return;
-        }
-
-        const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
-        if (!dateRegex.test(formData.checkInDate.trim())) {
-            setError('Ngày nhận phòng phải đúng định dạng dd/MM/yyyy (ví dụ: 01/10/2026)!');
-            return;
-        }
-
-        if (!dateRegex.test(formData.checkOutDate.trim())) {
-            setError('Ngày trả phòng phải đúng định dạng dd/MM/yyyy (ví dụ: 05/10/2026)!');
-            return;
-        }
-
-        const checkInIso = toISODate(formData.checkInDate);
-        if (checkInIso && checkInIso < todayIso) {
-            setError('Ngày nhận phòng (Check-in) không thể ở trong quá khứ!');
-            return;
-        }
-
-        if (priceCalculation && priceCalculation.isNegative) {
-            setError('Ngày trả phòng (Check-out) không thể diễn ra trước ngày nhận phòng (Check-in)!');
-            return;
-        }
-
-        if (selectedRoomTaken) {
-            setError(`Phòng #${formData.roomNumber} đã có đơn trong khoảng ngày này. Vui lòng chọn phòng khác!`);
-            return;
-        }
-
-        setLoading(true);
-        try {
-            await createBooking(formData);
-            alert('🎉 Đặt phòng thành công!');
-            setFormData({
-                customerId: '',
-                roomNumber: '',
-                checkInDate: '',
-                checkOutDate: ''
-            });
-            if (onSaved) onSaved();
-        } catch (err) {
-            console.error('Lỗi tạo đơn đặt phòng:', err);
-            const msg = err.response?.data?.message || err.message || 'Không thể tạo đơn đặt phòng. Vui lòng thử lại!';
-            setError(msg);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // 1. Lọc khách hàng: Khách hàng đang lưu trú (CHECKED_IN) hoặc đã xác nhận (CONFIRMED) sẽ không có trong danh sách chọn
+    // Khách đang có đơn hiệu lực không đặt thêm được
     const activeCustomerIds = useMemo(() => {
         const ids = new Set();
         bookings.forEach((b) => {
-            const status = b.bookingStatus;
-            if (status === 'CONFIRMED' || status === 'CHECKED_IN') {
-                if (b.customerId != null) {
-                    ids.add(Number(b.customerId));
-                }
+            if ((b.bookingStatus === 'CONFIRMED' || b.bookingStatus === 'CHECKED_IN') && b.customerId != null) {
+                ids.add(Number(b.customerId));
             }
         });
         return ids;
     }, [bookings]);
 
-    const availableGuests = useMemo(() => {
-        return guests.filter((g) => !activeCustomerIds.has(Number(g.id)));
+    const customerOptions = useMemo(() => {
+        return guests
+            .filter((g) => !activeCustomerIds.has(Number(g.id)))
+            .map((g) => ({
+                value: String(g.id),
+                label: `${g.fullName} (#${g.id})`,
+                tag: (MEMBERSHIP[g.membership] || MEMBERSHIP.CUSTOMER).label
+            }));
     }, [guests, activeCustomerIds]);
 
-    const customerOptions = useMemo(() => {
-        return availableGuests.map((g) => ({
-            value: String(g.id),
-            label: `#${g.id} - ${g.fullName || g.FullName}`,
-            tag: g.membership || 'CUSTOMER'
-        }));
-    }, [availableGuests]);
-
-    // 2. Lọc phòng theo khoảng ngày: hỏi backend phòng nào còn trống khi đã chọn đủ 2 ngày hợp lệ
+    // Lọc phòng theo khoảng ngày: hỏi backend phòng nào còn trống khi đã chọn đủ 2 ngày hợp lệ
     const dateKey = (() => {
         const inIso = toISODate(formData.checkInDate);
         const outIso = toISODate(formData.checkOutDate);
@@ -198,250 +109,164 @@ export default function BookingForm({ guests = [], rooms = [], bookings = [], in
     const isCheckingRooms = Boolean(dateKey) && availability.key !== dateKey;
     const selectedRoomTaken = Boolean(freeRoomNumbers && formData.roomNumber && !freeRoomNumbers.has(Number(formData.roomNumber)));
 
-    const availableRooms = useMemo(() => {
-        return rooms.filter((r) =>
-            r.roomStatus !== 'UNDER_MAINTENANCE' && (!freeRoomNumbers || freeRoomNumbers.has(Number(r.roomNumber)))
-        );
+    const roomOptions = useMemo(() => {
+        return rooms
+            .filter((r) => r.roomStatus !== 'UNDER_MAINTENANCE' && (!freeRoomNumbers || freeRoomNumbers.has(Number(r.roomNumber))))
+            .map((r) => ({
+                value: String(r.roomNumber),
+                label: `Phòng ${r.roomNumber} · ${ROOM_TYPE[r.roomType]?.label || r.roomType}`,
+                tag: formatMoney(r.basePrice)
+            }));
     }, [rooms, freeRoomNumbers]);
 
-    const roomOptions = useMemo(() => {
-        return availableRooms.map((r) => ({
-            value: String(r.roomNumber),
-            label: `Phòng #${r.roomNumber} - ${r.roomType}`,
-            tag: `${Number(r.basePrice || 0).toLocaleString('vi-VN')} ₫`
-        }));
-    }, [availableRooms]);
+    const roomHint = selectedRoomTaken
+        ? null
+        : !dateKey
+            ? 'Chọn ngày nhận và trả phòng để chỉ hiện phòng còn trống.'
+            : isCheckingRooms
+                ? 'Đang kiểm tra phòng trống...'
+                : roomOptions.length === 0
+                    ? 'Không còn phòng trống trong khoảng ngày này.'
+                    : `${roomOptions.length} phòng còn trống trong khoảng ngày đã chọn.`;
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError(null);
+
+        if (!toISODate(formData.checkInDate.trim()) || !toISODate(formData.checkOutDate.trim())) {
+            setError('Vui lòng chọn ngày nhận và trả phòng theo định dạng dd/MM/yyyy.');
+            return;
+        }
+        if (toISODate(formData.checkInDate) < today) {
+            setError('Ngày nhận phòng không thể ở trong quá khứ.');
+            return;
+        }
+        if (priceCalculation?.isNegative) {
+            setError('Ngày trả phòng không thể trước ngày nhận phòng.');
+            return;
+        }
+        if (!formData.customerId) {
+            setError('Vui lòng chọn khách hàng.');
+            return;
+        }
+        if (!formData.roomNumber) {
+            setError('Vui lòng chọn phòng.');
+            return;
+        }
+        if (selectedRoomTaken) {
+            setError(`Phòng ${formData.roomNumber} đã có đơn trong khoảng ngày này. Vui lòng chọn phòng khác.`);
+            return;
+        }
+
+        setLoading(true);
+        try {
+            await createBooking(formData);
+            if (onSaved) onSaved();
+        } catch (err) {
+            console.error('Lỗi tạo đơn đặt phòng:', err);
+            setError(err.response?.data?.message || err.message || 'Không thể tạo đơn đặt phòng. Vui lòng thử lại.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
-        <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/80 backdrop-blur-md animate-fadeIn"
-            onClick={onClose}
+        <Modal
+            title="Tạo đơn đặt phòng"
+            description="Chọn ngày trước để chỉ thấy phòng còn trống."
+            icon={BookmarkIcon}
+            onClose={onClose}
+            size="lg"
+            footer={
+                <>
+                    <Button onClick={onClose} disabled={loading}>Huỷ</Button>
+                    <Button type="submit" form="booking-form" variant="primary" disabled={loading}>
+                        {loading ? 'Đang tạo...' : 'Xác nhận đặt phòng'}
+                    </Button>
+                </>
+            }
         >
-            <div
-                className="bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden relative"
-                onClick={(e) => e.stopPropagation()}
-            >
-                <form onSubmit={handleSubmit} className="flex flex-col h-full max-h-[90vh]">
-                    {/* Header */}
-                    <div className="p-6 border-b border-slate-800 bg-slate-950/60 flex items-start justify-between gap-4">
-                        <div className="flex items-center gap-3.5">
-                            <div className="w-12 h-12 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
-                                <BookmarkIcon className="w-6 h-6" />
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-slate-900 dark:text-white text-xl leading-tight">
-                                    Tạo Đơn Đặt Phòng Mới
-                                </h3>
-                                <p className="text-sm text-slate-400 mt-1">
-                                    Kết nối khách hàng và phòng lưu trú với thuật toán kiểm tra trùng lịch
-                                </p>
-                            </div>
+            <form id="booking-form" onSubmit={handleSubmit} className="flex flex-col gap-4">
+                {error && <Alert>{error}</Alert>}
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <Field label="Ngày nhận phòng" htmlFor="check-in-date" required>
+                        <CustomDatePicker
+                            id="check-in-date"
+                            name="checkInDate"
+                            title="Chọn ngày nhận phòng"
+                            value={formData.checkInDate}
+                            onChange={update('checkInDate')}
+                            minDate={today}
+                            placeholder="dd/MM/yyyy"
+                            required
+                            presetsType="booking"
+                        />
+                    </Field>
+                    <Field label="Ngày trả phòng" htmlFor="check-out-date" required>
+                        <CustomDatePicker
+                            id="check-out-date"
+                            name="checkOutDate"
+                            title="Chọn ngày trả phòng"
+                            value={formData.checkOutDate}
+                            onChange={update('checkOutDate')}
+                            minDate={formData.checkInDate || today}
+                            placeholder="dd/MM/yyyy"
+                            required
+                            presetsType="booking"
+                        />
+                    </Field>
+
+                    <Field
+                        label="Khách hàng"
+                        required
+                        hint={customerOptions.length === 0 ? 'Mọi khách hàng đều đang có đơn hiệu lực.' : null}
+                    >
+                        <GlideSelect
+                            options={customerOptions}
+                            value={formData.customerId}
+                            onChange={update('customerId')}
+                            placeholder={customerOptions.length === 0 ? 'Không có khách khả dụng' : 'Chọn khách hàng'}
+                            ariaLabel="Chọn khách hàng"
+                            fullWidth
+                        />
+                    </Field>
+                    <Field label="Phòng" required hint={roomHint}>
+                        <GlideSelect
+                            options={roomOptions}
+                            value={formData.roomNumber}
+                            onChange={update('roomNumber')}
+                            placeholder={roomOptions.length === 0 ? 'Không còn phòng trống' : 'Chọn phòng'}
+                            ariaLabel="Chọn phòng lưu trú"
+                            fullWidth
+                        />
+                        {selectedRoomTaken && (
+                            <p className="text-xs font-medium text-rose-600 dark:text-rose-400">
+                                Phòng {formData.roomNumber} đã có đơn trong khoảng ngày này, hãy chọn phòng khác.
+                            </p>
+                        )}
+                    </Field>
+                </div>
+
+                {priceCalculation && !priceCalculation.isNegative && (
+                    <div className="rounded-lg border border-line bg-subtle/50 px-4 py-3 text-sm">
+                        <div className="flex justify-between py-1">
+                            <span className="text-muted">{priceCalculation.nights} đêm × {formatMoney(priceCalculation.basePrice)}</span>
+                            <span className="text-fg tabular">{formatMoney(priceCalculation.rawTotal)}</span>
                         </div>
-                        {onClose && (
-                            <button
-                                type="button"
-                                onClick={onClose}
-                                title="Đóng cửa sổ (hoặc ấn ra ngoài)"
-                                className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white transition-all cursor-pointer"
-                            >
-                                <XMarkIcon className="w-5 h-5" />
-                            </button>
-                        )}
-                    </div>
-
-                    {/* Body */}
-                    <div className="p-6 overflow-y-auto space-y-5 flex-1">
-                        {error && (
-                            <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-start gap-3 text-rose-300 text-sm">
-                                <ExclamationTriangleIcon className="w-5 h-5 flex-shrink-0 mt-0.5 text-rose-400" />
-                                <span className="font-medium">{error}</span>
+                        {priceCalculation.discountAmount > 0 && (
+                            <div className="flex justify-between py-1">
+                                <span className="text-muted">Ưu đãi hạng {priceCalculation.membership.label} (−{priceCalculation.membership.discount}%)</span>
+                                <span className="text-emerald-600 tabular dark:text-emerald-400">−{formatMoney(priceCalculation.discountAmount)}</span>
                             </div>
                         )}
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            {/* Chọn khách hàng */}
-                            <div>
-                                <label className="block text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200 mb-2">
-                                    Khách Hàng <span className="text-rose-400">*</span>
-                                </label>
-                                <GlideSelect
-                                    options={customerOptions}
-                                    value={formData.customerId}
-                                    onChange={(val) => {
-                                        setFormData(prev => ({ ...prev, customerId: val }));
-                                        if (error) setError(null);
-                                    }}
-                                    placeholder={customerOptions.length === 0 ? "-- Tất cả khách đang có phòng --" : "-- Chọn khách hàng --"}
-                                    ariaLabel="Chọn khách hàng"
-                                    size="md"
-                                    fullWidth
-                                    surfaceColor="#020617"
-                                    highlightColor="#1e293b"
-                                    accentColor="#38bdf8"
-                                    textColor="#f8fafc"
-                                    radius={12}
-                                />
-                                {customerOptions.length === 0 && (
-                                    <p className="text-xs text-amber-400/90 mt-1.5">
-                                        * Tất cả khách hàng hiện tại đều đang lưu trú hoặc đã đặt phòng.
-                                    </p>
-                                )}
-                            </div>
-
-                            {/* Chọn phòng */}
-                            <div>
-                                <label className="block text-sm font-bold uppercase tracking-wider text-slate-200 mb-2">
-                                    Số Phòng <span className="text-rose-400">*</span>
-                                </label>
-                                <GlideSelect
-                                    options={roomOptions}
-                                    value={formData.roomNumber}
-                                    onChange={(val) => {
-                                        setFormData(prev => ({ ...prev, roomNumber: val }));
-                                        if (error) setError(null);
-                                    }}
-                                    placeholder={roomOptions.length === 0 ? "-- Không còn phòng trống --" : "-- Chọn phòng lưu trú --"}
-                                    ariaLabel="Chọn phòng lưu trú"
-                                    size="md"
-                                    fullWidth
-                                    surfaceColor="#020617"
-                                    highlightColor="#1e293b"
-                                    accentColor="#818cf8"
-                                    textColor="#f8fafc"
-                                    radius={12}
-                                />
-                                {selectedRoomTaken ? (
-                                    <p className="text-xs text-rose-400 font-semibold mt-1.5">
-                                        * Phòng #{formData.roomNumber} đã có đơn trong khoảng ngày này, hãy chọn phòng khác.
-                                    </p>
-                                ) : (
-                                    <p className="text-xs text-slate-400 mt-1.5">
-                                        {!dateKey
-                                            ? '* Chọn ngày nhận và trả phòng để chỉ hiện phòng còn trống.'
-                                            : isCheckingRooms
-                                                ? 'Đang kiểm tra phòng trống...'
-                                                : roomOptions.length === 0
-                                                    ? '* Không còn phòng trống trong khoảng ngày này.'
-                                                    : `${roomOptions.length} phòng còn trống trong khoảng ngày đã chọn.`}
-                                    </p>
-                                )}
-                            </div>
-
-                            {/* Ngày nhận phòng */}
-                            <div>
-                                <label className="block text-sm font-bold uppercase tracking-wider text-slate-200 mb-2">
-                                    Ngày Nhận Phòng (Check-in) <span className="text-rose-400">*</span>
-                                </label>
-                                <CustomDatePicker
-                                    id="check-in-date"
-                                    name="checkInDate"
-                                    title="Chọn Ngày Nhận Phòng (Check-in)"
-                                    value={formData.checkInDate}
-                                    onChange={(val) => {
-                                        setFormData(prev => ({ ...prev, checkInDate: val }));
-                                        if (error) setError(null);
-                                    }}
-                                    minDate={todayIso}
-                                    placeholder="dd/MM/yyyy"
-                                    required
-                                    showPresets={true}
-                                    presetsType="booking"
-                                />
-                                <span className="text-xs text-slate-400 mt-1 block">Định dạng: ngày/tháng/năm (vd: 15/10/2026)</span>
-                            </div>
-
-                            {/* Ngày trả phòng */}
-                            <div>
-                                <label className="block text-sm font-bold uppercase tracking-wider text-slate-200 mb-2">
-                                    Ngày Trả Phòng (Check-out) <span className="text-rose-400">*</span>
-                                </label>
-                                <CustomDatePicker
-                                    id="check-out-date"
-                                    name="checkOutDate"
-                                    title="Chọn Ngày Trả Phòng (Check-out)"
-                                    value={formData.checkOutDate}
-                                    onChange={(val) => {
-                                        setFormData(prev => ({ ...prev, checkOutDate: val }));
-                                        if (error) setError(null);
-                                    }}
-                                    minDate={formData.checkInDate || todayIso}
-                                    placeholder="dd/MM/yyyy"
-                                    required
-                                    showPresets={true}
-                                    presetsType="booking"
-                                />
-                                <span className="text-xs text-slate-400 mt-1 block">Định dạng: ngày/tháng/năm (vd: 18/10/2026)</span>
-                            </div>
+                        <div className="mt-1 flex justify-between border-t border-line pt-2 font-semibold">
+                            <span className="text-fg">Tiền phòng dự kiến</span>
+                            <span className="text-fg tabular">{formatMoney(priceCalculation.total)}</span>
                         </div>
-
-                        {/* Box Tính toán tổng tiền theo thời gian thực */}
-                        {priceCalculation && !priceCalculation.isNegative && (
-                            <div className="p-5 rounded-2xl bg-blue-950/40 border border-blue-800/50 flex flex-wrap items-center justify-between gap-4 animate-fadeIn">
-                                <div className="flex items-center gap-3.5">
-                                    <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400">
-                                        <CurrencyDollarIcon className="w-6 h-6" />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs uppercase tracking-wider text-slate-400 font-bold">Thời gian lưu trú ước tính</p>
-                                        <p className="text-base font-bold text-slate-900 dark:text-slate-100 mt-0.5 whitespace-nowrap">
-                                            <span className="text-blue-400 font-black">{priceCalculation.nights}</span> đêm
-                                            <span className="text-slate-500 mx-2">×</span>
-                                            {priceCalculation.basePrice.toLocaleString('vi-VN')} đ
-                                        </p>
-                                        {priceCalculation.discountPercent > 0 && (
-                                            <p className="text-xs sm:text-sm text-amber-400 font-bold mt-1 whitespace-nowrap">
-                                                Ưu đãi hạng {priceCalculation.membership} (-{priceCalculation.discountPercent}%): -{priceCalculation.discountAmount.toLocaleString('vi-VN')} đ
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="text-right">
-                                    <p className="text-xs text-slate-300 uppercase tracking-wider font-bold">Tổng tiền thanh toán</p>
-                                    <p className="text-2xl font-black text-emerald-400 mt-0.5 whitespace-nowrap inline-flex items-baseline justify-end gap-1">
-                                        <span>{priceCalculation.total.toLocaleString('vi-VN')}</span>
-                                        <span className="text-xs font-semibold text-emerald-500">đ</span>
-                                    </p>
-                                    {priceCalculation.discountPercent > 0 && (
-                                        <p className="text-xs text-slate-400 line-through mt-0.5 whitespace-nowrap">
-                                            Gốc: {priceCalculation.rawTotal.toLocaleString('vi-VN')} đ
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
-                        )}
                     </div>
-
-                    {/* Footer */}
-                    <div className="p-6 border-t border-slate-800 bg-slate-950/60 flex items-center justify-end gap-3 flex-wrap">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            disabled={loading}
-                            className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-bold transition-all cursor-pointer"
-                        >
-                            Đóng
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-sm shadow-lg shadow-blue-500/25 transition-all cursor-pointer flex items-center gap-2"
-                        >
-                            {loading ? (
-                                <>
-                                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                    <span>Đang xử lý...</span>
-                                </>
-                            ) : (
-                                <>
-                                    <PlusIcon className="w-4 h-4" />
-                                    <span>Xác Nhận Đặt Phòng</span>
-                                </>
-                            )}
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+                )}
+            </form>
+        </Modal>
     );
 }

@@ -1,7 +1,7 @@
 package in.app.hotelmanagement.entity.charge;
 
 import in.app.hotelmanagement.entity.Booking;
-import in.app.hotelmanagement.enums.ExtraServiceType;
+import in.app.hotelmanagement.entity.ExtraService;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -20,8 +20,8 @@ public abstract class ServiceCharge {
     @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
 
-    @Enumerated(EnumType.STRING)
-    private ExtraServiceType type;
+    // Chép tên dịch vụ lúc thêm, để đổi tên / xoá trong danh mục không làm sai hoá đơn cũ
+    private String serviceName;
 
     private int quantity;
 
@@ -36,14 +36,14 @@ public abstract class ServiceCharge {
     /**
      * Factory: tạo đúng lớp con theo cách tính tiền của loại dịch vụ
      */
-    public static ServiceCharge of(ExtraServiceType type, int quantity) {
-        ServiceCharge charge = switch (type.getPricingMode()) {
+    public static ServiceCharge of(ExtraService service, int quantity) {
+        ServiceCharge charge = switch (service.getPricingMode()) {
             case PER_ITEM -> new PerItemCharge();
             case PER_NIGHT -> new PerNightCharge();
         };
-        charge.type = type;
+        charge.serviceName = service.getName();
         charge.quantity = quantity;
-        charge.unitPrice = type.getUnitPrice();
+        charge.unitPrice = service.getUnitPrice();
         return charge;
     }
 
@@ -62,8 +62,8 @@ public abstract class ServiceCharge {
         this.booking = booking;
     }
 
-    public ExtraServiceType getType() {
-        return type;
+    public String getServiceName() {
+        return serviceName;
     }
 
     public int getQuantity() {
