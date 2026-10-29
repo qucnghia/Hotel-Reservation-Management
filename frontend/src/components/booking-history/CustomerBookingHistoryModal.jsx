@@ -257,7 +257,7 @@ export default function CustomerBookingHistoryModal({ customer, guests = [], onS
                                                             </td>
                                                             <td className="px-3 py-3.5 font-bold text-base text-emerald-400 whitespace-nowrap">
                                                                 <span className="inline-flex items-baseline gap-1">
-                                                                    <span>{Number(b.totalPrice || 0).toLocaleString('vi-VN')}</span>
+                                                                    <span>{Number(b.grandTotal ?? b.totalPrice ?? 0).toLocaleString('vi-VN')}</span>
                                                                     <span className="text-xs font-semibold">đ</span>
                                                                 </span>
                                                             </td>

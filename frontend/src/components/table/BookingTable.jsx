@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { updateBookingStatus } from '../../services/bookingService.js';
 import { XMarkIcon, SearchIcon, BookmarkIcon } from '../icons/Icons.jsx';
 import GlideSelect from '../glide-select/GlideSelect.jsx';
+import BookingDetailModal from '../booking-detail/BookingDetailModal.jsx';
 
 const BOOKING_STATUS_FILTER_OPTIONS = [
     { value: 'ALL', label: 'Tất cả trạng thái' },
@@ -44,6 +45,8 @@ export default function BookingTable({ bookings = [], loading = false, onReload 
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('ALL');
     const [processingId, setProcessingId] = useState(null);
+    const [detailId, setDetailId] = useState(null);
+    const detailBooking = bookings.find(b => b.id === detailId);
 
     const handleStatusChange = async (id, newStatus) => {
         setProcessingId(id);
@@ -158,7 +161,12 @@ export default function BookingTable({ bookings = [], loading = false, onReload 
                                 const isCycable = Boolean(nextStatus);
 
                                 return (
-                                    <tr key={b.id} className="hover:bg-slate-100/80 dark:hover:bg-slate-800/30 transition-colors">
+                                    <tr
+                                        key={b.id}
+                                        onClick={() => setDetailId(b.id)}
+                                        title="Bấm để xem chi tiết, thêm dịch vụ, thu tiền, in hoá đơn"
+                                        className="hover:bg-slate-100/80 dark:hover:bg-slate-800/30 transition-colors cursor-pointer"
+                                    >
                                         {/* Mã đơn */}
                                         <td className="py-4 px-4 font-bold text-base text-indigo-600 dark:text-indigo-400 whitespace-nowrap">
                                             #{b.id}
@@ -189,13 +197,18 @@ export default function BookingTable({ bookings = [], loading = false, onReload 
                                         {/* Tổng tiền */}
                                         <td className="py-4 px-4 font-bold text-base text-emerald-400 whitespace-nowrap">
                                             <span className="inline-flex items-baseline gap-1">
-                                                <span>{Number(b.totalPrice || 0).toLocaleString('vi-VN')}</span>
+                                                <span>{Number(b.grandTotal ?? b.totalPrice ?? 0).toLocaleString('vi-VN')}</span>
                                                 <span className="text-xs font-semibold text-emerald-500">đ</span>
                                             </span>
+                                            {b.bookingStatus !== 'CANCELLED' && (
+                                                <div className={`text-xs font-semibold mt-0.5 ${b.balanceDue > 0 ? 'text-rose-400' : 'text-slate-400'}`}>
+                                                    {b.balanceDue > 0 ? `Còn nợ ${Number(b.balanceDue).toLocaleString('vi-VN')} đ` : 'Đã thanh toán đủ'}
+                                                </div>
+                                            )}
                                         </td>
 
                                         {/* Trạng thái - luồng 1 chiều: Đã xác nhận -> Đang lưu trú -> Đã trả phòng (kết thúc, không quay lại) */}
-                                        <td className="py-3 px-4 whitespace-nowrap">
+                                        <td className="py-3 px-4 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                                             <div className="flex items-center gap-2">
                                                 {isCycable ? (
                                                     <button
@@ -244,6 +257,14 @@ export default function BookingTable({ bookings = [], loading = false, onReload 
                     </tbody>
                 </table>
             </div>
+
+            {detailBooking && (
+                <BookingDetailModal
+                    booking={detailBooking}
+                    onClose={() => setDetailId(null)}
+                    onChanged={() => onReload?.()}
+                />
+            )}
         </div>
     );
 }

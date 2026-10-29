@@ -394,6 +394,23 @@ html.light ::-webkit-scrollbar-thumb:hover {
   .text-slate-400, .text-slate-300, .text-slate-200 {
     color: #475569 !important;
   }
+
+  /* Khi đang mở hoá đơn: chỉ in khối hoá đơn, chữ đen trên giấy trắng */
+  body:has(.invoice-print) * {
+    visibility: hidden;
+  }
+  .invoice-print, .invoice-print * {
+    visibility: visible;
+    color: #000000 !important;
+    background: transparent !important;
+    border-color: #cbd5e1 !important;
+  }
+  .invoice-print {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
 }
 
 /* ==========================================================================

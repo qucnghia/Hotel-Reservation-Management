@@ -45,6 +45,10 @@ public class Booking {
     @OrderBy("id")
     private List<ServiceCharge> services = new ArrayList<>();
 
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("id")
+    private List<Payment> payments = new ArrayList<>();
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -95,6 +99,25 @@ public class Booking {
 
     public long getGrandTotal() {
         return (totalPrice != null ? totalPrice : 0L) + getServiceTotal();
+    }
+
+    public void addPayment(Payment payment) {
+        payment.setBooking(this);
+        payments.add(payment);
+    }
+
+    public List<Payment> getPayments() {
+        return payments;
+    }
+
+    // Tổng đã thu thực tế (đã trừ các khoản hoàn)
+    public long getPaidAmount() {
+        return payments.stream().mapToLong(Payment::getSignedAmount).sum();
+    }
+
+    // Đơn đã huỷ không còn nợ gì
+    public long getBalanceDue() {
+        return bookingStatus == BookingStatus.CANCELLED ? 0L : getGrandTotal() - getPaidAmount();
     }
 
     public long getDurationNights() {

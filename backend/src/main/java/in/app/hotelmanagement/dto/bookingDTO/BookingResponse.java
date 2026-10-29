@@ -35,6 +35,9 @@ public class BookingResponse {
     private long serviceTotal;
     private long grandTotal;
     private List<ServiceChargeResponse> services = List.of();
+    private long paidAmount;
+    private long balanceDue;
+    private List<PaymentResponse> payments = List.of();
 
     public BookingResponse() {
     }
@@ -64,8 +67,23 @@ public class BookingResponse {
         res.serviceTotal = booking.getServiceTotal();
         res.grandTotal = booking.getGrandTotal();
         res.services = booking.getServices().stream().map(ServiceChargeResponse::fromEntity).toList();
+        res.paidAmount = booking.getPaidAmount();
+        res.balanceDue = booking.getBalanceDue();
+        res.payments = booking.getPayments().stream().map(PaymentResponse::fromEntity).toList();
 
         return res;
+    }
+
+    public long getPaidAmount() {
+        return paidAmount;
+    }
+
+    public long getBalanceDue() {
+        return balanceDue;
+    }
+
+    public List<PaymentResponse> getPayments() {
+        return payments;
     }
 
     public long getServiceTotal() {

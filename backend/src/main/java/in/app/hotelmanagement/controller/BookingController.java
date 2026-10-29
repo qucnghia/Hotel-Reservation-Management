@@ -2,6 +2,7 @@ package in.app.hotelmanagement.controller;
 
 import in.app.hotelmanagement.dto.bookingDTO.BookingRequest;
 import in.app.hotelmanagement.dto.bookingDTO.BookingResponse;
+import in.app.hotelmanagement.dto.bookingDTO.PaymentRequest;
 import in.app.hotelmanagement.dto.bookingDTO.ServiceChargeRequest;
 import jakarta.validation.Valid;
 import in.app.hotelmanagement.dto.CustomerBookingHistoryResponse;
@@ -53,6 +54,11 @@ public class BookingController {
     @PostMapping("/{id}/services")
     public ResponseEntity<BookingResponse> addService(@PathVariable Long id, @Valid @RequestBody ServiceChargeRequest request) {
         return ResponseEntity.ok(bookingService.addService(id, request.type(), request.quantity()));
+    }
+
+    @PostMapping("/{id}/payments")
+    public ResponseEntity<BookingResponse> addPayment(@PathVariable Long id, @Valid @RequestBody PaymentRequest request) {
+        return ResponseEntity.ok(bookingService.addPayment(id, request.amount(), request.method()));
     }
 
     @DeleteMapping("/{id}/services/{serviceId}")

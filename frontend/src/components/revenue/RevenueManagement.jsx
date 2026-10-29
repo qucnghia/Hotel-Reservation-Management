@@ -219,21 +219,24 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
         let successfulBookingsCount = 0;
 
         filteredBookings.forEach(b => {
-            const price = Number(b.totalPrice || 0);
+            // Thực nhận = tiền đã thu (gồm cọc, đã trừ hoàn); chờ thu = số khách còn nợ
+            const price = Number(b.grandTotal ?? b.totalPrice ?? 0);
+            const paid = Number(b.paidAmount || 0);
+            const due = Number(b.balanceDue || 0);
             const nights = Number(b.durationNights || 1);
+            realizedRevenue += paid;
 
             if (b.bookingStatus === 'CHECKED_OUT') {
-                realizedRevenue += price;
-                completedRevenue += price;
+                completedRevenue += paid;
                 realizedNights += nights;
                 successfulBookingsCount++;
             } else if (b.bookingStatus === 'CHECKED_IN') {
-                realizedRevenue += price;
-                activeRevenue += price;
+                activeRevenue += paid;
+                pendingRevenue += due;
                 realizedNights += nights;
                 successfulBookingsCount++;
             } else if (b.bookingStatus === 'CONFIRMED') {
-                pendingRevenue += price;
+                pendingRevenue += due;
             } else if (b.bookingStatus === 'CANCELLED') {
                 lostRevenue += price;
             }
@@ -249,7 +252,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
         const occupancyRate = rooms.length > 0 ? (occupiedRooms / rooms.length) * 100 : 0;
 
         // ADR (Average Daily Rate): Doanh thu thực nhận / Số đêm đã bán
-        const adr = realizedNights > 0 ? Math.round(realizedRevenue / realizedNights) : 0;
+        const adr = realizedNights > 0 ? Math.round((completedRevenue + activeRevenue) / realizedNights) : 0;
 
         // RevPAR (Revenue Per Available Room): Doanh thu thực tế / Tổng số phòng
         const revPAR = Math.round(realizedRevenue / totalRooms);
@@ -302,7 +305,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                 const type = (b.roomType || 'STANDARD').toUpperCase();
                 if (stats[type]) {
                     stats[type].count++;
-                    stats[type].revenue += Number(b.totalPrice || 0);
+                    stats[type].revenue += Number(b.grandTotal ?? b.totalPrice ?? 0);
                     stats[type].nights += Number(b.durationNights || 1);
                 }
             }
@@ -361,7 +364,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                 };
             }
 
-            const price = Number(b.totalPrice || 0);
+            const price = Number(b.grandTotal ?? b.totalPrice ?? 0);
             if (b.bookingStatus === 'CHECKED_OUT' || b.bookingStatus === 'CHECKED_IN') {
                 dailyData[key].revenue += price;
             } else if (b.bookingStatus === 'CONFIRMED') {
@@ -502,7 +505,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
         const spentFromBookings = {};
         const bookingsCount = {};
         (bookings || []).forEach(b => {
-            const price = Number(b.totalPrice || 0);
+            const price = Number(b.grandTotal ?? b.totalPrice ?? 0);
             const cId = b.customerId;
             if (cId) {
                 // Với các đơn đã checkout hoặc checkin
@@ -561,7 +564,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
             b.roomNumber,
             b.roomType,
             b.durationNights || 1,
-            b.totalPrice || 0,
+            b.grandTotal ?? b.totalPrice ?? 0,
             TRANSACTION_STATUS[b.bookingStatus]?.shortLabel || b.bookingStatus
         ]);
 
@@ -1334,7 +1337,7 @@ export default function RevenueManagement({ bookings = [], rooms = [], guests = 
                                             {/* Thành tiền */}
                                             <td className="py-4 px-4 whitespace-nowrap">
                                                 <div className="font-black text-base text-emerald-400">
-                                                    {Number(b.totalPrice || 0).toLocaleString('vi-VN')}
+                                                    {Number(b.grandTotal ?? b.totalPrice ?? 0).toLocaleString('vi-VN')}
                                                     <span className="text-xs font-semibold text-emerald-500 ml-1">đ</span>
                                                 </div>
                                                 <div className="text-[11px] text-slate-400">

@@ -44,3 +44,18 @@ export const getCustomerBookingHistory = (customerId) => {
     return axios.get(`${API_URL}/customer/${customerId}`);
 };
 
+
+// 6. POST: Thêm dịch vụ phát sinh vào đơn
+export const addBookingService = (id, type, quantity) => {
+    return axios.post(`${API_URL}/${id}/services`, { type, quantity: Number(quantity) });
+};
+
+// 7. DELETE: Bớt dịch vụ khỏi đơn
+export const removeBookingService = (id, serviceId) => {
+    return axios.delete(`${API_URL}/${id}/services/${serviceId}`);
+};
+
+// 8. POST: Thu tiền (cọc / thanh toán) cho đơn
+export const addBookingPayment = (id, amount, method) => {
+    return axios.post(`${API_URL}/${id}/payments`, { amount: Number(amount), method });
+};

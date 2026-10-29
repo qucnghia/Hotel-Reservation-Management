@@ -5,6 +5,9 @@ import in.app.hotelmanagement.dto.bookingDTO.BookingResponse;
 import in.app.hotelmanagement.dto.CustomerBookingHistoryResponse;
 import in.app.hotelmanagement.entity.Booking;
 import in.app.hotelmanagement.entity.Customer;
+import in.app.hotelmanagement.entity.Payment;
+import in.app.hotelmanagement.enums.PaymentMethod;
+import in.app.hotelmanagement.enums.PaymentType;
 import in.app.hotelmanagement.entity.charge.ServiceCharge;
 import in.app.hotelmanagement.enums.ExtraServiceType;
 import in.app.hotelmanagement.entity.room.Room;
@@ -98,15 +101,10 @@ public class BookingService {
         Booking booking = new Booking(customer, room, request.getCheckInDate(), request.getCheckOutDate());
         booking.setBookingStatus(BookingStatus.CONFIRMED);
 
+        // Chi tiêu tích luỹ chỉ tăng khi khách thực sự trả tiền (addPayment), không phải lúc đặt
         Booking saved = bookingRepository.save(booking);
 
-        // 3. Tích lũy tiền chi tiêu và tự động nâng hạng hội viên
-        if (saved.getTotalPrice() != null && saved.getTotalPrice() > 0) {
-            customer.addPaidPrice(saved.getTotalPrice());
-            customerRepository.save(customer);
-        }
-
-        // 4. Đồng bộ trạng thái phòng
+        // 3. Đồng bộ trạng thái phòng
         syncRoomStatus(room, saved.getId(), saved.getBookingStatus());
 
         return BookingResponse.fromEntity(saved);
@@ -124,16 +122,40 @@ public class BookingService {
         if (!removed) {
             throw new ResourceNotFoundException("Không tìm thấy dịch vụ #" + serviceId + " trong đơn #" + bookingId);
         }
+        if (booking.getBalanceDue() < 0) {
+            throw new InvalidBookingException("Không thể bớt dịch vụ này vì khách đã thanh toán nhiều hơn tổng tiền còn lại");
+        }
         return BookingResponse.fromEntity(bookingRepository.saveAndFlush(booking));
     }
 
-    // Chỉ đơn đang hiệu lực mới được thêm/bớt dịch vụ
+    public BookingResponse addPayment(Long bookingId, long amount, PaymentMethod method) {
+        Booking booking = findEditableBooking(bookingId);
+        long balance = booking.getBalanceDue();
+        if (balance <= 0) {
+            throw new InvalidBookingException("Đơn #" + bookingId + " đã được thanh toán đủ");
+        }
+        if (amount > balance) {
+            throw new InvalidBookingException("Số tiền vượt quá số còn nợ (" + formatMoney(balance) + ")");
+        }
+
+        // Trả trước khi nhận phòng là tiền cọc
+        PaymentType type = booking.getBookingStatus() == BookingStatus.CONFIRMED ? PaymentType.DEPOSIT : PaymentType.PAYMENT;
+        booking.addPayment(new Payment(amount, type, method));
+        booking.getCustomer().addPaidPrice(amount);
+        return BookingResponse.fromEntity(bookingRepository.saveAndFlush(booking));
+    }
+
+    private static String formatMoney(long amount) {
+        return String.format("%,d đ", amount).replace(',', '.');
+    }
+
+    // Chỉ đơn đang hiệu lực mới được thêm/bớt dịch vụ hoặc thu tiền
     private Booking findEditableBooking(Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đơn đặt phòng #" + bookingId));
         BookingStatus status = booking.getBookingStatus();
         if (status != BookingStatus.CONFIRMED && status != BookingStatus.CHECKED_IN) {
-            throw new InvalidBookingException("Chỉ thêm hoặc bớt dịch vụ cho đơn đã xác nhận hoặc đang lưu trú");
+            throw new InvalidBookingException("Chỉ thao tác với đơn đã xác nhận hoặc đang lưu trú (đơn #" + bookingId + " đang ở trạng thái " + status + ")");
         }
         return booking;
     }
@@ -166,15 +188,21 @@ public class BookingService {
             throw new InvalidBookingException("Không thể chuyển đơn #" + id + " từ " + oldStatus + " sang " + newStatus);
         }
 
-        booking.setBookingStatus(newStatus);
+        if (newStatus == BookingStatus.CHECKED_OUT && booking.getBalanceDue() > 0) {
+            throw new InvalidBookingException("Khách còn nợ " + formatMoney(booking.getBalanceDue()) + ", vui lòng thu đủ tiền trước khi trả phòng");
+        }
+
         Room room = booking.getRoom();
         Customer customer = booking.getCustomer();
 
-        // 1. Trừ chi tiêu tích luỹ khi huỷ đơn (đơn đã huỷ không thể khôi phục)
-        if (newStatus == BookingStatus.CANCELLED && customer != null && booking.getTotalPrice() != null) {
-            customer.deductPaidPrice(booking.getTotalPrice());
-            customerRepository.save(customer);
+        // 1. Huỷ đơn thì hoàn lại toàn bộ tiền đã thu (cọc) và trừ khỏi chi tiêu tích luỹ
+        long paid = booking.getPaidAmount();
+        if (newStatus == BookingStatus.CANCELLED && paid > 0) {
+            PaymentMethod method = booking.getPayments().get(booking.getPayments().size() - 1).getMethod();
+            booking.addPayment(new Payment(paid, PaymentType.REFUND, method));
+            customer.deductPaidPrice(paid);
         }
+        booking.setBookingStatus(newStatus);
 
         // 2. Cập nhật trạng thái phòng an toàn và chính xác
         if (room != null) {
@@ -189,11 +217,10 @@ public class BookingService {
         Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy đơn đặt phòng #" + id));
 
-        // Hoàn lại tiền chi tiêu tích luỹ nếu đơn chưa bị huỷ trước đó
-        if (booking.getBookingStatus() != BookingStatus.CANCELLED && booking.getCustomer() != null && booking.getTotalPrice() != null) {
-            Customer customer = booking.getCustomer();
-            customer.deductPaidPrice(booking.getTotalPrice());
-            customerRepository.save(customer);
+        // Xoá đơn thì bỏ số tiền đã thu của đơn này khỏi chi tiêu tích luỹ
+        long paid = booking.getPaidAmount();
+        if (paid > 0 && booking.getCustomer() != null) {
+            booking.getCustomer().deductPaidPrice(paid);
         }
 
         Room room = booking.getRoom();
@@ -245,20 +272,15 @@ public class BookingService {
         int cancelledBookings = 0;
 
         for (Booking b : bookings) {
+            // Tổng chi tiêu = tiền khách đã thực trả (đơn huỷ đã hoàn nên tự về 0)
+            totalSpent += b.getPaidAmount();
             if (b.getBookingStatus() == BookingStatus.CANCELLED) {
                 cancelledBookings++;
             } else if (b.getBookingStatus() == BookingStatus.CHECKED_OUT) {
                 completedBookings++;
-                if (b.getTotalPrice() != null) {
-                    totalSpent += b.getTotalPrice();
-                }
             } else if (b.getBookingStatus() == BookingStatus.CONFIRMED || b.getBookingStatus() == BookingStatus.CHECKED_IN) {
                 activeBookings++;
-                if (b.getTotalPrice() != null) {
-                    totalSpent += b.getTotalPrice();
-                }
             }
-            // Đơn PENDING: Không cộng vào totalSpent, không tính vào active/completed/cancelled
         }
 
         List<BookingResponse> bookingResponses = bookings.stream()
