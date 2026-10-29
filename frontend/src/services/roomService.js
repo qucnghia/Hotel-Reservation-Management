@@ -21,6 +21,11 @@ export const getRoomByNumber = (roomNumber) => {
     return axios.get(`${API_URL}/${roomNumber}`);
 };
 
+// 1c. GET: Phòng còn trống trong khoảng ngày (dd/MM/yyyy)
+export const getAvailableRooms = (checkIn, checkOut) => {
+    return axios.get(`${API_URL}/available`, { params: { checkIn, checkOut } });
+};
+
 // 2. POST: Thêm phòng mới
 export const createRoom = (roomData) => {
     return axios.post(API_URL, formatPayload(roomData));

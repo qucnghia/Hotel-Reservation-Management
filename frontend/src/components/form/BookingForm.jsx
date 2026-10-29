@@ -1,14 +1,15 @@
 import { useState, useMemo, useEffect } from 'react';
 import { createBooking } from '../../services/bookingService.js';
+import { getAvailableRooms } from '../../services/roomService.js';
 import { PlusIcon, ExclamationTriangleIcon, BookmarkIcon, CurrencyDollarIcon, XMarkIcon } from '../icons/Icons.jsx';
 import GlideSelect from '../glide-select/GlideSelect.jsx';
 import CustomDatePicker from '../date-picker/CustomDatePicker.jsx';
 
-export default function BookingForm({ guests = [], rooms = [], bookings = [], initialRoomNumber = '', onSaved, onClose }) {
+export default function BookingForm({ guests = [], rooms = [], bookings = [], initialRoomNumber = '', initialCheckIn = '', onSaved, onClose }) {
     const [formData, setFormData] = useState({
         customerId: '',
         roomNumber: initialRoomNumber ? String(initialRoomNumber) : '',
-        checkInDate: '',
+        checkInDate: initialCheckIn,
         checkOutDate: '',
     });
     const [loading, setLoading] = useState(false);
@@ -118,6 +119,11 @@ export default function BookingForm({ guests = [], rooms = [], bookings = [], in
             return;
         }
 
+        if (selectedRoomTaken) {
+            setError(`Phòng #${formData.roomNumber} đã có đơn trong khoảng ngày này. Vui lòng chọn phòng khác!`);
+            return;
+        }
+
         setLoading(true);
         try {
             await createBooking(formData);
@@ -164,10 +170,39 @@ export default function BookingForm({ guests = [], rooms = [], bookings = [], in
         }));
     }, [availableGuests]);
 
-    // 2. Lọc phòng: chỉ ẩn phòng đang bảo trì; trùng lịch theo ngày do backend kiểm tra
+    // 2. Lọc phòng theo khoảng ngày: hỏi backend phòng nào còn trống khi đã chọn đủ 2 ngày hợp lệ
+    const dateKey = (() => {
+        const inIso = toISODate(formData.checkInDate);
+        const outIso = toISODate(formData.checkOutDate);
+        return inIso && outIso && outIso >= inIso ? `${formData.checkInDate}|${formData.checkOutDate}` : '';
+    })();
+    const [availability, setAvailability] = useState({ key: '', roomNumbers: null });
+
+    useEffect(() => {
+        if (!dateKey) return undefined;
+        let cancelled = false;
+        const [checkIn, checkOut] = dateKey.split('|');
+        getAvailableRooms(checkIn, checkOut)
+            .then((res) => {
+                if (!cancelled) setAvailability({ key: dateKey, roomNumbers: new Set(res.data.map((r) => Number(r.roomNumber))) });
+            })
+            .catch((err) => {
+                console.error('Lỗi tải phòng trống:', err);
+                if (!cancelled) setAvailability({ key: dateKey, roomNumbers: null });
+            });
+        return () => { cancelled = true; };
+    }, [dateKey]);
+
+    // null = chưa chọn ngày hoặc đang tải: tạm hiện mọi phòng không bảo trì
+    const freeRoomNumbers = dateKey && availability.key === dateKey ? availability.roomNumbers : null;
+    const isCheckingRooms = Boolean(dateKey) && availability.key !== dateKey;
+    const selectedRoomTaken = Boolean(freeRoomNumbers && formData.roomNumber && !freeRoomNumbers.has(Number(formData.roomNumber)));
+
     const availableRooms = useMemo(() => {
-        return rooms.filter((r) => r.roomStatus !== 'UNDER_MAINTENANCE');
-    }, [rooms]);
+        return rooms.filter((r) =>
+            r.roomStatus !== 'UNDER_MAINTENANCE' && (!freeRoomNumbers || freeRoomNumbers.has(Number(r.roomNumber)))
+        );
+    }, [rooms, freeRoomNumbers]);
 
     const roomOptions = useMemo(() => {
         return availableRooms.map((r) => ({
@@ -265,7 +300,7 @@ export default function BookingForm({ guests = [], rooms = [], bookings = [], in
                                         setFormData(prev => ({ ...prev, roomNumber: val }));
                                         if (error) setError(null);
                                     }}
-                                    placeholder={roomOptions.length === 0 ? "-- Hết phòng trống khả dụng --" : "-- Chọn phòng lưu trú --"}
+                                    placeholder={roomOptions.length === 0 ? "-- Không còn phòng trống --" : "-- Chọn phòng lưu trú --"}
                                     ariaLabel="Chọn phòng lưu trú"
                                     size="md"
                                     fullWidth
@@ -275,9 +310,19 @@ export default function BookingForm({ guests = [], rooms = [], bookings = [], in
                                     textColor="#f8fafc"
                                     radius={12}
                                 />
-                                {roomOptions.length === 0 && (
-                                    <p className="text-xs text-amber-400/90 mt-1.5">
-                                        * Tất cả các phòng hiện đã có khách đặt hoặc đang lưu trú.
+                                {selectedRoomTaken ? (
+                                    <p className="text-xs text-rose-400 font-semibold mt-1.5">
+                                        * Phòng #{formData.roomNumber} đã có đơn trong khoảng ngày này, hãy chọn phòng khác.
+                                    </p>
+                                ) : (
+                                    <p className="text-xs text-slate-400 mt-1.5">
+                                        {!dateKey
+                                            ? '* Chọn ngày nhận và trả phòng để chỉ hiện phòng còn trống.'
+                                            : isCheckingRooms
+                                                ? 'Đang kiểm tra phòng trống...'
+                                                : roomOptions.length === 0
+                                                    ? '* Không còn phòng trống trong khoảng ngày này.'
+                                                    : `${roomOptions.length} phòng còn trống trong khoảng ngày đã chọn.`}
                                     </p>
                                 )}
                             </div>

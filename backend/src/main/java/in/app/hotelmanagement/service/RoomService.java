@@ -67,6 +67,20 @@ public class RoomService {
         return rooms.stream().map(RoomResponse::fromEntity).toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<RoomResponse> getAvailableRooms(LocalDate checkIn, LocalDate checkOut) {
+        if (checkOut.isBefore(checkIn)) {
+            throw new InvalidBookingException("Ngày trả phòng (Check-out) không thể trước ngày nhận phòng (Check-in)");
+        }
+        // Đặt trong ngày được tính là 1 đêm, giống BookingService.createBooking
+        LocalDate effectiveCheckOut = checkIn.isEqual(checkOut) ? checkIn.plusDays(1) : checkOut;
+        Set<Long> booked = bookingRepository.findBookedRoomNumbers(checkIn, effectiveCheckOut);
+        return roomRepository.findAll().stream()
+                .filter(r -> r.getRoomStatus() != RoomStatus.UNDER_MAINTENANCE && !booked.contains(r.getRoomNumber()))
+                .map(RoomResponse::fromEntity)
+                .toList();
+    }
+
     public RoomResponse updateRoom(Long roomId, RoomRequest request) {
         Room current = findRoom(roomId);
 

@@ -40,6 +40,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                                          @Param("checkInDate") LocalDate checkInDate,
                                          @Param("checkOutDate") LocalDate checkOutDate);
 
+    // Cùng điều kiện trùng lịch như findConflictingBookings nhưng cho mọi phòng
+    @Query("SELECT DISTINCT b.room.roomNumber FROM Booking b " +
+           "WHERE b.bookingStatus NOT IN (in.app.hotelmanagement.enums.BookingStatus.CANCELLED, in.app.hotelmanagement.enums.BookingStatus.CHECKED_OUT) " +
+           "AND b.checkInDate < :checkOutDate " +
+           "AND (b.checkOutDate > :checkInDate OR (b.checkOutDate = b.checkInDate AND b.checkInDate >= :checkInDate))")
+    Set<Long> findBookedRoomNumbers(@Param("checkInDate") LocalDate checkInDate,
+                                    @Param("checkOutDate") LocalDate checkOutDate);
+
     /**
      * Kiểm tra trùng lịch khi sửa đơn: Loại trừ chính đơn đang sửa (id != :excludeBookingId)
      */

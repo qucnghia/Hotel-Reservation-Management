@@ -12,6 +12,7 @@ import {
     CustomerBookingHistoryModal,
     HotelFloorPlan2D,
     RevenueManagement,
+    RoomCalendar,
     ThemeToggle,
     MorphMenuButton,
     UsersIcon,
@@ -23,13 +24,15 @@ import {
     HistoryIcon,
     MapIcon,
     TableIcon,
+    CalendarIcon,
     TrendingUpIcon
 } from './components';
 
 function App() {
     const [activeTab, setActiveTab] = useState('rooms'); // 'guests' | 'rooms' | 'bookings' | 'revenue'
-    const [roomViewMode, setRoomViewMode] = useState('2d'); // '2d' | 'table'
+    const [roomViewMode, setRoomViewMode] = useState('2d'); // '2d' | 'table' | 'calendar'
     const [bookingInitialRoom, setBookingInitialRoom] = useState('');
+    const [bookingInitialCheckIn, setBookingInitialCheckIn] = useState('');
     const [menuOpen, setMenuOpen] = useState(true);
     const [showCustomerForm, setShowCustomerForm] = useState(false);
     const [showRoomForm, setShowRoomForm] = useState(false);
@@ -294,9 +297,6 @@ function App() {
                                         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                                         Menu Quản Lý
                                     </span>
-                                    <span className="text-[11px] font-bold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-950/80 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-800">
-                                        4 mục
-                                    </span>
                                 </div>
 
                                 {/* Danh sách 4 nút menu xếp dọc - MỖI NÚT TRÊN 1 DÒNG DUY NHẤT */}
@@ -322,11 +322,6 @@ function App() {
                                             </div>
                                             <span className="font-bold text-sm whitespace-nowrap">Quản lý Khách Hàng</span>
                                         </div>
-                                        <span className={`px-2 py-0.5 rounded-full text-xs font-bold flex-shrink-0 whitespace-nowrap ${
-                                            activeTab === 'guests' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
-                                        }`}>
-                                            {guests.length} khách
-                                        </span>
                                     </button>
 
                                     {/* Mục 2: Phòng */}
@@ -350,11 +345,6 @@ function App() {
                                             </div>
                                             <span className="font-bold text-sm whitespace-nowrap">Quản lý Phòng</span>
                                         </div>
-                                        <span className={`px-2 py-0.5 rounded-full text-xs font-bold flex-shrink-0 whitespace-nowrap ${
-                                            activeTab === 'rooms' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
-                                        }`}>
-                                            {rooms.length} phòng
-                                        </span>
                                     </button>
 
                                     {/* Mục 3: Đặt Phòng */}
@@ -375,11 +365,6 @@ function App() {
                                             </div>
                                             <span className="font-bold text-sm whitespace-nowrap">Quản lý Đặt Phòng</span>
                                         </div>
-                                        <span className={`px-2 py-0.5 rounded-full text-xs font-bold flex-shrink-0 whitespace-nowrap ${
-                                            activeTab === 'bookings' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
-                                        }`}>
-                                            {bookings.length} đơn
-                                        </span>
                                     </button>
 
                                     {/* Mục 4: Doanh Thu */}
@@ -400,11 +385,6 @@ function App() {
                                             </div>
                                             <span className="font-bold text-sm whitespace-nowrap">Báo Cáo Doanh Thu</span>
                                         </div>
-                                        <span className={`px-2 py-0.5 rounded-full text-xs font-bold flex-shrink-0 whitespace-nowrap ${
-                                            activeTab === 'revenue' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
-                                        }`}>
-                                            Tài chính
-                                        </span>
                                     </button>
                                 </nav>
                             </div>
@@ -528,6 +508,18 @@ function App() {
                                             <TableIcon className="w-4 h-4" />
                                             <span>Dạng Bảng</span>
                                         </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setRoomViewMode('calendar')}
+                                            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                                                roomViewMode === 'calendar'
+                                                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                                                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                                            }`}
+                                        >
+                                            <CalendarIcon className="w-4 h-4" />
+                                            <span>Lịch</span>
+                                        </button>
                                     </div>
 
                                     <button
@@ -565,6 +557,16 @@ function App() {
                                         setEditingRoom(null);
                                         setSelectedRoom(null);
                                         setShowRoomForm(true);
+                                    }}
+                                />
+                            ) : roomViewMode === 'calendar' ? (
+                                <RoomCalendar
+                                    rooms={rooms}
+                                    bookings={bookings}
+                                    onBookRoom={(room, checkInDate) => {
+                                        setBookingInitialRoom(room.roomNumber);
+                                        setBookingInitialCheckIn(checkInDate);
+                                        setShowBookingForm(true);
                                     }}
                                 />
                             ) : (
@@ -660,16 +662,19 @@ function App() {
                         rooms={rooms}
                         bookings={bookings}
                         initialRoomNumber={bookingInitialRoom}
+                        initialCheckIn={bookingInitialCheckIn}
                         onSaved={() => {
                             fetchBookings();
                             fetchRooms(); // Đồng bộ trạng thái phòng
                             fetchGuests(); // Đồng bộ chi tiêu và hạng hội viên khách hàng
                             setShowBookingForm(false);
                             setBookingInitialRoom('');
+                            setBookingInitialCheckIn('');
                         }}
                         onClose={() => {
                             setShowBookingForm(false);
                             setBookingInitialRoom('');
+                            setBookingInitialCheckIn('');
                         }}
                     />
                 )}

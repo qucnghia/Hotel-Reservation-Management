@@ -4,10 +4,12 @@ import in.app.hotelmanagement.dto.roomDTO.RoomRequest;
 import in.app.hotelmanagement.dto.roomDTO.RoomResponse;
 import in.app.hotelmanagement.service.RoomService;
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -25,6 +27,14 @@ public class RoomController {
     public ResponseEntity<RoomResponse> createRoom(@Valid @RequestBody RoomRequest room) {
         RoomResponse created = roomService.createRoom(room);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    // Khai báo trước "/{roomNumber}" cho dễ đọc; Spring vẫn ưu tiên đường dẫn cố định
+    @GetMapping("/available")
+    public ResponseEntity<List<RoomResponse>> getAvailableRooms(
+            @RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate checkIn,
+            @RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate checkOut) {
+        return ResponseEntity.ok(roomService.getAvailableRooms(checkIn, checkOut));
     }
 
     @GetMapping("/{roomNumber}")

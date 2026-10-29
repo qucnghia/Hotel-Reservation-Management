@@ -14,6 +14,7 @@ export { default as CustomerBookingHistoryModal } from './booking-history/Custom
 // === SƠ ĐỒ PHÒNG 2D & QUẢN LÝ DOANH THU ===
 export { default as HotelFloorPlan2D } from './floor-plan/HotelFloorPlan2D.jsx';
 export { default as RevenueManagement } from './revenue/RevenueManagement.jsx';
+export { default as RoomCalendar } from './room-calendar/RoomCalendar.jsx';
 
 // === UI CONTROLS, THEME & ICONS ===
 export { default as CustomDatePicker } from './date-picker/CustomDatePicker.jsx';
